@@ -1,0 +1,45 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TestTCP1.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">8501</Value>
+    </Setting>
+    <Setting Name="SaveImageDirName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">images/</Value>
+    </Setting>
+    <Setting Name="NgImageDirName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ng/</Value>
+    </Setting>
+    <Setting Name="LogPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">log/</Value>
+    </Setting>
+    <Setting Name="MarkSaveDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">markImg/</Value>
+    </Setting>
+    <Setting Name="ServerIpAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="ImageDirName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\hpe2_\Documents\ftp\cv-x\image\</Value>
+    </Setting>
+    <Setting Name="DelaySettingParameter" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="DelayDashboardProcess" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">200</Value>
+    </Setting>
+    <Setting Name="CameraDelay" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3000</Value>
+    </Setting>
+    <Setting Name="NgCameraDelay" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2500</Value>
+    </Setting>
+    <Setting Name="DebugLogPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">debug-log/</Value>
+    </Setting>
+    <Setting Name="Password" Type="System.String" Scope="User">
+      <Value Profile="(Default)">L52Xc2qyPiNA1l17gPloyiLGvmELedNN2X+p0JG7Dbe1TQAgLtXihProA+4Z9Y0C2b+yLxsW+TZ+3hhL8Bi/Ww==</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
