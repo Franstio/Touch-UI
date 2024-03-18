@@ -64,7 +64,7 @@ namespace TestTCP1
                 return;
             if (passModal.Result.Hmac512Hash() != Properties.Settings.Default["Password"].ToString())
             {
-                MessageBox.Show("Incorrect Password","Access Fail");
+                MessageBox.Show("Incorrect Password", "Access Fail");
                 return;
             }
             var data = await conn.GetPositions(true);

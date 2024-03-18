@@ -19,6 +19,16 @@ namespace TestTCP1.Model
         {
             return new object[] { Pos, Model, X, Y, Z, CameraCheckpoint };
         }
-
+        public PositionModel() { }
+        public PositionModel(PositionModel other)
+        {
+            Pos = other.Pos;
+            X = other.X;
+            Y = other.Y;
+            Z = other.Z;
+            CameraCheckpoint = other.CameraCheckpoint;
+            Model = other.Model;
+            AreaInspection = other.AreaInspection;
+        }
     }
 }

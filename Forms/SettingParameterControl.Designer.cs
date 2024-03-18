@@ -44,6 +44,15 @@
             delPos = new NumericUpDown();
             button3 = new Button();
             groupBox2 = new GroupBox();
+            groupBox6 = new GroupBox();
+            button17 = new Button();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            label3 = new Label();
+            label6 = new Label();
+            panel1 = new Panel();
+            cavityBox = new NumericUpDown();
+            panel2 = new Panel();
+            pitchingBox = new NumericUpDown();
             groupBox5 = new GroupBox();
             button14 = new Button();
             camPoint = new NumericUpDown();
@@ -79,6 +88,12 @@
             ((System.ComponentModel.ISupportInitialize)insertAfter).BeginInit();
             ((System.ComponentModel.ISupportInitialize)delPos).BeginInit();
             groupBox2.SuspendLayout();
+            groupBox6.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)cavityBox).BeginInit();
+            panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pitchingBox).BeginInit();
             groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)camPoint).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -92,12 +107,13 @@
             parameterDatsGridView.BackgroundColor = SystemColors.Control;
             parameterDatsGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             parameterDatsGridView.Dock = DockStyle.Fill;
-            parameterDatsGridView.Location = new Point(3, 23);
+            parameterDatsGridView.Location = new Point(3, 18);
+            parameterDatsGridView.Margin = new Padding(3, 2, 3, 2);
             parameterDatsGridView.Name = "parameterDatsGridView";
             parameterDatsGridView.ReadOnly = true;
             parameterDatsGridView.RowHeadersWidth = 51;
             parameterDatsGridView.RowTemplate.Height = 29;
-            parameterDatsGridView.Size = new Size(216, 841);
+            parameterDatsGridView.Size = new Size(458, 857);
             parameterDatsGridView.TabIndex = 0;
             parameterDatsGridView.CellContentClick += parameterDatsGridView_CellContentClick;
             // 
@@ -105,9 +121,11 @@
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox3.Controls.Add(parameterDatsGridView);
-            groupBox3.Location = new Point(706, 57);
+            groupBox3.Location = new Point(618, 43);
+            groupBox3.Margin = new Padding(3, 2, 3, 2);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(222, 867);
+            groupBox3.Padding = new Padding(3, 2, 3, 2);
+            groupBox3.Size = new Size(464, 877);
             groupBox3.TabIndex = 15;
             groupBox3.TabStop = false;
             groupBox3.Text = "Parameter Data";
@@ -116,20 +134,21 @@
             // 
             timeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             timeLabel.AutoSize = true;
-            timeLabel.Location = new Point(472, 12);
+            timeLabel.Location = new Point(966, 11);
             timeLabel.Name = "timeLabel";
-            timeLabel.Size = new Size(45, 40);
+            timeLabel.Size = new Size(36, 30);
             timeLabel.TabIndex = 12;
             timeLabel.Text = "Date:\r\nTime:";
             timeLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // runningModel
             // 
+            runningModel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             runningModel.AutoSize = true;
             runningModel.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            runningModel.Location = new Point(275, 12);
+            runningModel.Location = new Point(241, 9);
             runningModel.Name = "runningModel";
-            runningModel.Size = new Size(121, 41);
+            runningModel.Size = new Size(97, 32);
             runningModel.TabIndex = 11;
             runningModel.Text = "Model: ";
             runningModel.TextAlign = ContentAlignment.MiddleCenter;
@@ -140,9 +159,11 @@
             groupBox1.Controls.Add(yLabel);
             groupBox1.Controls.Add(xLabel);
             groupBox1.Controls.Add(label2);
-            groupBox1.Location = new Point(9, 57);
+            groupBox1.Location = new Point(8, 43);
+            groupBox1.Margin = new Padding(3, 2, 3, 2);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(693, 125);
+            groupBox1.Padding = new Padding(3, 2, 3, 2);
+            groupBox1.Size = new Size(606, 94);
             groupBox1.TabIndex = 16;
             groupBox1.TabStop = false;
             // 
@@ -150,9 +171,9 @@
             // 
             zLabel.AutoSize = true;
             zLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            zLabel.Location = new Point(565, 61);
+            zLabel.Location = new Point(494, 46);
             zLabel.Name = "zLabel";
-            zLabel.Size = new Size(106, 28);
+            zLabel.Size = new Size(84, 21);
             zLabel.TabIndex = 3;
             zLabel.Text = "Z: 0.0 mm";
             // 
@@ -160,9 +181,9 @@
             // 
             yLabel.AutoSize = true;
             yLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            yLabel.Location = new Point(267, 61);
+            yLabel.Location = new Point(234, 46);
             yLabel.Name = "yLabel";
-            yLabel.Size = new Size(106, 28);
+            yLabel.Size = new Size(84, 21);
             yLabel.TabIndex = 2;
             yLabel.Text = "Y: 0.0 mm";
             // 
@@ -170,9 +191,9 @@
             // 
             xLabel.AutoSize = true;
             xLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            xLabel.Location = new Point(17, 61);
+            xLabel.Location = new Point(15, 46);
             xLabel.Name = "xLabel";
-            xLabel.Size = new Size(107, 28);
+            xLabel.Size = new Size(84, 21);
             xLabel.TabIndex = 1;
             xLabel.Text = "X: 0.0 mm";
             // 
@@ -180,34 +201,37 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point);
-            label2.Location = new Point(254, 23);
+            label2.Location = new Point(222, 17);
             label2.Name = "label2";
-            label2.Size = new Size(134, 28);
+            label2.Size = new Size(109, 21);
             label2.TabIndex = 0;
             label2.Text = "Axis Position";
             // 
             // gotoValue
             // 
             gotoValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
-            gotoValue.Location = new Point(170, 205);
+            gotoValue.Location = new Point(149, 154);
+            gotoValue.Margin = new Padding(3, 2, 3, 2);
             gotoValue.Name = "gotoValue";
-            gotoValue.Size = new Size(67, 31);
+            gotoValue.Size = new Size(59, 27);
             gotoValue.TabIndex = 18;
             gotoValue.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // insertAfter
             // 
             insertAfter.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
-            insertAfter.Location = new Point(373, 207);
+            insertAfter.Location = new Point(326, 155);
+            insertAfter.Margin = new Padding(3, 2, 3, 2);
             insertAfter.Name = "insertAfter";
-            insertAfter.Size = new Size(97, 31);
+            insertAfter.Size = new Size(85, 27);
             insertAfter.TabIndex = 20;
             // 
             // button2
             // 
-            button2.Location = new Point(243, 200);
+            button2.Location = new Point(213, 150);
+            button2.Margin = new Padding(3, 2, 3, 2);
             button2.Name = "button2";
-            button2.Size = new Size(123, 43);
+            button2.Size = new Size(108, 32);
             button2.TabIndex = 19;
             button2.Text = "Insert After";
             button2.UseVisualStyleBackColor = true;
@@ -216,16 +240,18 @@
             // delPos
             // 
             delPos.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
-            delPos.Location = new Point(592, 207);
+            delPos.Location = new Point(518, 155);
+            delPos.Margin = new Padding(3, 2, 3, 2);
             delPos.Name = "delPos";
-            delPos.Size = new Size(105, 31);
+            delPos.Size = new Size(92, 27);
             delPos.TabIndex = 22;
             // 
             // button3
             // 
-            button3.Location = new Point(475, 200);
+            button3.Location = new Point(416, 150);
+            button3.Margin = new Padding(3, 2, 3, 2);
             button3.Name = "button3";
-            button3.Size = new Size(110, 43);
+            button3.Size = new Size(96, 32);
             button3.TabIndex = 21;
             button3.Text = "Delete";
             button3.UseVisualStyleBackColor = true;
@@ -234,6 +260,7 @@
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            groupBox2.Controls.Add(groupBox6);
             groupBox2.Controls.Add(groupBox5);
             groupBox2.Controls.Add(pictureBox1);
             groupBox2.Controls.Add(cameraTriggerBox);
@@ -242,30 +269,135 @@
             groupBox2.Controls.Add(label4);
             groupBox2.Controls.Add(pointLabel);
             groupBox2.Controls.Add(groupBox4);
-            groupBox2.Location = new Point(18, 261);
+            groupBox2.Location = new Point(16, 196);
+            groupBox2.Margin = new Padding(3, 2, 3, 2);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(678, 663);
+            groupBox2.Padding = new Padding(3, 2, 3, 2);
+            groupBox2.Size = new Size(593, 698);
             groupBox2.TabIndex = 23;
             groupBox2.TabStop = false;
             groupBox2.Text = "Setting Parameter";
             // 
+            // groupBox6
+            // 
+            groupBox6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox6.Controls.Add(button17);
+            groupBox6.Controls.Add(tableLayoutPanel1);
+            groupBox6.Location = new Point(7, 20);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(349, 104);
+            groupBox6.TabIndex = 35;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "Cavity & Pitching";
+            // 
+            // button17
+            // 
+            button17.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            button17.Location = new Point(6, 71);
+            button17.Name = "button17";
+            button17.Size = new Size(337, 23);
+            button17.TabIndex = 2;
+            button17.Text = "Set";
+            button17.UseVisualStyleBackColor = true;
+            button17.Click += button17_Click;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel1.ColumnCount = 4;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.Controls.Add(label3, 0, 0);
+            tableLayoutPanel1.Controls.Add(label6, 2, 0);
+            tableLayoutPanel1.Controls.Add(panel1, 1, 0);
+            tableLayoutPanel1.Controls.Add(panel2, 3, 0);
+            tableLayoutPanel1.Location = new Point(6, 22);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Size = new Size(337, 43);
+            tableLayoutPanel1.TabIndex = 36;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Dock = DockStyle.Fill;
+            label3.Location = new Point(3, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(61, 43);
+            label3.TabIndex = 0;
+            label3.Text = "Cavity:";
+            label3.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Dock = DockStyle.Fill;
+            label6.Location = new Point(171, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(95, 43);
+            label6.TabIndex = 1;
+            label6.Text = "Pitching (mm):";
+            label6.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(cavityBox);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(70, 3);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(95, 37);
+            panel1.TabIndex = 2;
+            // 
+            // cavityBox
+            // 
+            cavityBox.Location = new Point(3, 9);
+            cavityBox.Maximum = new decimal(new int[] { 99999, 0, 0, 0 });
+            cavityBox.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            cavityBox.Name = "cavityBox";
+            cavityBox.Size = new Size(90, 23);
+            cavityBox.TabIndex = 0;
+            cavityBox.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // panel2
+            // 
+            panel2.Controls.Add(pitchingBox);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new Point(272, 3);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(62, 37);
+            panel2.TabIndex = 3;
+            // 
+            // pitchingBox
+            // 
+            pitchingBox.DecimalPlaces = 2;
+            pitchingBox.Location = new Point(3, 9);
+            pitchingBox.Maximum = new decimal(new int[] { 99999, 0, 0, 0 });
+            pitchingBox.Name = "pitchingBox";
+            pitchingBox.Size = new Size(54, 23);
+            pitchingBox.TabIndex = 0;
+            // 
             // groupBox5
             // 
+            groupBox5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox5.Controls.Add(button14);
             groupBox5.Controls.Add(camPoint);
-            groupBox5.Location = new Point(414, 27);
+            groupBox5.Location = new Point(362, 20);
+            groupBox5.Margin = new Padding(3, 2, 3, 2);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(258, 105);
+            groupBox5.Padding = new Padding(3, 2, 3, 2);
+            groupBox5.Size = new Size(226, 79);
             groupBox5.TabIndex = 34;
             groupBox5.TabStop = false;
             groupBox5.Text = "Camera Program";
             // 
             // button14
             // 
-            button14.Location = new Point(13, 64);
-            button14.Margin = new Padding(3, 4, 3, 4);
+            button14.Location = new Point(11, 48);
             button14.Name = "button14";
-            button14.Size = new Size(239, 31);
+            button14.Size = new Size(209, 23);
             button14.TabIndex = 1;
             button14.Text = "Set";
             button14.UseVisualStyleBackColor = true;
@@ -273,50 +405,55 @@
             // 
             // camPoint
             // 
-            camPoint.Location = new Point(13, 27);
+            camPoint.Location = new Point(11, 20);
+            camPoint.Margin = new Padding(3, 2, 3, 2);
             camPoint.Name = "camPoint";
-            camPoint.Size = new Size(239, 27);
+            camPoint.Size = new Size(209, 23);
             camPoint.TabIndex = 0;
             // 
             // pictureBox1
             // 
+            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox1.Location = new Point(13, 145);
+            pictureBox1.Location = new Point(17, 210);
+            pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(365, 263);
+            pictureBox1.Size = new Size(320, 198);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 5;
             pictureBox1.TabStop = false;
             // 
             // cameraTriggerBox
             // 
-            cameraTriggerBox.Location = new Point(131, 101);
+            cameraTriggerBox.Location = new Point(117, 179);
+            cameraTriggerBox.Margin = new Padding(3, 2, 3, 2);
             cameraTriggerBox.Name = "cameraTriggerBox";
-            cameraTriggerBox.Size = new Size(125, 27);
+            cameraTriggerBox.Size = new Size(110, 23);
             cameraTriggerBox.TabIndex = 4;
             // 
             // inspectionAreaBox
             // 
-            inspectionAreaBox.Location = new Point(131, 63);
+            inspectionAreaBox.Location = new Point(117, 150);
+            inspectionAreaBox.Margin = new Padding(3, 2, 3, 2);
             inspectionAreaBox.Name = "inspectionAreaBox";
-            inspectionAreaBox.Size = new Size(125, 27);
+            inspectionAreaBox.Size = new Size(110, 23);
             inspectionAreaBox.TabIndex = 3;
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(13, 105);
+            label5.Location = new Point(13, 182);
             label5.Name = "label5";
-            label5.Size = new Size(128, 20);
+            label5.Size = new Size(103, 15);
             label5.TabIndex = 2;
             label5.Text = "Camera Execution";
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(13, 67);
+            label4.Location = new Point(13, 153);
             label4.Name = "label4";
-            label4.Size = new Size(112, 20);
+            label4.Size = new Size(89, 15);
             label4.TabIndex = 1;
             label4.Text = "Inspection Area";
             label4.TextAlign = ContentAlignment.MiddleRight;
@@ -324,14 +461,15 @@
             // pointLabel
             // 
             pointLabel.AutoSize = true;
-            pointLabel.Location = new Point(13, 32);
+            pointLabel.Location = new Point(13, 127);
             pointLabel.Name = "pointLabel";
-            pointLabel.Size = new Size(45, 20);
+            pointLabel.Size = new Size(38, 15);
             pointLabel.TabIndex = 0;
             pointLabel.Text = "Point:";
             // 
             // groupBox4
             // 
+            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox4.Controls.Add(button16);
             groupBox4.Controls.Add(label1);
             groupBox4.Controls.Add(comboBox1);
@@ -348,19 +486,20 @@
             groupBox4.Controls.Add(button10);
             groupBox4.Controls.Add(button8);
             groupBox4.Controls.Add(button7);
-            groupBox4.Location = new Point(413, 145);
+            groupBox4.Location = new Point(361, 109);
+            groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(258, 503);
+            groupBox4.Padding = new Padding(3, 2, 3, 2);
+            groupBox4.Size = new Size(226, 377);
             groupBox4.TabIndex = 33;
             groupBox4.TabStop = false;
             groupBox4.Text = "Axis Position";
             // 
             // button16
             // 
-            button16.Location = new Point(59, 439);
-            button16.Margin = new Padding(3, 4, 3, 4);
+            button16.Location = new Point(52, 329);
             button16.Name = "button16";
-            button16.Size = new Size(138, 31);
+            button16.Size = new Size(121, 23);
             button16.TabIndex = 39;
             button16.Text = "Reset";
             button16.UseVisualStyleBackColor = true;
@@ -370,9 +509,9 @@
             // 
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label1.AutoSize = true;
-            label1.Location = new Point(213, 107);
+            label1.Location = new Point(186, 80);
             label1.Name = "label1";
-            label1.Size = new Size(35, 20);
+            label1.Size = new Size(29, 15);
             label1.TabIndex = 38;
             label1.Text = "mm";
             // 
@@ -382,9 +521,10 @@
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "0.1", "0.5", "1", "1.5", "2" });
-            comboBox1.Location = new Point(143, 107);
+            comboBox1.Location = new Point(125, 80);
+            comboBox1.Margin = new Padding(3, 2, 3, 2);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(63, 28);
+            comboBox1.Size = new Size(56, 23);
             comboBox1.TabIndex = 37;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
@@ -392,9 +532,10 @@
             // 
             radioButton2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(143, 77);
+            radioButton2.Location = new Point(130, 58);
+            radioButton2.Margin = new Padding(3, 2, 3, 2);
             radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(90, 24);
+            radioButton2.Size = new Size(74, 19);
             radioButton2.TabIndex = 36;
             radioButton2.Text = "INCHING";
             radioButton2.UseVisualStyleBackColor = true;
@@ -404,9 +545,10 @@
             // 
             radioButton1.AutoSize = true;
             radioButton1.Checked = true;
-            radioButton1.Location = new Point(14, 77);
+            radioButton1.Location = new Point(12, 58);
+            radioButton1.Margin = new Padding(3, 2, 3, 2);
             radioButton1.Name = "radioButton1";
-            radioButton1.Size = new Size(56, 24);
+            radioButton1.Size = new Size(46, 19);
             radioButton1.TabIndex = 35;
             radioButton1.TabStop = true;
             radioButton1.Text = "JOG";
@@ -415,9 +557,10 @@
             // 
             // button15
             // 
-            button15.Location = new Point(59, 397);
+            button15.Location = new Point(52, 298);
+            button15.Margin = new Padding(3, 2, 3, 2);
             button15.Name = "button15";
-            button15.Size = new Size(139, 35);
+            button15.Size = new Size(122, 26);
             button15.TabIndex = 34;
             button15.Text = "Mark Point";
             button15.UseVisualStyleBackColor = true;
@@ -425,10 +568,9 @@
             // 
             // button13
             // 
-            button13.Location = new Point(58, 359);
-            button13.Margin = new Padding(3, 4, 3, 4);
+            button13.Location = new Point(51, 269);
             button13.Name = "button13";
-            button13.Size = new Size(139, 31);
+            button13.Size = new Size(122, 23);
             button13.TabIndex = 33;
             button13.Text = "Zero";
             button13.UseVisualStyleBackColor = true;
@@ -436,9 +578,10 @@
             // 
             // button12
             // 
-            button12.Location = new Point(58, 317);
+            button12.Location = new Point(51, 238);
+            button12.Margin = new Padding(3, 2, 3, 2);
             button12.Name = "button12";
-            button12.Size = new Size(139, 35);
+            button12.Size = new Size(122, 26);
             button12.TabIndex = 32;
             button12.Text = "Add";
             button12.UseVisualStyleBackColor = true;
@@ -446,9 +589,10 @@
             // 
             // button4
             // 
-            button4.Location = new Point(59, 27);
+            button4.Location = new Point(52, 20);
+            button4.Margin = new Padding(3, 2, 3, 2);
             button4.Name = "button4";
-            button4.Size = new Size(139, 35);
+            button4.Size = new Size(122, 26);
             button4.TabIndex = 24;
             button4.Text = "Origin";
             button4.UseVisualStyleBackColor = true;
@@ -456,9 +600,10 @@
             // 
             // button11
             // 
-            button11.Location = new Point(58, 277);
+            button11.Location = new Point(51, 208);
+            button11.Margin = new Padding(3, 2, 3, 2);
             button11.Name = "button11";
-            button11.Size = new Size(139, 35);
+            button11.Size = new Size(122, 26);
             button11.TabIndex = 31;
             button11.Text = "Trigger";
             button11.UseVisualStyleBackColor = true;
@@ -467,9 +612,10 @@
             // button5
             // 
             button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button5.Location = new Point(13, 147);
+            button5.Location = new Point(11, 110);
+            button5.Margin = new Padding(3, 2, 3, 2);
             button5.Name = "button5";
-            button5.Size = new Size(114, 35);
+            button5.Size = new Size(100, 26);
             button5.TabIndex = 25;
             button5.Tag = "X-";
             button5.Text = "<- -X";
@@ -479,9 +625,10 @@
             // button9
             // 
             button9.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button9.Location = new Point(133, 229);
+            button9.Location = new Point(116, 172);
+            button9.Margin = new Padding(3, 2, 3, 2);
             button9.Name = "button9";
-            button9.Size = new Size(114, 35);
+            button9.Size = new Size(100, 26);
             button9.TabIndex = 30;
             button9.Tag = "Z+";
             button9.Text = "+Z ->";
@@ -491,9 +638,10 @@
             // button6
             // 
             button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button6.Location = new Point(133, 145);
+            button6.Location = new Point(116, 109);
+            button6.Margin = new Padding(3, 2, 3, 2);
             button6.Name = "button6";
-            button6.Size = new Size(114, 35);
+            button6.Size = new Size(100, 26);
             button6.TabIndex = 26;
             button6.Tag = "X+";
             button6.Text = "+X ->";
@@ -503,9 +651,10 @@
             // button10
             // 
             button10.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button10.Location = new Point(13, 229);
+            button10.Location = new Point(11, 172);
+            button10.Margin = new Padding(3, 2, 3, 2);
             button10.Name = "button10";
-            button10.Size = new Size(114, 35);
+            button10.Size = new Size(100, 26);
             button10.TabIndex = 29;
             button10.Tag = "Z-";
             button10.Text = "<- -Z";
@@ -515,9 +664,10 @@
             // button8
             // 
             button8.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button8.Location = new Point(11, 187);
+            button8.Location = new Point(10, 140);
+            button8.Margin = new Padding(3, 2, 3, 2);
             button8.Name = "button8";
-            button8.Size = new Size(114, 35);
+            button8.Size = new Size(100, 26);
             button8.TabIndex = 27;
             button8.Tag = "Y-";
             button8.Text = "<- -Y";
@@ -527,9 +677,10 @@
             // button7
             // 
             button7.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button7.Location = new Point(133, 187);
+            button7.Location = new Point(116, 140);
+            button7.Margin = new Padding(3, 2, 3, 2);
             button7.Name = "button7";
-            button7.Size = new Size(114, 35);
+            button7.Size = new Size(100, 26);
             button7.TabIndex = 28;
             button7.Tag = "Y+";
             button7.Text = "+Y ->";
@@ -543,9 +694,10 @@
             // 
             // button1
             // 
-            button1.Location = new Point(26, 200);
+            button1.Location = new Point(23, 150);
+            button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(139, 43);
+            button1.Size = new Size(122, 32);
             button1.TabIndex = 17;
             button1.Text = "Go Point";
             button1.UseVisualStyleBackColor = true;
@@ -553,7 +705,7 @@
             // 
             // SettingParameterControl
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             Controls.Add(groupBox2);
@@ -567,6 +719,7 @@
             Controls.Add(groupBox3);
             Controls.Add(timeLabel);
             Controls.Add(runningModel);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "SettingParameterControl";
             Size = new Size(1085, 927);
             Load += SettingParameterControl_Load;
@@ -579,6 +732,13 @@
             ((System.ComponentModel.ISupportInitialize)delPos).EndInit();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            groupBox6.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)cavityBox).EndInit();
+            panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pitchingBox).EndInit();
             groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)camPoint).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -632,5 +792,14 @@
         private RadioButton radioButton2;
         private RadioButton radioButton1;
         private Button button16;
+        private GroupBox groupBox6;
+        private Button button17;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Label label3;
+        private Label label6;
+        private Panel panel1;
+        private NumericUpDown cavityBox;
+        private Panel panel2;
+        private NumericUpDown pitchingBox;
     }
 }

@@ -69,7 +69,7 @@ namespace TestTCP1.Forms
             "CM8390",
             "CM8590",
         };
-//        private bool debug = false;
+        //        private bool debug = false;
         private Dictionary<string, string> selectedCommand;
         private readonly int DelayTimer = 0;
         public SettingParameterControl(string Model)
@@ -77,6 +77,8 @@ namespace TestTCP1.Forms
             InitializeComponent();
             minusButtons = new Button[] { button5, button8, button10 };
             this.Model = Model;
+            runningModel.Text = $"Model: {Model}";
+
             checkMinusButton();
             DataTable dt = new DataTable();
             dt.Columns.Add("Point");
@@ -117,7 +119,7 @@ namespace TestTCP1.Forms
             decimal initVal = 80;
             initVal = initVal * mmVal;
             for (int i = 0; i < InchingCommand.Count; i++)
-                await mainConn.SendCommand($"WR {InchingCommand[i]} {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
+                await mainConn.SendCommand($"WR {InchingCommand[i]}{(i > 2 ? ".L" :string.Empty)} {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
         }
         private async void SettingParameterControl_Load(object sender, EventArgs e)
         {
@@ -129,6 +131,9 @@ namespace TestTCP1.Forms
             fileLib.FolderCode = cPoint ?? 1;
             camPoint.Invoke(new Action(() => camPoint.Value = cPoint ?? 1));
             await LoadJogState("JOG");
+            var data = await dbCon.GetCAvity(Model);
+            pitchingBox.Value = data?.Pitching ?? 0;
+            cavityBox.Value = data?.CavityTotal ?? 1;
         }
         private void checkMinusButton()
         {
@@ -264,8 +269,8 @@ namespace TestTCP1.Forms
         {
             curModel.X = await LoadValue("RD CM8830", curModel.X);
             curModel.Y = await LoadValue("RD CM8870", curModel.Y);
-//            if (debug)
-//                debug = false;
+            //            if (debug)
+            //                debug = false;
             curModel.Z = await LoadValue("RD CM8910", curModel.Z);
         }
         private async Task<decimal> LoadValue(string command, decimal defaultValue)
@@ -285,7 +290,7 @@ namespace TestTCP1.Forms
                     return defaultValue;
                 }
             }
-            bool s = decimal.TryParse(res.Replace("+", "").Replace("\r","").Replace("\n",""), out value);
+            bool s = decimal.TryParse(res.Replace("+", "").Replace("\r", "").Replace("\n", ""), out value);
             return s ? value : defaultValue;
         }
 
@@ -311,7 +316,7 @@ namespace TestTCP1.Forms
         private async Task TriggerCamPoint(int CamPoint)
         {
             var res = await mainConn.SendCommand($"WR W0F8 {CamPoint}");
-           res = await mainConn.SendCommand($"WR MR401 1");
+            res = await mainConn.SendCommand($"WR MR401 1");
             Task.Delay(DelayTimer);
             await mainConn.SendCommand($"WR MR401 0");
             fileLib.FolderCode = CamPoint;
@@ -388,15 +393,16 @@ namespace TestTCP1.Forms
         private void GotoPoint(PositionModel _data)
         {
             //string res = string.Empty;
+            curModel = new PositionModel(_data);
             curModel.X = _data.X * 1600 / 20;
             curModel.Y = _data.Y * 1600 / 20;
             curModel.Z = _data.Z * 1600 / 20;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            Task.Run(new Action(async () => GoPoint(_data)));
+            Task.Run(new Action(async () => await GoPoint()));
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         }
-        private async Task GoPoint(PositionModel _data)
+        private async Task GoPoint()
         {
 
             string xVal = String.Format("{0:0}", curModel.X);
@@ -405,7 +411,7 @@ namespace TestTCP1.Forms
             string res = string.Empty;
             res = await mainConn.SendCommand($"WR CM8010 {xVal}");
             res = await mainConn.SendCommand($"WR CM8210 {yVal}");
-//            debug = true;
+            //            debug = true;
             res = await mainConn.SendCommand($"WR CM8410 {zVal}");
 
             await mainConn.SendCommand($"WR MR800 1");
@@ -414,7 +420,6 @@ namespace TestTCP1.Forms
 
             string img = await dbCon.GetLocalImage(curModel);
             pictureBox1.Invoke(new Action(() => pictureBox1.Image = fileLib.ReadImage(img, true)));
-
             this.button1.Invoke(new Action(() => { button1.Enabled = true; }));
         }
         private async void button1_Click(object sender, EventArgs e)
@@ -570,6 +575,20 @@ namespace TestTCP1.Forms
             await Task.Delay(DelayTimer);
             await mainConn.SendCommand("WR MR003 0");
             this.button16.Invoke(new Action(() => this.button16.Enabled = true));
+        }
+
+        private async void button17_Click(object sender, EventArgs e)
+        {
+            button17.Invoke(delegate
+            {
+                button17.Enabled = false;
+            });
+            await dbCon.SaveCavity(Model, new TestTCP1.Model.ViewModel.CavityModel() { CavityTotal = int.Parse(cavityBox.Value.ToString() ?? "0"), Pitching = pitchingBox.Value });
+            button17.Invoke(delegate
+            {
+                button17.Enabled = true;
+            });
+
         }
     }
 }

@@ -19,5 +19,6 @@ namespace TestTCP1.Model
         public DateTime ProcessDate { get; set; } = DateTime.Now;
         public string Judgement { get; set; } = string.Empty;
         public string FileName { get; set; } = string.Empty;
+        public string? Reason { get; set; } = null;
     }
 }

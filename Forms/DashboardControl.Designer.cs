@@ -29,14 +29,9 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             runningModel = new Label();
-            groupBox1 = new GroupBox();
-            textBox1 = new TextBox();
-            panel6 = new Panel();
-            label2 = new Label();
-            label3 = new Label();
-            panel3 = new Panel();
-            scanLabel = new Label();
             groupBox2 = new GroupBox();
             panel7 = new Panel();
             labeld = new Label();
@@ -83,12 +78,22 @@
             label5 = new Label();
             groupBox8 = new GroupBox();
             tableLayoutPanel8 = new TableLayoutPanel();
+            failCountLabel = new Label();
             quantityLabel = new Label();
             yieldLabel = new Label();
-            failCountLabel = new Label();
-            groupBox1.SuspendLayout();
-            panel6.SuspendLayout();
-            panel3.SuspendLayout();
+            groupBox9 = new GroupBox();
+            inputSerialView = new DataGridView();
+            Label = new DataGridViewTextBoxColumn();
+            Serial = new DataGridViewTextBoxColumn();
+            Decision = new DataGridViewTextBoxColumn();
+            button3 = new Button();
+            groupBox1 = new GroupBox();
+            serialGridView = new DataGridView();
+            No = new DataGridViewTextBoxColumn();
+            SerialNumber = new DataGridViewTextBoxColumn();
+            groupBox10 = new GroupBox();
+            button4 = new Button();
+            comboBox1 = new ComboBox();
             groupBox2.SuspendLayout();
             panel7.SuspendLayout();
             panel5.SuspendLayout();
@@ -112,6 +117,11 @@
             tableLayoutPanel7.SuspendLayout();
             groupBox8.SuspendLayout();
             tableLayoutPanel8.SuspendLayout();
+            groupBox9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)inputSerialView).BeginInit();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)serialGridView).BeginInit();
+            groupBox10.SuspendLayout();
             SuspendLayout();
             // 
             // runningModel
@@ -127,106 +137,13 @@
             runningModel.TextAlign = ContentAlignment.MiddleCenter;
             runningModel.Click += runningModel_Click;
             // 
-            // groupBox1
-            // 
-            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            groupBox1.BackColor = SystemColors.Control;
-            groupBox1.Controls.Add(textBox1);
-            groupBox1.Controls.Add(panel6);
-            groupBox1.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox1.Location = new Point(667, 250);
-            groupBox1.Margin = new Padding(3, 2, 3, 2);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new Padding(3, 2, 3, 2);
-            groupBox1.Size = new Size(228, 137);
-            groupBox1.TabIndex = 2;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Serial No.";
-            groupBox1.Enter += groupBox1_Enter;
-            // 
-            // textBox1
-            // 
-            textBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            textBox1.BackColor = Color.White;
-            textBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
-            textBox1.Location = new Point(6, 46);
-            textBox1.Margin = new Padding(3, 2, 3, 2);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(217, 25);
-            textBox1.TabIndex = 0;
-            textBox1.TextAlign = HorizontalAlignment.Center;
-            textBox1.TextChanged += textBox1_TextChanged;
-            textBox1.KeyDown += textBox1_KeyDown;
-            // 
-            // panel6
-            // 
-            panel6.BackColor = Color.MediumTurquoise;
-            panel6.Controls.Add(label2);
-            panel6.Controls.Add(label3);
-            panel6.Controls.Add(panel3);
-            panel6.Dock = DockStyle.Fill;
-            panel6.Location = new Point(3, 22);
-            panel6.Name = "panel6";
-            panel6.Size = new Size(222, 113);
-            panel6.TabIndex = 5;
-            // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label2.AutoSize = true;
-            label2.BackColor = Color.MediumTurquoise;
-            label2.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(74, 4);
-            label2.Name = "label2";
-            label2.Size = new Size(79, 19);
-            label2.TabIndex = 1;
-            label2.Text = "Scan Code";
-            label2.Click += label2_Click;
-            // 
-            // label3
-            // 
-            label3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label3.AutoSize = true;
-            label3.BackColor = Color.MediumTurquoise;
-            label3.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
-            label3.Location = new Point(53, 66);
-            label3.Name = "label3";
-            label3.Size = new Size(108, 19);
-            label3.TabIndex = 2;
-            label3.Text = "RUNNING S/N:";
-            label3.Click += label3_Click;
-            // 
-            // panel3
-            // 
-            panel3.BackColor = Color.Transparent;
-            panel3.Controls.Add(scanLabel);
-            panel3.Dock = DockStyle.Bottom;
-            panel3.Location = new Point(0, 87);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(222, 26);
-            panel3.TabIndex = 4;
-            // 
-            // scanLabel
-            // 
-            scanLabel.BackColor = Color.Transparent;
-            scanLabel.Dock = DockStyle.Fill;
-            scanLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
-            scanLabel.ForeColor = SystemColors.Highlight;
-            scanLabel.Location = new Point(0, 0);
-            scanLabel.Name = "scanLabel";
-            scanLabel.Size = new Size(222, 26);
-            scanLabel.TabIndex = 3;
-            scanLabel.Text = "-";
-            scanLabel.TextAlign = ContentAlignment.TopCenter;
-            scanLabel.Click += scanLabel_Click;
-            // 
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox2.BackColor = SystemColors.Control;
             groupBox2.Controls.Add(panel7);
             groupBox2.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox2.Location = new Point(667, 392);
+            groupBox2.Location = new Point(667, 238);
             groupBox2.Margin = new Padding(3, 2, 3, 2);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(3, 2, 3, 2);
@@ -326,10 +243,10 @@
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox3.Controls.Add(inspectionListGridView);
             groupBox3.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox3.Location = new Point(902, 97);
+            groupBox3.Location = new Point(902, 392);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new Padding(3, 2, 3, 2);
-            groupBox3.Size = new Size(307, 535);
+            groupBox3.Size = new Size(307, 215);
             groupBox3.TabIndex = 4;
             groupBox3.TabStop = false;
             groupBox3.Text = "Inspection List:";
@@ -350,7 +267,7 @@
             inspectionListGridView.ReadOnly = true;
             inspectionListGridView.RowHeadersWidth = 51;
             inspectionListGridView.RowTemplate.Height = 29;
-            inspectionListGridView.Size = new Size(301, 509);
+            inspectionListGridView.Size = new Size(301, 189);
             inspectionListGridView.TabIndex = 0;
             inspectionListGridView.CellClick += inspectionListGridView_CellClick;
             inspectionListGridView.CellContentClick += inspectionListGridView_CellContentClick;
@@ -361,7 +278,7 @@
             groupBox4.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox4.Controls.Add(label6);
             groupBox4.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox4.Location = new Point(905, 638);
+            groupBox4.Location = new Point(905, 613);
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
@@ -389,7 +306,7 @@
             groupBox5.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox5.Controls.Add(statusLabel);
             groupBox5.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox5.Location = new Point(668, 670);
+            groupBox5.Location = new Point(668, 645);
             groupBox5.Margin = new Padding(3, 2, 3, 2);
             groupBox5.Name = "groupBox5";
             groupBox5.Padding = new Padding(3, 2, 3, 2);
@@ -504,9 +421,9 @@
             // 
             processTimeLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             processTimeLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
-            processTimeLabel.Location = new Point(670, 644);
+            processTimeLabel.Location = new Point(670, 619);
             processTimeLabel.Name = "processTimeLabel";
-            processTimeLabel.Size = new Size(228, 31);
+            processTimeLabel.Size = new Size(222, 31);
             processTimeLabel.TabIndex = 13;
             processTimeLabel.Text = "Process Time: 00:00:00";
             processTimeLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -521,7 +438,7 @@
             timeLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             timeLabel.AutoSize = true;
             timeLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-            timeLabel.Location = new Point(905, 691);
+            timeLabel.Location = new Point(905, 666);
             timeLabel.Name = "timeLabel";
             timeLabel.Size = new Size(41, 38);
             timeLabel.TabIndex = 14;
@@ -626,7 +543,7 @@
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 82.89963F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 17.1003723F));
-            tableLayoutPanel2.Size = new Size(651, 285);
+            tableLayoutPanel2.Size = new Size(651, 260);
             tableLayoutPanel2.TabIndex = 20;
             // 
             // parameterPictureBox
@@ -636,7 +553,7 @@
             parameterPictureBox.Location = new Point(3, 2);
             parameterPictureBox.Margin = new Padding(3, 2, 3, 2);
             parameterPictureBox.Name = "parameterPictureBox";
-            parameterPictureBox.Size = new Size(319, 232);
+            parameterPictureBox.Size = new Size(319, 211);
             parameterPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             parameterPictureBox.TabIndex = 4;
             parameterPictureBox.TabStop = false;
@@ -648,7 +565,7 @@
             actualPictureBox.Location = new Point(328, 2);
             actualPictureBox.Margin = new Padding(3, 2, 3, 2);
             actualPictureBox.Name = "actualPictureBox";
-            actualPictureBox.Size = new Size(320, 232);
+            actualPictureBox.Size = new Size(320, 211);
             actualPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             actualPictureBox.TabIndex = 5;
             actualPictureBox.TabStop = false;
@@ -661,12 +578,12 @@
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel3.Controls.Add(button1, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(3, 238);
+            tableLayoutPanel3.Location = new Point(3, 217);
             tableLayoutPanel3.Margin = new Padding(3, 2, 3, 2);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new Size(319, 45);
+            tableLayoutPanel3.Size = new Size(319, 41);
             tableLayoutPanel3.TabIndex = 6;
             // 
             // button1
@@ -679,7 +596,7 @@
             button1.Location = new Point(109, 2);
             button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(100, 41);
+            button1.Size = new Size(100, 37);
             button1.TabIndex = 3;
             button1.Text = "PASS";
             button1.UseVisualStyleBackColor = false;
@@ -694,12 +611,12 @@
             tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel6.Controls.Add(button2, 1, 0);
             tableLayoutPanel6.Dock = DockStyle.Fill;
-            tableLayoutPanel6.Location = new Point(328, 238);
+            tableLayoutPanel6.Location = new Point(328, 217);
             tableLayoutPanel6.Margin = new Padding(3, 2, 3, 2);
             tableLayoutPanel6.Name = "tableLayoutPanel6";
             tableLayoutPanel6.RowCount = 1;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel6.Size = new Size(320, 45);
+            tableLayoutPanel6.Size = new Size(320, 41);
             tableLayoutPanel6.TabIndex = 7;
             // 
             // button2
@@ -712,7 +629,7 @@
             button2.Location = new Point(109, 2);
             button2.Margin = new Padding(3, 2, 3, 2);
             button2.Name = "button2";
-            button2.Size = new Size(100, 41);
+            button2.Size = new Size(100, 37);
             button2.TabIndex = 4;
             button2.Text = "NG";
             button2.UseVisualStyleBackColor = false;
@@ -786,10 +703,10 @@
             // 
             // groupBox8
             // 
-            groupBox8.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            groupBox8.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox8.Controls.Add(tableLayoutPanel8);
             groupBox8.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox8.Location = new Point(668, 522);
+            groupBox8.Location = new Point(673, 530);
             groupBox8.Name = "groupBox8";
             groupBox8.Size = new Size(222, 77);
             groupBox8.TabIndex = 22;
@@ -812,6 +729,19 @@
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel8.Size = new Size(216, 51);
             tableLayoutPanel8.TabIndex = 0;
+            // 
+            // failCountLabel
+            // 
+            failCountLabel.AutoSize = true;
+            failCountLabel.BackColor = SystemColors.Control;
+            failCountLabel.Dock = DockStyle.Fill;
+            failCountLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
+            failCountLabel.Location = new Point(74, 0);
+            failCountLabel.Name = "failCountLabel";
+            failCountLabel.Size = new Size(65, 51);
+            failCountLabel.TabIndex = 5;
+            failCountLabel.Text = "Fail: 0";
+            failCountLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // quantityLabel
             // 
@@ -839,23 +769,161 @@
             yieldLabel.Text = "Yield: 0%";
             yieldLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // failCountLabel
+            // groupBox9
             // 
-            failCountLabel.AutoSize = true;
-            failCountLabel.BackColor = SystemColors.Control;
-            failCountLabel.Dock = DockStyle.Fill;
-            failCountLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
-            failCountLabel.Location = new Point(74, 0);
-            failCountLabel.Name = "failCountLabel";
-            failCountLabel.Size = new Size(65, 51);
-            failCountLabel.TabIndex = 5;
-            failCountLabel.Text = "Fail: 0";
-            failCountLabel.TextAlign = ContentAlignment.MiddleCenter;
+            groupBox9.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            groupBox9.Controls.Add(inputSerialView);
+            groupBox9.Location = new Point(902, 180);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Padding = new Padding(5);
+            groupBox9.Size = new Size(307, 206);
+            groupBox9.TabIndex = 23;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Serial No.";
+            // 
+            // inputSerialView
+            // 
+            inputSerialView.AllowUserToAddRows = false;
+            inputSerialView.AllowUserToDeleteRows = false;
+            inputSerialView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            inputSerialView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            inputSerialView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            inputSerialView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            inputSerialView.Columns.AddRange(new DataGridViewColumn[] { Label, Serial, Decision });
+            inputSerialView.Location = new Point(8, 24);
+            inputSerialView.Name = "inputSerialView";
+            inputSerialView.RowTemplate.Height = 25;
+            inputSerialView.Size = new Size(291, 172);
+            inputSerialView.TabIndex = 2;
+            inputSerialView.CellClick += inputSerialView_CellClick;
+            // 
+            // Label
+            // 
+            Label.HeaderText = "Label";
+            Label.Name = "Label";
+            Label.ReadOnly = true;
+            // 
+            // Serial
+            // 
+            Serial.HeaderText = "Serial Number";
+            Serial.Name = "Serial";
+            Serial.ReadOnly = true;
+            // 
+            // Decision
+            // 
+            Decision.HeaderText = "Decision";
+            Decision.Name = "Decision";
+            Decision.ReadOnly = true;
+            // 
+            // button3
+            // 
+            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            button3.Location = new Point(6, 121);
+            button3.Name = "button3";
+            button3.Size = new Size(207, 29);
+            button3.TabIndex = 1;
+            button3.Text = "Submit";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            groupBox1.Controls.Add(serialGridView);
+            groupBox1.Controls.Add(button3);
+            groupBox1.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox1.Location = new Point(670, 368);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(222, 156);
+            groupBox1.TabIndex = 24;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Serial Input";
+            // 
+            // serialGridView
+            // 
+            serialGridView.AllowUserToAddRows = false;
+            serialGridView.AllowUserToDeleteRows = false;
+            serialGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            serialGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            serialGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            serialGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            serialGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            serialGridView.Columns.AddRange(new DataGridViewColumn[] { No, SerialNumber });
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            serialGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            serialGridView.Location = new Point(6, 25);
+            serialGridView.Name = "serialGridView";
+            serialGridView.RowTemplate.Height = 25;
+            serialGridView.Size = new Size(207, 90);
+            serialGridView.TabIndex = 2;
+            // 
+            // No
+            // 
+            No.HeaderText = "No";
+            No.Name = "No";
+            No.ReadOnly = true;
+            No.Width = 48;
+            // 
+            // SerialNumber
+            // 
+            SerialNumber.HeaderText = "Serial Number";
+            SerialNumber.Name = "SerialNumber";
+            SerialNumber.Width = 112;
+            // 
+            // groupBox10
+            // 
+            groupBox10.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            groupBox10.Controls.Add(button4);
+            groupBox10.Controls.Add(comboBox1);
+            groupBox10.Location = new Point(905, 108);
+            groupBox10.Name = "groupBox10";
+            groupBox10.Size = new Size(304, 66);
+            groupBox10.TabIndex = 3;
+            groupBox10.TabStop = false;
+            groupBox10.Text = "Cavity Setup";
+            // 
+            // button4
+            // 
+            button4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button4.Location = new Point(112, 22);
+            button4.Name = "button4";
+            button4.Size = new Size(186, 31);
+            button4.TabIndex = 1;
+            button4.Text = "Set";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
+            // comboBox1
+            // 
+            comboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6" });
+            comboBox1.Location = new Point(6, 27);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(100, 23);
+            comboBox1.TabIndex = 0;
             // 
             // DashboardControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(groupBox10);
+            Controls.Add(groupBox1);
+            Controls.Add(groupBox9);
             Controls.Add(groupBox8);
             Controls.Add(tableLayoutPanel7);
             Controls.Add(tableLayoutPanel2);
@@ -872,17 +940,11 @@
             Controls.Add(groupBox4);
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
             Controls.Add(panel1);
             Margin = new Padding(3, 2, 3, 2);
             Name = "DashboardControl";
-            Size = new Size(1231, 728);
+            Size = new Size(1231, 703);
             Load += DashboardControl_Load;
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
-            panel6.ResumeLayout(false);
-            panel6.PerformLayout();
-            panel3.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
             panel7.ResumeLayout(false);
             panel7.PerformLayout();
@@ -910,6 +972,11 @@
             groupBox8.ResumeLayout(false);
             tableLayoutPanel8.ResumeLayout(false);
             tableLayoutPanel8.PerformLayout();
+            groupBox9.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)inputSerialView).EndInit();
+            groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)serialGridView).EndInit();
+            groupBox10.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -917,11 +984,6 @@
         #endregion
 
         private Label runningModel;
-        private GroupBox groupBox1;
-        private Label scanLabel;
-        private Label label3;
-        private Label label2;
-        private TextBox textBox1;
         private GroupBox groupBox2;
         private Label decisionLabel;
         private Label labeld;
@@ -950,11 +1012,9 @@
         private Panel panel2;
         private PictureBox pictureBox2;
         private PictureBox pictureBox3;
-        private Panel panel3;
         private Panel panel5;
         private Panel panel4;
         private Label areaLabel;
-        private Panel panel6;
         private Panel panel7;
         private TableLayoutPanel tableLayoutPanel2;
         private TableLayoutPanel tableLayoutPanel4;
@@ -973,5 +1033,18 @@
         private TableLayoutPanel tableLayoutPanel8;
         private Label failCountLabel;
         private Label yieldLabel;
+        private GroupBox groupBox9;
+        private Button button3;
+        private DataGridView inputSerialView;
+        private GroupBox groupBox1;
+        private DataGridView serialGridView;
+        private DataGridViewTextBoxColumn Label;
+        private DataGridViewTextBoxColumn Serial;
+        private DataGridViewTextBoxColumn Decision;
+        private DataGridViewTextBoxColumn No;
+        private DataGridViewTextBoxColumn SerialNumber;
+        private GroupBox groupBox10;
+        private Button button4;
+        private ComboBox comboBox1;
     }
 }

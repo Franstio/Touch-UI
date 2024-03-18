@@ -143,7 +143,8 @@ namespace TestTCP1.Lib
                         $"Position: {record.Pos}\n" +
                         $"Area Inspection: {record.AreaInspection}\n" +
                         $"Judgement: {record.Judgement}\n" +
-                        $"Image: {record.FileName}\n"
+                        $"Image: {record.FileName}\n"+
+                        (record.Reason is null ? string.Empty : "Reason: " + record.Reason + "\n")
                     );
             }
             string filename = $"{DateTime.Now.ToString("yyyyMMdd")}_{ScanCode}.txt";

@@ -49,7 +49,7 @@
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(5, 2, 0, 2);
-            menuStrip1.Size = new Size(976, 24);
+            menuStrip1.Size = new Size(1122, 24);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -118,7 +118,7 @@
             mainPanel.Location = new Point(0, 24);
             mainPanel.Margin = new Padding(3, 2, 3, 2);
             mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(976, 476);
+            mainPanel.Size = new Size(1122, 592);
             mainPanel.TabIndex = 1;
             // 
             // dashboardControl1
@@ -127,14 +127,14 @@
             dashboardControl1.Location = new Point(0, 0);
             dashboardControl1.Margin = new Padding(3, 2, 3, 2);
             dashboardControl1.Name = "dashboardControl1";
-            dashboardControl1.Size = new Size(976, 476);
+            dashboardControl1.Size = new Size(1122, 592);
             dashboardControl1.TabIndex = 0;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(976, 500);
+            ClientSize = new Size(1122, 616);
             Controls.Add(mainPanel);
             Controls.Add(menuStrip1);
             Margin = new Padding(3, 2, 3, 2);

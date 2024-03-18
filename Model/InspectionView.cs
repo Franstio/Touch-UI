@@ -11,5 +11,6 @@ namespace TestTCP1.Model
         public string Area { get; set; } = string.Empty;
         public string Judgement { get; set; } = string.Empty;
         public string Image { get;set; } = string.Empty;
+        public string? Reason { get; set; } = null;
     }
 }

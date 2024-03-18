@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TestTCP1.Lib.DbUtil;
 using TestTCP1.Model;
+using TestTCP1.Model.ViewModel;
 
 namespace TestTCP1.Lib
 {
@@ -112,8 +113,8 @@ namespace TestTCP1.Lib
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
-                string query = "Insert Into Tbl_Record(Model,Position,X,Y,Z,CameraCheckPoint,AreaInspection,ScanCode,Judgement,ProcessDate,FileName) Values(@Model,@Position,@X,@Y,@Z,@c,@area,@scanCode,@judgement,GETDATE(),@filename)";
-                await conn.ExecuteAsync(query, new { Model = record.Model, Position = record.Pos, X = record.X, Y = record.Y, Z = record.Z, c = record.CameraCheckpoint, area = record.AreaInspection,scanCode=record.ScanCode,judgement=record.Judgement,filename=record.FileName });
+                string query = "Insert Into Tbl_Record(Model,Position,X,Y,Z,CameraCheckPoint,AreaInspection,ScanCode,Judgement,ProcessDate,FileName,Reason) Values(@Model,@Position,@X,@Y,@Z,@c,@area,@scanCode,@judgement,GETDATE(),@filename,@reason)";
+                await conn.ExecuteAsync(query, new { Model = record.Model, Position = record.Pos, X = record.X, Y = record.Y, Z = record.Z, c = record.CameraCheckpoint, area = record.AreaInspection,scanCode=record.ScanCode,judgement=record.Judgement,filename=record.FileName,reason=record.Reason });
             }
         }
         public async Task SaveImage(string model,int pos,string imgName)
@@ -173,6 +174,32 @@ namespace TestTCP1.Lib
                 point = r ? int.Parse(rd[0].ToString() ?? "-1") : 0;
             }
             return point;
+        }
+        public async Task<CavityModel?> GetCAvity(string model)
+        {
+            CavityModel? result;
+            using (var conn=GetConn())
+            {
+                await conn.OpenAsync();
+                string query = "Select Pitching,CavityTotal From Tbl_Campoint where model=@model";
+                var res = await conn.QueryAsync<CavityModel>(query, new { model = model });
+                result = res.FirstOrDefault();
+            }
+            return result;
+        }
+        public async Task SaveCavity(string Model,CavityModel data)
+        {
+            var camPoint = await GetCamPoint(Model);
+            using (var conn = GetConn())
+            {
+                await conn.OpenAsync();
+                string query = string.Empty;
+                if (camPoint is null || camPoint == -1)
+                    query = "Insert Into Tbl_CamPoint(Model,CameraPoint,Pitching,CavityTotal) values(@Model,-2,@Pitching,@CavityTotal)";
+                else
+                    query = "Update Tbl_Campoint set Pitching=@Pitching,CavityTotal=@CavityTotal Where Model=@model";
+                await conn.ExecuteAsync(query,new {model= Model, Pitching=data.Pitching,CavityTotal=data.CavityTotal});
+            }
         }
 
         public async Task SaveMarkPoint(MarkPointModel model)
