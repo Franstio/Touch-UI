@@ -34,6 +34,8 @@
             settingParameterToolStripMenuItem = new ToolStripMenuItem();
             newModelParameterToolStripMenuItem = new ToolStripMenuItem();
             modifyParameterToolStripMenuItem = new ToolStripMenuItem();
+            copyProgramToolStripMenuItem = new ToolStripMenuItem();
+            deleteProgramToolStripMenuItem = new ToolStripMenuItem();
             configurationToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             mainPanel = new Panel();
@@ -71,7 +73,7 @@
             // 
             // settingParameterToolStripMenuItem
             // 
-            settingParameterToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newModelParameterToolStripMenuItem, modifyParameterToolStripMenuItem });
+            settingParameterToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newModelParameterToolStripMenuItem, modifyParameterToolStripMenuItem, copyProgramToolStripMenuItem, deleteProgramToolStripMenuItem });
             settingParameterToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             settingParameterToolStripMenuItem.Name = "settingParameterToolStripMenuItem";
             settingParameterToolStripMenuItem.Size = new Size(168, 22);
@@ -92,6 +94,20 @@
             modifyParameterToolStripMenuItem.Size = new Size(192, 22);
             modifyParameterToolStripMenuItem.Text = "Modify Parameter";
             modifyParameterToolStripMenuItem.Click += modifyParameterToolStripMenuItem_Click;
+            // 
+            // copyProgramToolStripMenuItem
+            // 
+            copyProgramToolStripMenuItem.Name = "copyProgramToolStripMenuItem";
+            copyProgramToolStripMenuItem.Size = new Size(192, 22);
+            copyProgramToolStripMenuItem.Text = "Copy Program";
+            copyProgramToolStripMenuItem.Click += copyProgramToolStripMenuItem_Click;
+            // 
+            // deleteProgramToolStripMenuItem
+            // 
+            deleteProgramToolStripMenuItem.Name = "deleteProgramToolStripMenuItem";
+            deleteProgramToolStripMenuItem.Size = new Size(192, 22);
+            deleteProgramToolStripMenuItem.Text = "Delete Program";
+            deleteProgramToolStripMenuItem.Click += deleteProgramToolStripMenuItem_Click;
             // 
             // configurationToolStripMenuItem
             // 
@@ -160,6 +176,8 @@
         private ToolStripMenuItem configurationToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
         private Panel mainPanel;
+        private ToolStripMenuItem copyProgramToolStripMenuItem;
+        private ToolStripMenuItem deleteProgramToolStripMenuItem;
         private Forms.DashboardControl dashboardControl1;
     }
 }

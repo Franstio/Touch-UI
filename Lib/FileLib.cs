@@ -138,7 +138,7 @@ namespace TestTCP1.Lib
             StringBuilder sb = new StringBuilder(Log);
             foreach (var record in Records) 
             {
-                if (record.Judgement=="NG")
+                if (record.Judgement=="NG" || !string.IsNullOrEmpty(record.Reason) )
                     sb.AppendLine(
                         $"Position: {record.Pos}\n" +
                         $"Area Inspection: {record.AreaInspection}\n" +

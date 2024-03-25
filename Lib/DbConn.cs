@@ -43,6 +43,33 @@ namespace TestTCP1.Lib
                     await SaveCamPoint(find!.First(),data.CameraPoint!.Value);
             }
         }
+        public async Task FullCopyPosition(string oldModelName,string newModelName)
+        {
+            string[] queries = new string[]
+                {
+                    "Insert Into tbl_data(Model,Position,X,Y,Z,CameraCheckPoint,AreaInspection) Select @newModelName,Position,x,y,z,CameraCheckPoint,AreaInspection From TBl_Data where model=@oldModelName;",
+                    "Insert Into Tbl_CamPoint(Model,CameraPoint,Pitching,CavityTotal) Select @newModelName,CameraPoint,Pitching,CavityTotal From Tbl_CamPoint where model=@oldModelName",
+                    "Insert Into Tbl_MarkPoint(Model,Position,AreaInspection,X,Y,ImageName) Select @newModelName,Position,AreaInspection,X,Y,ImageName From TBl_MarkPoint Where model=@oldModelName",
+                    "Insert Into Tbl_Image(Model,Position,ImageName) Select @newModelName,Position,ImageName From Tbl_Image Where Model=@oldModelName"
+                };
+            using (var conn = GetConn())
+            {
+                await conn.OpenAsync();
+                using (var transact = await conn.BeginTransactionAsync())
+                {
+
+                    int res = await conn.ExecuteAsync(queries[0], new { oldModelName = oldModelName, newModelName = newModelName }, transaction: transact);
+                    if (res < 1)
+                    {
+                        await transact.RollbackAsync();
+                        return;
+                    }
+                    for (int i=1;i<queries.Length; i++)
+                        await conn.ExecuteAsync(queries[i],new {oldModelName=oldModelName,newModelName=newModelName},transaction:transact);
+                    await transact.CommitAsync();
+                }
+            }
+        }
         public async Task SaveCamPoint(PosView data,int newCampoint)
         {
             using (var conn = GetConn())
@@ -66,6 +93,15 @@ namespace TestTCP1.Lib
                 await conn.ExecuteAsync(query, new { model = data.Model, pos = data.Pos });
                 query = "Update Tbl_Data set Position=Position-1 where Model=@model and Position > @pos and @pos>0;";
                 await conn.ExecuteAsync(query, new { model = data.Model, pos = data.Pos });
+            }
+        }
+        public async Task DeletePosition(string model)
+        {
+            using (var conn = GetConn())
+            {
+                await conn.OpenAsync();
+                string query = "Delete Tbl_Data where model=@model";
+                await conn.ExecuteAsync(query,new {model = model });
             }
         }
         public async Task InsertAter(int insertAfterPos,PosView data)

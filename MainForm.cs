@@ -100,5 +100,17 @@ namespace TestTCP1
         {
 
         }
+
+        private void copyProgramToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CopyProgramForm frm = new CopyProgramForm();
+            frm.ShowDialog();
+        }
+
+        private void deleteProgramToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DeleteProgramForm frm = new DeleteProgramForm();
+            frm.ShowDialog();
+        }
     }
 }

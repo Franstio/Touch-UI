@@ -39,6 +39,7 @@ namespace TestTCP1.Forms
         private CountViewModel countView = new CountViewModel();
         //private TouchUITemp touchUITemp = new TouchUITemp();
         private DashboardCavityModel? cavities;
+        private bool isRunning = false;
 
         public DashboardControl()
         {
@@ -122,7 +123,7 @@ namespace TestTCP1.Forms
                 label6.Invoke(delegate { label6.Text = string.Empty; });
                 foreach (var _cavity in cavities.Cavities)
                 {
-                    bool checkIfJudgementEmpty = _cavity.InspectionViews.Any(x => x.Judgement == string.Empty);
+                    bool checkIfJudgementEmpty = _cavity.InspectionViews.Any(x => x.Judgement == string.Empty || x.Judgement == "" || x.Judgement is null);
                     if (!checkIfJudgementEmpty && _cavity.InspectionViews.Count >= Positions.Count)
                     {
                         List<RecordInspectionModel> records = new List<RecordInspectionModel>();
@@ -131,8 +132,8 @@ namespace TestTCP1.Forms
                             RecordInspectionModel record = mapper.Map<RecordInspectionModel>(Positions[i]);
                             record.ScanCode = _cavity.SerialNumber;
                             record.Judgement = _cavity.InspectionViews[i].Judgement;
-                            record.FileName = (record.Judgement == "PASS" ? fileLib._savePath : fileLib._ngSavePath) + _cavity.InspectionViews[i].Image;
                             record.Reason = _cavity.InspectionViews[i].Reason;
+                            record.FileName = (record.Judgement == "PASS" ? fileLib._savePath : fileLib._ngSavePath) + _cavity.InspectionViews[i].Image;
                             await dbCon.SavePosRecord(record);
                             records.Add(record);
                         }
@@ -149,7 +150,6 @@ namespace TestTCP1.Forms
             if (cavityModel is null)
                 return;
             await ReloadCavity(cavityModel);
-            LoadCavityGridTable();
             CamPoint = await dbCon.GetCamPoint(Model);
             this.inspectionListGridView.Invoke(new Action(() =>
             {
@@ -166,10 +166,10 @@ namespace TestTCP1.Forms
             Positions = await dbCon.GetPositionByModel(Model);
             cavities = new DashboardCavityModel(cavityModel, Positions);
             Positions = cavities.Cavities.First().Models;
-            comboBox1.Text = cavities.Cavity.CavityTotal.ToString();
-            comboBox1.SelectedText = cavities.Cavity.CavityTotal.ToString();
-            comboBox1.SelectedValue = cavities.Cavity.CavityTotal;
-            comboBox1.SelectedItem = cavities.Cavity.CavityTotal;
+            comboBox1.Invoke(delegate
+            {
+                comboBox1.SelectedIndex = comboBox1.Items.IndexOf(cavities.Cavity.CavityTotal.ToString());
+            });
             cavities.CurrentCavityItem.InspectionViews = mapper.Map<List<InspectionView>>(Positions);
 
         }
@@ -240,6 +240,7 @@ namespace TestTCP1.Forms
         private async Task ScanRun()
         {
             await GetPos();
+            LoadCavityGridTable(false);
             this.cavities!.CurrentCavity = 0;
             SwitchControlState("waiting");
             string res = string.Empty;
@@ -482,15 +483,16 @@ namespace TestTCP1.Forms
 
             LoadCavityGridTable();
         }
-        private void LoadCavityGridTable()=> Invoke(delegate
+        private void LoadCavityGridTable(bool reset = true) => Invoke(delegate
         {
             if (cavities is null)
                 return;
-            inputSerialView.Rows.Clear();
+            if (reset) inputSerialView.Rows.Clear();
             serialGridView.Rows.Clear();
             for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
             {
-                inputSerialView.Rows.Add(new object[] { $"Cavity {i + 1}", string.Empty, "-" });
+                if (reset)
+                    inputSerialView.Rows.Add(new object[] { $"Cavity {i + 1}", string.Empty, "-" });
                 serialGridView.Rows.Add(new object[] { i + 1, string.Empty });
             }
         });
@@ -639,10 +641,21 @@ namespace TestTCP1.Forms
                 cavities.CurrentCavityItem.InspectionViews[index].Judgement = frm.resultVerification ? "PASS" : "NG";
                 //RecordInspectionModel record = mapper.Map<RecordInspectionModel>(pos);
                 //record.Judgement = InspectionViews[index].Judgement;
+
+
+                ReasonForm reasonForm = new ReasonForm();
+                var _res = reasonForm.ShowDialog();
+                if (_res == DialogResult.OK)
+                {
+                    string reason = reasonForm.Result;
+                    cavities.CurrentCavityItem.InspectionViews[index].Reason = reason;
+                }
                 if (frm.resultVerification)
                 {
-                    await dbCon.SaveImage(pos.Model, pos.Pos, frm._image);
-                    fileLib.SaveImage(frm._imageFull, frm._image);
+                    var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
+                    cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection] = new Tuple<string, string>(tup.Item1, tup.Item1);
+                    //                    await dbCon.SaveImage(pos.Model, pos.Pos, frm._image);
+                    //                    fileLib.SaveImage(frm._imageFull, frm._image);
                 }
                 await Task.Run(new Action(() =>
                 {
@@ -660,7 +673,7 @@ namespace TestTCP1.Forms
                     inputSerialView.Invoke(new Action(() =>
                     {
 
-                        inputSerialView[2, cavities.CurrentCavity].Style.BackColor = finalJudge ? Color.DarkRed : Color.Lime;
+                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
                         inputSerialView[2, cavities.CurrentCavity].Value = finalJudge ? "FAIL" : "PASS";
                     }));
                 }));
@@ -737,9 +750,9 @@ namespace TestTCP1.Forms
             }
             var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
             string prevJudgement = inputSerialView[2, cavities.CurrentCavity].Value.ToString()!;
-            string name = Path.GetFileName(tup.Item2);
-            await dbCon.SaveImage(_curPos.Model, _curPos.Pos, name);
-            fileLib.SaveImage(tup.Item2, name);
+            //string name = Path.GetFileName(tup.Item2);
+            //await dbCon.SaveImage(_curPos.Model, _curPos.Pos, name);
+            //fileLib.SaveImage(tup.Item2, name);
 
             cavities.CurrentCavityItem.InspectionViews[index].Judgement = "NG";
             inspectionListGridView.Invoke(LoadInspectionToGrid);
@@ -769,7 +782,7 @@ namespace TestTCP1.Forms
 
         private void inspectionListGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0)
+            if (e.RowIndex < 0 || isRunning)
                 return;
             PositionModel pcur = Positions[e.RowIndex];
             MarkPointModel? mark = markPoint.Where(x => x.Position == pcur.Pos).FirstOrDefault();
@@ -783,7 +796,8 @@ namespace TestTCP1.Forms
             if (res is null)
                 return;
             button1.Enabled = res.Judgement != "PASS";
-            button2.Enabled = res.Judgement == "PASS";
+            button2.Enabled = true;
+            //            button2.Enabled = res.Judgement == "PASS";
 
             button1.Visible = res.Judgement != "PASS";
             button2.Visible = res.Judgement != "PASS";
@@ -812,12 +826,15 @@ namespace TestTCP1.Forms
                     MessageBox.Show("Please fill all of serial numbers first");
                     return;
                 }
-                inputSerialView[1, i].Value = serialGridView[1, i].Value;
+                inputSerialView[1, i].Value = serialGridView[1, i].Value.ToString();
                 inputSerialView[2, i].Value = "-";
                 inputSerialView[2, i].Style.ForeColor = Color.Black;
+                inputSerialView.Refresh();
                 cavities!.Cavities[i].SerialNumber = serialGridView[1, i].Value.ToString() ?? String.Empty;
             }
             button3.Enabled = false;
+            button4.Enabled = false;
+            isRunning = true;
             Task.Run(async delegate
             {
                 await ScanRun();
@@ -825,13 +842,15 @@ namespace TestTCP1.Forms
                 Invoke(delegate
                 {
                     button3.Enabled = true;
+                    button4.Enabled = true;
+                    isRunning = false;
                 });
             });
         }
 
         private void inputSerialView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0)
+            if (e.RowIndex < 0 || isRunning)
                 return;
             cavities!.CurrentCavity = e.RowIndex;
             groupBox3.Text = "Inspection List: " + inputSerialView[0, cavities!.CurrentCavity].Value.ToString();
@@ -848,17 +867,37 @@ namespace TestTCP1.Forms
             {
                 res = MessageBox.Show("Are you sure want to change total cavity of this model?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             });
-            if (res==DialogResult.Yes)
+            if (res == DialogResult.Yes)
             {
                 var cModel = cavities!.Cavity;
                 cModel.CavityTotal = int.Parse(comboBox1.Text);
-                await dbCon.SaveCavity(Model,cModel);
+                await dbCon.SaveCavity(Model, cModel);
                 cModel = await dbCon.GetCAvity(Model);
                 if (cModel is null)
                     return;
                 await ReloadCavity(cModel);
                 LoadCavityGridTable();
             }
+        }
+
+        private async void button5_Click(object sender, EventArgs e)
+        {
+
+            this.button5.Invoke(new Action(() => this.button5.Enabled = false));;
+            await mainConn.SendCommand("WR MR001 0");
+            await mainConn.SendCommand("WR DM0 0");
+            await mainConn.SendCommand("WR MR701 1");
+            await Task.Delay(DelayTimer);
+            await mainConn.SendCommand("WR MR701 0");
+            await mainConn.SendCommand("WR M400 0");
+            await mainConn.SendCommand("WR B068 0");
+            await mainConn.SendCommand("WR MR006 1");
+            await Task.Delay(DelayTimer);
+            await mainConn.SendCommand("WR MR006 0");
+            await mainConn.SendCommand("WR MR003 1");
+            await Task.Delay(DelayTimer);
+            await mainConn.SendCommand("WR MR003 0");
+            this.button5.Invoke(new Action(() => this.button5.Enabled = true));
         }
     }
 }

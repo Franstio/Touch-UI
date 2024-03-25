@@ -94,6 +94,7 @@
             groupBox10 = new GroupBox();
             button4 = new Button();
             comboBox1 = new ComboBox();
+            button5 = new Button();
             groupBox2.SuspendLayout();
             panel7.SuspendLayout();
             panel5.SuspendLayout();
@@ -246,7 +247,7 @@
             groupBox3.Location = new Point(902, 392);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new Padding(3, 2, 3, 2);
-            groupBox3.Size = new Size(307, 215);
+            groupBox3.Size = new Size(307, 177);
             groupBox3.TabIndex = 4;
             groupBox3.TabStop = false;
             groupBox3.Text = "Inspection List:";
@@ -267,7 +268,7 @@
             inspectionListGridView.ReadOnly = true;
             inspectionListGridView.RowHeadersWidth = 51;
             inspectionListGridView.RowTemplate.Height = 29;
-            inspectionListGridView.Size = new Size(301, 189);
+            inspectionListGridView.Size = new Size(301, 151);
             inspectionListGridView.TabIndex = 0;
             inspectionListGridView.CellClick += inspectionListGridView_CellClick;
             inspectionListGridView.CellContentClick += inspectionListGridView_CellContentClick;
@@ -791,7 +792,9 @@
             inputSerialView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             inputSerialView.Columns.AddRange(new DataGridViewColumn[] { Label, Serial, Decision });
             inputSerialView.Location = new Point(8, 24);
+            inputSerialView.MultiSelect = false;
             inputSerialView.Name = "inputSerialView";
+            inputSerialView.ReadOnly = true;
             inputSerialView.RowTemplate.Height = 25;
             inputSerialView.Size = new Size(291, 172);
             inputSerialView.TabIndex = 2;
@@ -917,10 +920,23 @@
             comboBox1.Size = new Size(100, 23);
             comboBox1.TabIndex = 0;
             // 
+            // button5
+            // 
+            button5.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            button5.Location = new Point(905, 575);
+            button5.Name = "button5";
+            button5.Size = new Size(304, 29);
+            button5.TabIndex = 25;
+            button5.Text = "RESET";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
+            // 
             // DashboardControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(button5);
             Controls.Add(groupBox10);
             Controls.Add(groupBox1);
             Controls.Add(groupBox9);
@@ -1046,5 +1062,6 @@
         private GroupBox groupBox10;
         private Button button4;
         private ComboBox comboBox1;
+        private Button button5;
     }
 }

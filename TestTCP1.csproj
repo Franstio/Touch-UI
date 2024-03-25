@@ -21,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Forms\DeleteProgramForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\SelectModalForm.cs">
       <SubType>Form</SubType>
     </Compile>
