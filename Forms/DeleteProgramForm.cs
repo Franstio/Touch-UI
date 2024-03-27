@@ -24,6 +24,9 @@ namespace TestTCP1.Forms
 
         private async void button1_Click(object sender, EventArgs e)
         {
+            DialogResult result = MessageBox.Show("Are you sure want to delete this program?", "Delete Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result != DialogResult.Yes)
+                return;
             await db.DeletePosition(((PositionModel)comboBox1.SelectedItem).Model);
             MessageBox.Show("Delete Success");
             Close();

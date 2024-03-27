@@ -791,6 +791,7 @@
             inputSerialView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             inputSerialView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             inputSerialView.Columns.AddRange(new DataGridViewColumn[] { Label, Serial, Decision });
+            inputSerialView.EditMode = DataGridViewEditMode.EditProgrammatically;
             inputSerialView.Location = new Point(8, 24);
             inputSerialView.MultiSelect = false;
             inputSerialView.Name = "inputSerialView";

@@ -40,6 +40,7 @@ namespace TestTCP1.Forms
         //private TouchUITemp touchUITemp = new TouchUITemp();
         private DashboardCavityModel? cavities;
         private bool isRunning = false;
+        private CancellationTokenSource cTokenSource = new CancellationTokenSource();
 
         public DashboardControl()
         {
@@ -248,10 +249,13 @@ namespace TestTCP1.Forms
             await mainConn.SendCommand("WR MR004 1");
             do
             {
+
+                if (cTokenSource.IsCancellationRequested)
+                    return;
                 res = await mainConn.SendCommand($"RD MR8000");
             }
             while (!res.Contains("1") && !res.Contains("ok"));
-            for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
+            for (int i = 0; i < cavities!.Cavity.CavityTotal && !cTokenSource.IsCancellationRequested; i++)
             {
                 cavities!.CurrentCavity = i;
 
@@ -263,22 +267,22 @@ namespace TestTCP1.Forms
                 });
 
                 await RunProcess(i);
-
-                this.Invoke(new Action(() =>
-                {
-                    bool finalJudge = cavities.CurrentCavityItem.InspectionViews.Select(x => x.Judgement).Any(x => x.Contains("NG"));
-                    inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
-                    inputSerialView[2, cavities.CurrentCavity].Value = finalJudge ? "FAIL" : "PASS";
-                    finalJudgeLabel.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
-                    finalJudgeLabel.Text = finalJudge ? "FAIL" : "PASS";
-                    countView.Count++;
-                    if (finalJudge)
-                        countView.Fail++;
-                    else
-                        countView.Pass++;
-                    countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
-                    LoadCountView();
-                }));
+                if (!cTokenSource.IsCancellationRequested)
+                    this.Invoke(new Action(() =>
+                    {
+                        bool finalJudge = cavities.CurrentCavityItem.InspectionViews.Select(x => x.Judgement).Any(x => x.Contains("NG"));
+                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
+                        inputSerialView[2, cavities.CurrentCavity].Value = finalJudge ? "FAIL" : "PASS";
+                        finalJudgeLabel.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
+                        finalJudgeLabel.Text = finalJudge ? "FAIL" : "PASS";
+                        countView.Count++;
+                        if (finalJudge)
+                            countView.Fail++;
+                        else
+                            countView.Pass++;
+                        countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
+                        LoadCountView();
+                    }));
             }
             string res1, res2;
             do
@@ -287,33 +291,42 @@ namespace TestTCP1.Forms
                 res1 = await mainConn.SendCommand("WR MR8000 0");
                 res2 = await mainConn.SendCommand("WR DM0 0");
             }
-            while (!(res1.ToLower().Contains("ok") || res1.ToLower().Contains("1")) || !(res2.ToLower().Contains("ok") || res2.ToLower().Contains("1")));
+            while ((!(res1.ToLower().Contains("ok") || res1.ToLower().Contains("1")) || !(res2.ToLower().Contains("ok") || res2.ToLower().Contains("1"))) && !cTokenSource.IsCancellationRequested);
+            if (cTokenSource.IsCancellationRequested)
+                return;
             SwitchControlState("complete");
             processTimer.Stop();
             processTimer.Enabled = false;
             this.Invoke(new Action(() =>
             {
-                actualPictureBox.Image = null;
-                parameterPictureBox.Image = null;
-                serialGridView.Rows.Clear();
-                for (int i = 0; i < cavities.Cavity.CavityTotal; i++)
-                    serialGridView.Rows.Add(new object[] { i + 1, string.Empty });
+                ClearSerialGrid();
                 //touchUITemp.Multiplier = touchUITemp.Multiplier + 1;
             }));
         }
+        private void ClearSerialGrid()
+        {
 
+            actualPictureBox.Image = null;
+            parameterPictureBox.Image = null;
+            serialGridView.Rows.Clear();
+            for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
+                serialGridView.Rows.Add(new object[] { i + 1, string.Empty });
+        }
         private async Task RunProcess(int cavityNo)
         {
             cavities!.ClearImageList(cavityNo);
 
             Positions = cavities!.Cavities[cavityNo].Models;
             SwitchControlState("running");
-            for (int i = 0; i < Positions.Count; i++)
+            for (int i = 0; i < Positions.Count && !cTokenSource.IsCancellationRequested; i++)
             {
                 var _pos = /*Model.ToLower()=="touch-ui" ? touchUITemp.Setup( Positions[i]) :*/ Positions[i];
                 await StartProcess(_pos);
-                Task.Run(() => LoadImage(Positions[i]));
-                var isPassed = await Trigger(_pos.CameraCheckpoint);
+                Task.Run(() => LoadImage(Positions[i]), cTokenSource.Token);
+                var _isPassed = await Trigger(_pos.CameraCheckpoint);
+                if (_isPassed is null || cTokenSource.IsCancellationRequested)
+                    return;
+                bool isPassed = _isPassed!.Value;
                 cavities.CurrentCavityItem.InspectionViews[i].Judgement = isPassed ? "PASS" : "NG";
                 string localImage = await dbCon.GetLocalImage(_pos);
 
@@ -417,20 +430,26 @@ namespace TestTCP1.Forms
                 s = await mainConn.SendCommand("WR MR300 1");
                 decimal[] _curPos = await GetCurrentPosition();
                 while (_curPos.Any(x => x != 0))
+                {
+                    if (cTokenSource.IsCancellationRequested)
+                        return;
                     _curPos = await GetCurrentPosition();
+                }
                 return;
             }
             s = await mainConn.SendCommand("WR MR300 1");
             bool[] confirms = new bool[3];
             do
             {
+                if (cTokenSource.IsCancellationRequested)
+                    return;
                 confirms[0] = (await mainConn.SendCommand($"RD CR8401")).Contains("1");
                 confirms[1] = (await mainConn.SendCommand($"RD CR8501")).Contains("1");
                 confirms[2] = (await mainConn.SendCommand($"RD CR8601")).Contains("1");
             }
             while (confirms.Any(x => x == false));
         }
-        private async Task<bool> Trigger(string checkPoint)
+        private async Task<bool?> Trigger(string checkPoint)
         {
             //res = await conn.SendCommand("WR MR400 1");
             //Thread.Sleep(10);
@@ -439,6 +458,9 @@ namespace TestTCP1.Forms
             string res = string.Empty;
             do
             {
+
+                if (cTokenSource.IsCancellationRequested)
+                    return null;
                 res = await mainConn.SendCommand("RD MR400");
             }
             while (!res.Contains("1"));
@@ -451,11 +473,11 @@ namespace TestTCP1.Forms
                 if (res.Contains("1"))
                     result = false;
             }
-            while (result is null);
+            while (result is null && !cTokenSource.IsCancellationRequested);
             //this.Invoke(new Action(() =>
             //MessageBox.Show("Incorrect trigger output")));
             await mainConn.SendCommand("WR MR400 0");
-            return result.Value;
+            return result;
         }
 
 
@@ -485,16 +507,21 @@ namespace TestTCP1.Forms
         }
         private void LoadCavityGridTable(bool reset = true) => Invoke(delegate
         {
-            if (cavities is null)
-                return;
             if (reset) inputSerialView.Rows.Clear();
             serialGridView.Rows.Clear();
+            inputSerialView.Refresh();
+            serialGridView.Refresh();
+            if (cavities is null)
+                return;
             for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
             {
                 if (reset)
                     inputSerialView.Rows.Add(new object[] { $"Cavity {i + 1}", string.Empty, "-" });
                 serialGridView.Rows.Add(new object[] { i + 1, string.Empty });
             }
+            inputSerialView.Refresh();
+            serialGridView.Refresh();
+
         });
         private async Task<decimal> LoadValue(string command, decimal defaultValue)
         {
@@ -809,6 +836,8 @@ namespace TestTCP1.Forms
 
         private void button3_Click(object sender, EventArgs e)
         {
+            cTokenSource.Dispose();
+            cTokenSource = new CancellationTokenSource();
             finalJudgeLabel.Text = string.Empty;
             areaLabel.Text = string.Empty;
             decisionLabel.Text = string.Empty;
@@ -818,6 +847,7 @@ namespace TestTCP1.Forms
             startTime = DateTime.Now;
             processTimer.Enabled = true;
             processTimer.Start();
+            string[] serialCheck = new string[serialGridView.Rows.Count];
             for (int i = 0; i < serialGridView.Rows.Count; i++)
             {
                 var val = serialGridView[1, i].Value.ToString();
@@ -826,11 +856,18 @@ namespace TestTCP1.Forms
                     MessageBox.Show("Please fill all of serial numbers first");
                     return;
                 }
+
                 inputSerialView[1, i].Value = serialGridView[1, i].Value.ToString();
                 inputSerialView[2, i].Value = "-";
                 inputSerialView[2, i].Style.ForeColor = Color.Black;
                 inputSerialView.Refresh();
                 cavities!.Cavities[i].SerialNumber = serialGridView[1, i].Value.ToString() ?? String.Empty;
+                serialCheck[i] = val;
+            }
+            if (serialCheck.Length != serialCheck.Distinct().Count())
+            {
+                MessageBox.Show("Duplicate serial detected");
+                return;
             }
             button3.Enabled = false;
             button4.Enabled = false;
@@ -845,7 +882,7 @@ namespace TestTCP1.Forms
                     button4.Enabled = true;
                     isRunning = false;
                 });
-            });
+            }, cancellationToken: cTokenSource.Token);
         }
 
         private void inputSerialView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -883,7 +920,24 @@ namespace TestTCP1.Forms
         private async void button5_Click(object sender, EventArgs e)
         {
 
-            this.button5.Invoke(new Action(() => this.button5.Enabled = false));;
+            this.button5.Invoke(new Action(() => this.button5.Enabled = false));
+
+            LoadCavityGridTable(true);
+            if (isRunning)
+            {
+                cTokenSource.Cancel();
+
+                processTimer.Enabled = false;
+                processTimer.Stop();
+                await GetPos();
+                Invoke(delegate
+                {
+                    button3.Enabled = true;
+                    button4.Enabled = true;
+                    isRunning = false;
+                    statusLabel.Text = "Cancelled...";
+                });
+            }
             await mainConn.SendCommand("WR MR001 0");
             await mainConn.SendCommand("WR DM0 0");
             await mainConn.SendCommand("WR MR701 1");

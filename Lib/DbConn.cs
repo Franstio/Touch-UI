@@ -101,7 +101,7 @@ namespace TestTCP1.Lib
             {
                 await conn.OpenAsync();
                 string query = "Delete Tbl_Data where model=@model";
-                await conn.ExecuteAsync(query,new {model = model });
+                await conn.ExecuteAsync(query, new { model = model });
             }
         }
         public async Task InsertAter(int insertAfterPos,PosView data)

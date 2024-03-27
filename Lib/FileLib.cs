@@ -133,20 +133,20 @@ namespace TestTCP1.Lib
             string Log =
                /// "Content:\n" +
                /// $"Model: {Records.First().Model}\n"+
-                $"{ScanCode}\n"+
-                (Records.Any(x=>x.Judgement=="NG") ? "FAIL" : "PASS" )+"\n\n";
+                $"SN : {ScanCode}\n"+
+                "Result : "+(Records.Any(x=>x.Judgement=="NG") ? "FAIL" : "PASS" )+"\n\n";
             StringBuilder sb = new StringBuilder(Log);
             foreach (var record in Records) 
             {
                 if (record.Judgement=="NG" || !string.IsNullOrEmpty(record.Reason) )
                     sb.AppendLine(
                         $"Position: {record.Pos}\n" +
-                        $"Area Inspection: {record.AreaInspection}\n" +
+                        $"Area Inspection: {record.AreaInspection}" + (record.Reason is null ?  string.Empty : (", " + record.Reason)) + "\n"+
                         $"Judgement: {record.Judgement}\n" +
-                        $"Image: {record.FileName}\n"+
-                        (record.Reason is null ? string.Empty : "Reason: " + record.Reason + "\n")
+                        $"Image: {record.FileName}\n"
                     );
             }
+            sb.AppendLine("End");
             string filename = $"{DateTime.Now.ToString("yyyyMMdd")}_{ScanCode}.txt";
             using (StreamWriter sw = new StreamWriter(Path.Combine(_logPath, filename)))
             {
