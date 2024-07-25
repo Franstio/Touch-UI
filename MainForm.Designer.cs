@@ -58,14 +58,14 @@
             // optionToolStripMenuItem
             // 
             optionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeModelToolStripMenuItem, settingParameterToolStripMenuItem, configurationToolStripMenuItem, exitToolStripMenuItem });
-            optionToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point);
+            optionToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Underline);
             optionToolStripMenuItem.Name = "optionToolStripMenuItem";
             optionToolStripMenuItem.Size = new Size(57, 20);
             optionToolStripMenuItem.Text = "Option";
             // 
             // changeModelToolStripMenuItem
             // 
-            changeModelToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            changeModelToolStripMenuItem.Font = new Font("Segoe UI", 9F);
             changeModelToolStripMenuItem.Name = "changeModelToolStripMenuItem";
             changeModelToolStripMenuItem.Size = new Size(168, 22);
             changeModelToolStripMenuItem.Text = "Change Model";
@@ -74,14 +74,14 @@
             // settingParameterToolStripMenuItem
             // 
             settingParameterToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newModelParameterToolStripMenuItem, modifyParameterToolStripMenuItem, copyProgramToolStripMenuItem, deleteProgramToolStripMenuItem });
-            settingParameterToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            settingParameterToolStripMenuItem.Font = new Font("Segoe UI", 9F);
             settingParameterToolStripMenuItem.Name = "settingParameterToolStripMenuItem";
             settingParameterToolStripMenuItem.Size = new Size(168, 22);
             settingParameterToolStripMenuItem.Text = "Setting Parameter";
             // 
             // newModelParameterToolStripMenuItem
             // 
-            newModelParameterToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            newModelParameterToolStripMenuItem.Font = new Font("Segoe UI", 9F);
             newModelParameterToolStripMenuItem.Name = "newModelParameterToolStripMenuItem";
             newModelParameterToolStripMenuItem.Size = new Size(192, 22);
             newModelParameterToolStripMenuItem.Text = "New Model Parameter";
@@ -89,7 +89,7 @@
             // 
             // modifyParameterToolStripMenuItem
             // 
-            modifyParameterToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            modifyParameterToolStripMenuItem.Font = new Font("Segoe UI", 9F);
             modifyParameterToolStripMenuItem.Name = "modifyParameterToolStripMenuItem";
             modifyParameterToolStripMenuItem.Size = new Size(192, 22);
             modifyParameterToolStripMenuItem.Text = "Modify Parameter";
@@ -111,7 +111,7 @@
             // 
             // configurationToolStripMenuItem
             // 
-            configurationToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            configurationToolStripMenuItem.Font = new Font("Segoe UI", 9F);
             configurationToolStripMenuItem.Name = "configurationToolStripMenuItem";
             configurationToolStripMenuItem.Size = new Size(168, 22);
             configurationToolStripMenuItem.Text = "Configuration";
@@ -119,7 +119,7 @@
             // 
             // exitToolStripMenuItem
             // 
-            exitToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            exitToolStripMenuItem.Font = new Font("Segoe UI", 9F);
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.Size = new Size(168, 22);
             exitToolStripMenuItem.Text = "Exit";
@@ -150,6 +150,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(1122, 616);
             Controls.Add(mainPanel);
             Controls.Add(menuStrip1);

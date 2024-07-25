@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,8 +14,10 @@ namespace TestTCP1.Lib
         public string _filePath { get; private set; } = string.Empty;
         public  string _savePath { get; private set; } = string.Empty;
         public string _ngSavePath { get; private set; } = string.Empty;
-        private string _logPath = string.Empty;
+        public string _logPath { get; private set; } = string.Empty;
         public string _markSaveDir { get; private set; } = string.Empty;
+        public string _snResultPath { get;private set; } = string.Empty;
+        public int _snResultDelay { get; private set; } = 0;
         private string basename_folder = "SD1_";
         public int FolderCode { get; set; } = 1;
         public FileLib()
@@ -24,6 +27,7 @@ namespace TestTCP1.Lib
             string ngSavePath = Properties.Settings.Default["NgImageDirName"]?.ToString() ?? "ng";
             string logPath = Properties.Settings.Default["LogPath"]?.ToString() ?? "log";
             string markSaveDir = Properties.Settings.Default["MarkSaveDir"]?.ToString() ?? "markImg";
+            string snResultPath = Properties.Settings.Default["SNResultPath"]?.ToString() ?? "result";
             _filePath = settingPath.Contains(":\\") || settingPath.Contains(":/") ? settingPath :  Path.Combine( AppDomain.CurrentDomain.BaseDirectory,
                  settingPath);
             _savePath = savePath.Contains(":\\") || savePath.Contains(":/") ? savePath  : Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
@@ -35,6 +39,8 @@ namespace TestTCP1.Lib
 
             _markSaveDir = markSaveDir.Contains(":\\") || markSaveDir.Contains(":/") ? markSaveDir : Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
                 markSaveDir);
+            _snResultPath = snResultPath.Contains(":\\") || snResultPath.Contains(":/") ? snResultPath : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, snResultPath);
+            _snResultDelay = int.Parse(Properties.Settings.Default["SNResultDelay"].ToString()??"0");
             try
             {
                 if (!Directory.Exists(_filePath))
@@ -47,6 +53,8 @@ namespace TestTCP1.Lib
                     Directory.CreateDirectory(_logPath);
                 if (!Directory.Exists(_markSaveDir))
                     Directory.CreateDirectory(_markSaveDir);
+                if (!Directory.Exists(_snResultPath))
+                    Directory.CreateDirectory(_snResultPath);
                 Console.WriteLine(_filePath);
                 Console.WriteLine(_savePath);
             }
@@ -141,20 +149,65 @@ namespace TestTCP1.Lib
                 if (record.Judgement=="NG" || !string.IsNullOrEmpty(record.Reason) )
                     sb.AppendLine(
                         $"Position: {record.Pos}\n" +
-                        $"Area Inspection: {record.AreaInspection}" + (record.Reason is null ?  string.Empty : (", " + record.Reason)) + "\n"+
                         $"Judgement: {record.Judgement}\n" +
+                        $"Area Inspection: {record.AreaInspection}" + (record.Reason is null ?  string.Empty : (" # " + record.Reason)) + "\n"+
                         $"Image: {record.FileName}\n"
                     );
             }
             sb.AppendLine("End");
             string filename = $"{DateTime.Now.ToString("yyyyMMdd")}_{ScanCode}.txt";
-            using (StreamWriter sw = new StreamWriter(Path.Combine(_logPath, filename)))
+            for (int i = 0; i <2; i++)
             {
-                await sw.WriteAsync(sb);
-                await sw.FlushAsync();
+                string _path = Path.Combine(_logPath,i.ToString(),filename);
+                if (i == 0)
+                    _path = Path.Combine(_logPath, filename);
+                else
+                {
+                    _path = Path.Combine(_logPath, "result", filename);
+                    if (!Directory.Exists(Path.Combine(_logPath, "result")))
+                        Directory.CreateDirectory(Path.Combine(_logPath,"result"));
+                }    
+                if (File.Exists(_path))
+                    File.Delete(_path);
+                using (StreamWriter sw = new StreamWriter(_path))
+                {
+                    await sw.WriteAsync(sb);
+                    await sw.FlushAsync();
+                }
             }
-
             return filename;
+        }
+        public async Task<bool> ValidateLog(string ScanCode)
+        {
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "result");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            await Task.Delay(1000);
+            string[] files = Directory.GetFiles(path);
+            bool result = (files.Length > 0 || files.Any(x => x.Contains(".txt")));
+            return !result;
+            if (result)
+            {
+//                string filename = $"{DateTime.Now.ToString("yyyyMMdd")}_{ScanCode}.txt";
+ //               File.Delete(Path.Combine(_logPath,filename));
+                return false;
+            }
+            return true;
+        } 
+        public async Task<Dictionary<string,string>?> ValidateLog()
+        {
+            await Task.Delay(TimeSpan.FromSeconds(_snResultDelay));
+            string[] files = Directory.GetFiles(_snResultPath);
+            if (files.Length == 0)
+                return null;
+            Dictionary<string, string> Dict = new Dictionary<string, string>();
+            for (int i=0;i<files.Length; i++)
+            {
+                using (StreamReader reader = new StreamReader(File.OpenRead(files[i])))
+                    Dict.Add(files[i].Split(" ").Last().Replace(" ","").Trim(),reader.ReadToEnd());
+                File.Delete(files[i]);
+            }
+            return Dict ;
         }
     }
 }

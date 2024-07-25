@@ -66,6 +66,7 @@ namespace TestTCP1.Forms
             settingParamDelay.Value = Convert.ToDecimal(Properties.Settings.Default["DelaySettingParameter"].ToString() ?? "0");
             cameraTriggerDelay.Value = Convert.ToDecimal(Properties.Settings.Default["CameraDelay"].ToString() ?? "0");
             ngCameraDelay.Value = Convert.ToDecimal(Properties.Settings.Default["NgCameraDelay"].ToString() ?? "0");
+            snResultDelay.Value = Convert.ToDecimal(Properties.Settings.Default["SNResultDelay"].ToString() ?? "0");
         }
         private string GetConfig(string name)
         {
@@ -79,6 +80,8 @@ namespace TestTCP1.Forms
             ftpCameraDir.Text = GetConfig("ImageDirName");
             reportLogPath.Text = GetConfig("LogPath");
             debugLogPath.Text = GetConfig("DebugLogPath");
+            snResultPath.Text = GetConfig("SNResultPath");
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -87,6 +90,7 @@ namespace TestTCP1.Forms
             Properties.Settings.Default["DelaySettingParameter"] = int.Parse(settingParamDelay.Value.ToString());
             Properties.Settings.Default["CameraDelay"] = int.Parse(cameraTriggerDelay.Value.ToString());
             Properties.Settings.Default["NgCameraDelay"] = int.Parse(ngCameraDelay.Value.ToString());
+            Properties.Settings.Default["SNResultDelay"] = int.Parse(snResultDelay.Value.ToString());
             Properties.Settings.Default.Save();
         }
 

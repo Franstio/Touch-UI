@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             runningModel = new Label();
             groupBox2 = new GroupBox();
             panel7 = new Panel();
@@ -95,6 +95,7 @@
             button4 = new Button();
             comboBox1 = new ComboBox();
             button5 = new Button();
+            button6 = new Button();
             groupBox2.SuspendLayout();
             panel7.SuspendLayout();
             panel5.SuspendLayout();
@@ -129,7 +130,7 @@
             // 
             runningModel.BackColor = Color.MediumTurquoise;
             runningModel.Dock = DockStyle.Fill;
-            runningModel.Font = new Font("Segoe UI", 10F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+            runningModel.Font = new Font("Segoe UI", 10F, FontStyle.Bold | FontStyle.Italic);
             runningModel.Location = new Point(3, 23);
             runningModel.Name = "runningModel";
             runningModel.Size = new Size(222, 38);
@@ -143,7 +144,7 @@
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox2.BackColor = SystemColors.Control;
             groupBox2.Controls.Add(panel7);
-            groupBox2.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox2.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             groupBox2.Location = new Point(667, 238);
             groupBox2.Margin = new Padding(3, 2, 3, 2);
             groupBox2.Name = "groupBox2";
@@ -171,7 +172,7 @@
             // 
             labeld.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             labeld.AutoSize = true;
-            labeld.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
+            labeld.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             labeld.Location = new Point(74, 47);
             labeld.Name = "labeld";
             labeld.Size = new Size(69, 19);
@@ -193,7 +194,7 @@
             // 
             decisionLabel.BackColor = Color.MediumTurquoise;
             decisionLabel.Dock = DockStyle.Fill;
-            decisionLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            decisionLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             decisionLabel.ForeColor = Color.Lime;
             decisionLabel.Location = new Point(0, 0);
             decisionLabel.Name = "decisionLabel";
@@ -221,7 +222,7 @@
             // 
             areaLabel.BackColor = Color.MediumTurquoise;
             areaLabel.Dock = DockStyle.Fill;
-            areaLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            areaLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             areaLabel.Location = new Point(0, 0);
             areaLabel.Name = "areaLabel";
             areaLabel.Size = new Size(220, 17);
@@ -232,7 +233,7 @@
             // 
             label4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
+            label4.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             label4.Location = new Point(62, 6);
             label4.Name = "label4";
             label4.Size = new Size(88, 19);
@@ -243,11 +244,11 @@
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox3.Controls.Add(inspectionListGridView);
-            groupBox3.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox3.Location = new Point(902, 392);
+            groupBox3.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            groupBox3.Location = new Point(905, 431);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new Padding(3, 2, 3, 2);
-            groupBox3.Size = new Size(307, 177);
+            groupBox3.Size = new Size(304, 177);
             groupBox3.TabIndex = 4;
             groupBox3.TabStop = false;
             groupBox3.Text = "Inspection List:";
@@ -268,7 +269,7 @@
             inspectionListGridView.ReadOnly = true;
             inspectionListGridView.RowHeadersWidth = 51;
             inspectionListGridView.RowTemplate.Height = 29;
-            inspectionListGridView.Size = new Size(301, 151);
+            inspectionListGridView.Size = new Size(298, 151);
             inspectionListGridView.TabIndex = 0;
             inspectionListGridView.CellClick += inspectionListGridView_CellClick;
             inspectionListGridView.CellContentClick += inspectionListGridView_CellContentClick;
@@ -278,7 +279,7 @@
             // 
             groupBox4.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox4.Controls.Add(label6);
-            groupBox4.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             groupBox4.Location = new Point(905, 613);
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
@@ -293,7 +294,7 @@
             // 
             label6.BackColor = Color.LightGreen;
             label6.Dock = DockStyle.Fill;
-            label6.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+            label6.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Italic);
             label6.Location = new Point(3, 24);
             label6.Name = "label6";
             label6.Size = new Size(298, 24);
@@ -306,7 +307,7 @@
             // 
             groupBox5.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox5.Controls.Add(statusLabel);
-            groupBox5.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox5.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             groupBox5.Location = new Point(668, 645);
             groupBox5.Margin = new Padding(3, 2, 3, 2);
             groupBox5.Name = "groupBox5";
@@ -321,7 +322,7 @@
             // 
             statusLabel.BackColor = Color.LightGreen;
             statusLabel.Dock = DockStyle.Fill;
-            statusLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+            statusLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Italic);
             statusLabel.Location = new Point(3, 24);
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(221, 29);
@@ -366,7 +367,7 @@
             // 
             zLabel.AutoSize = true;
             zLabel.Dock = DockStyle.Fill;
-            zLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            zLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             zLabel.Location = new Point(417, 0);
             zLabel.Name = "zLabel";
             zLabel.Size = new Size(201, 20);
@@ -379,7 +380,7 @@
             // 
             yLabel.AutoSize = true;
             yLabel.Dock = DockStyle.Fill;
-            yLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            yLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             yLabel.Location = new Point(210, 0);
             yLabel.Name = "yLabel";
             yLabel.Size = new Size(201, 20);
@@ -392,7 +393,7 @@
             // 
             xLabel.AutoSize = true;
             xLabel.Dock = DockStyle.Fill;
-            xLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            xLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             xLabel.Location = new Point(3, 0);
             xLabel.Name = "xLabel";
             xLabel.Size = new Size(201, 20);
@@ -411,7 +412,7 @@
             // 
             finalJudgeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             finalJudgeLabel.AutoSize = true;
-            finalJudgeLabel.Font = new Font("Segoe UI", 48F, FontStyle.Bold, GraphicsUnit.Point);
+            finalJudgeLabel.Font = new Font("Segoe UI", 48F, FontStyle.Bold);
             finalJudgeLabel.Location = new Point(793, 7);
             finalJudgeLabel.Name = "finalJudgeLabel";
             finalJudgeLabel.Size = new Size(189, 86);
@@ -421,7 +422,7 @@
             // processTimeLabel
             // 
             processTimeLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            processTimeLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
+            processTimeLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             processTimeLabel.Location = new Point(670, 619);
             processTimeLabel.Name = "processTimeLabel";
             processTimeLabel.Size = new Size(222, 31);
@@ -438,7 +439,7 @@
             // 
             timeLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             timeLabel.AutoSize = true;
-            timeLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            timeLabel.Font = new Font("Segoe UI", 10F);
             timeLabel.Location = new Point(905, 666);
             timeLabel.Name = "timeLabel";
             timeLabel.Size = new Size(41, 38);
@@ -451,7 +452,7 @@
             groupBox6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox6.BackColor = SystemColors.Control;
             groupBox6.Controls.Add(runningModel);
-            groupBox6.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox6.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             groupBox6.Location = new Point(667, 97);
             groupBox6.Name = "groupBox6";
             groupBox6.Size = new Size(228, 64);
@@ -471,7 +472,7 @@
             // label1
             // 
             label1.Dock = DockStyle.Fill;
-            label1.Font = new Font("Segoe UI", 42F, FontStyle.Bold, GraphicsUnit.Point);
+            label1.Font = new Font("Segoe UI", 42F, FontStyle.Bold);
             label1.Location = new Point(0, 0);
             label1.Name = "label1";
             label1.Size = new Size(777, 85);
@@ -484,7 +485,7 @@
             groupBox7.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox7.BackColor = SystemColors.Control;
             groupBox7.Controls.Add(campointLabel);
-            groupBox7.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox7.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             groupBox7.Location = new Point(667, 167);
             groupBox7.Name = "groupBox7";
             groupBox7.Size = new Size(229, 66);
@@ -496,7 +497,7 @@
             // 
             campointLabel.BackColor = Color.MediumTurquoise;
             campointLabel.Dock = DockStyle.Fill;
-            campointLabel.Font = new Font("Segoe UI", 16F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+            campointLabel.Font = new Font("Segoe UI", 16F, FontStyle.Bold | FontStyle.Italic);
             campointLabel.Location = new Point(3, 23);
             campointLabel.Name = "campointLabel";
             campointLabel.Size = new Size(223, 40);
@@ -592,7 +593,7 @@
             button1.BackColor = Color.LimeGreen;
             button1.Dock = DockStyle.Fill;
             button1.Enabled = false;
-            button1.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+            button1.Font = new Font("Segoe UI", 8F);
             button1.ForeColor = Color.WhiteSmoke;
             button1.Location = new Point(109, 2);
             button1.Margin = new Padding(3, 2, 3, 2);
@@ -625,7 +626,7 @@
             button2.BackColor = Color.Red;
             button2.Dock = DockStyle.Fill;
             button2.Enabled = false;
-            button2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+            button2.Font = new Font("Segoe UI", 8F);
             button2.ForeColor = Color.WhiteSmoke;
             button2.Location = new Point(109, 2);
             button2.Margin = new Padding(3, 2, 3, 2);
@@ -682,7 +683,7 @@
             // 
             label7.AutoSize = true;
             label7.Dock = DockStyle.Fill;
-            label7.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            label7.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label7.Location = new Point(327, 0);
             label7.Name = "label7";
             label7.Size = new Size(318, 26);
@@ -694,7 +695,7 @@
             // 
             label5.AutoSize = true;
             label5.Dock = DockStyle.Fill;
-            label5.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            label5.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label5.Location = new Point(3, 0);
             label5.Name = "label5";
             label5.Size = new Size(318, 26);
@@ -706,7 +707,7 @@
             // 
             groupBox8.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox8.Controls.Add(tableLayoutPanel8);
-            groupBox8.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox8.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             groupBox8.Location = new Point(673, 530);
             groupBox8.Name = "groupBox8";
             groupBox8.Size = new Size(222, 77);
@@ -736,7 +737,7 @@
             failCountLabel.AutoSize = true;
             failCountLabel.BackColor = SystemColors.Control;
             failCountLabel.Dock = DockStyle.Fill;
-            failCountLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
+            failCountLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             failCountLabel.Location = new Point(74, 0);
             failCountLabel.Name = "failCountLabel";
             failCountLabel.Size = new Size(65, 51);
@@ -749,7 +750,7 @@
             quantityLabel.AutoSize = true;
             quantityLabel.BackColor = SystemColors.Control;
             quantityLabel.Dock = DockStyle.Fill;
-            quantityLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
+            quantityLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             quantityLabel.Location = new Point(3, 0);
             quantityLabel.Name = "quantityLabel";
             quantityLabel.Size = new Size(65, 51);
@@ -762,7 +763,7 @@
             yieldLabel.AutoSize = true;
             yieldLabel.BackColor = SystemColors.Control;
             yieldLabel.Dock = DockStyle.Fill;
-            yieldLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
+            yieldLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             yieldLabel.Location = new Point(145, 0);
             yieldLabel.Name = "yieldLabel";
             yieldLabel.Size = new Size(68, 51);
@@ -774,10 +775,10 @@
             // 
             groupBox9.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox9.Controls.Add(inputSerialView);
-            groupBox9.Location = new Point(902, 180);
+            groupBox9.Location = new Point(905, 219);
             groupBox9.Name = "groupBox9";
             groupBox9.Padding = new Padding(5);
-            groupBox9.Size = new Size(307, 206);
+            groupBox9.Size = new Size(304, 206);
             groupBox9.TabIndex = 23;
             groupBox9.TabStop = false;
             groupBox9.Text = "Serial No.";
@@ -796,8 +797,7 @@
             inputSerialView.MultiSelect = false;
             inputSerialView.Name = "inputSerialView";
             inputSerialView.ReadOnly = true;
-            inputSerialView.RowTemplate.Height = 25;
-            inputSerialView.Size = new Size(291, 172);
+            inputSerialView.Size = new Size(288, 172);
             inputSerialView.TabIndex = 2;
             inputSerialView.CellClick += inputSerialView_CellClick;
             // 
@@ -835,7 +835,7 @@
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox1.Controls.Add(serialGridView);
             groupBox1.Controls.Add(button3);
-            groupBox1.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             groupBox1.Location = new Point(670, 368);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(222, 156);
@@ -850,27 +850,26 @@
             serialGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             serialGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             serialGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            serialGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            serialGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             serialGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             serialGridView.Columns.AddRange(new DataGridViewColumn[] { No, SerialNumber });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            serialGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            serialGridView.DefaultCellStyle = dataGridViewCellStyle4;
             serialGridView.Location = new Point(6, 25);
             serialGridView.Name = "serialGridView";
-            serialGridView.RowTemplate.Height = 25;
             serialGridView.Size = new Size(207, 90);
             serialGridView.TabIndex = 2;
             // 
@@ -892,7 +891,7 @@
             groupBox10.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox10.Controls.Add(button4);
             groupBox10.Controls.Add(comboBox1);
-            groupBox10.Location = new Point(905, 108);
+            groupBox10.Location = new Point(905, 147);
             groupBox10.Name = "groupBox10";
             groupBox10.Size = new Size(304, 66);
             groupBox10.TabIndex = 3;
@@ -923,20 +922,34 @@
             // 
             // button5
             // 
-            button5.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button5.Location = new Point(905, 575);
+            button5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button5.Location = new Point(1052, 110);
             button5.Name = "button5";
-            button5.Size = new Size(304, 29);
+            button5.Size = new Size(157, 29);
             button5.TabIndex = 25;
             button5.Text = "RESET";
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
             // 
+            // button6
+            // 
+            button6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button6.Enabled = false;
+            button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button6.Location = new Point(905, 110);
+            button6.Name = "button6";
+            button6.Size = new Size(141, 29);
+            button6.TabIndex = 26;
+            button6.Text = "Genrate Log";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
             // DashboardControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(button6);
             Controls.Add(button5);
             Controls.Add(groupBox10);
             Controls.Add(groupBox1);
@@ -1064,5 +1077,6 @@
         private Button button4;
         private ComboBox comboBox1;
         private Button button5;
+        private Button button6;
     }
 }

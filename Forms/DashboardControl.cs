@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -41,6 +42,8 @@ namespace TestTCP1.Forms
         private DashboardCavityModel? cavities;
         private bool isRunning = false;
         private CancellationTokenSource cTokenSource = new CancellationTokenSource();
+        private bool isSensorActive = false;
+        private string prevStatus = string.Empty;
 
         public DashboardControl()
         {
@@ -82,18 +85,36 @@ namespace TestTCP1.Forms
             inspectionListGridView.DataSource = dt;
             Task.Run(GetLivePosition, cts.Token);
             LoadCountView();
+            
         }
         private async Task GetLivePosition()
         {
-            while (true)
+            while (!cts.IsCancellationRequested)
             {
-
                 string res = string.Empty;
                 decimal val = 0;
                 if (livePositionConn is null)
                     return;
                 if (!livePositionConn.IsRunning())
                     await livePositionConn.StartConnection();
+                res = await livePositionConn.SendCommand("RD MR1003");
+                if (res.Contains("1") && !isSensorActive)
+                {
+                    prevStatus = statusLabel.Text;
+                    isSensorActive  = true;
+                    statusLabel.Invoke(delegate
+                    {
+                        statusLabel.Text = "M/C Paused, Waiting Start Button";
+                    });
+                }
+                else if (res.Contains("0") && isSensorActive)
+                {
+                    isSensorActive = false;
+                    statusLabel.Invoke(delegate
+                    {
+                        statusLabel.Text = prevStatus;
+                    });
+                }
                 val = await LoadValue("RD CM8830", 0);
 
                 xLabel.Invoke(new Action(() =>
@@ -117,9 +138,63 @@ namespace TestTCP1.Forms
             values[2] = await LoadValue("RD CM8910", 0);
             return values;
         }
-        private async Task GetPos()
+        private async Task LogWrite()
         {
             if (cavities is not null)
+            {
+                foreach (var _cavity in cavities.Cavities)
+                {
+                    bool checkIfJudgementEmpty = _cavity.InspectionViews.Any(x => x.Judgement == string.Empty || x.Judgement == "" || x.Judgement is null);
+                    if (!checkIfJudgementEmpty && _cavity.InspectionViews.Count >= Positions.Count)
+                    {
+                        List<RecordInspectionModel> records = new List<RecordInspectionModel>();
+                        for (int i = 0; i < Positions.Count; i++)
+                        {
+                            RecordInspectionModel record = mapper.Map<RecordInspectionModel>(Positions[i]);
+                            record.ScanCode = _cavity.SerialNumber;
+                            record.Judgement = _cavity.InspectionViews[i].Judgement;
+                            record.Reason = _cavity.InspectionViews[i].Reason;
+                            record.FileName = (record.Judgement == "PASS" ? fileLib._savePath : fileLib._ngSavePath) + _cavity.InspectionViews[i].Image;
+                            await dbCon.DeleteRecord(record);
+                            await dbCon.SavePosRecord(record);
+                            records.Add(record);
+                        }
+                        string logname = await fileLib.GenerateLog(records, _cavity.SerialNumber);
+                        bool isValid = await fileLib.ValidateLog(_cavity.SerialNumber);
+                        if (!isValid)
+                        {
+                            MessageBox.Show("BOT tidak ditemukan", "Log Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            SwitchControlState("Error");
+                            return;
+
+                        }
+                        label6.Invoke(delegate
+                        {
+                            label6.Text += ";" + logname;
+                        });
+                    }
+                }
+                var msg = await fileLib.ValidateLog();
+                if (msg is null)
+                    return;
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in msg)
+                {
+                    var _cavity = cavities.Cavities.Where(x => x.SerialNumber == item.Key).FirstOrDefault();
+                    if (_cavity == null)
+                        continue;
+                    sb.AppendLine($"Cavity {_cavity.CavityNo}: ");
+                    sb.AppendLine($"{item.Value}\n");
+                }
+                Invoke(delegate
+                {
+                    MessageBox.Show(sb.ToString(),"Notification",MessageBoxButtons.OK, MessageBoxIcon.Information);
+                });
+            }
+        }
+        private async Task GetPos()
+        {
+            /*if (cavities is not null)
             {
                 label6.Invoke(delegate { label6.Text = string.Empty; });
                 foreach (var _cavity in cavities.Cavities)
@@ -139,13 +214,21 @@ namespace TestTCP1.Forms
                             records.Add(record);
                         }
                         string logname = await fileLib.GenerateLog(records, _cavity.SerialNumber);
+                        bool isValid = await fileLib.ValidateLog(_cavity.SerialNumber);
+                        if (!isValid)
+                        {
+                            MessageBox.Show("BOT tidak ditemukan", "Log Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            SwitchControlState("Error");
+                            return;
+
+                        }
                         label6.Invoke(delegate
                         {
                             label6.Text += ";" + logname;
                         });
                     }
                 }
-            }
+            }*/
             CavityModel? cavityModel = await dbCon.GetCAvity(Model);
 
             if (cavityModel is null)
@@ -210,6 +293,9 @@ namespace TestTCP1.Forms
                     //textBox1.Invoke(new Action(() => { textBox1.Enabled = true; textBox1.Text = string.Empty; })); ;
                     statusLabel.Invoke(new Action(() => statusLabel.Text = "Running Process Complete"));
                     break;
+                default:
+                    statusLabel.Invoke(new Action(() => statusLabel.Text = status));
+                    break;
             }
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -227,7 +313,15 @@ namespace TestTCP1.Forms
             processTimer.Start();
             Task.Run(delegate
             {
-                ScanRun();
+                try
+                {
+                    ScanRun();
+                }
+                catch(SqlException ex)
+                {
+                    Invoke(delegate { MessageBox.Show("SQL Error, please restart sql service."); });
+                }
+                
             });
         }
         private void LoadInspectionToGrid()
@@ -242,7 +336,7 @@ namespace TestTCP1.Forms
         {
             await GetPos();
             LoadCavityGridTable(false);
-            this.cavities!.CurrentCavity = 0;
+            cavities!.CurrentCavity = 0;
             SwitchControlState("waiting");
             string res = string.Empty;
             await mainConn.SendCommand("WR MR002 1");
@@ -295,13 +389,30 @@ namespace TestTCP1.Forms
             if (cTokenSource.IsCancellationRequested)
                 return;
             SwitchControlState("complete");
+
             processTimer.Stop();
             processTimer.Enabled = false;
+            if (cavities!.isCavitiesPass())
+                await LogWrite();
+            else
+            {
+                Invoke(delegate
+                {
+                    statusLabel.Text = "Complete (Need Verification)";
+                    button6.Enabled = true;
+                });
+            }
             this.Invoke(new Action(() =>
             {
                 ClearSerialGrid();
                 //touchUITemp.Multiplier = touchUITemp.Multiplier + 1;
             }));
+        }
+        private async Task ShowLogPopup()
+        {
+            DialogResult dialogResult = MessageBox.Show("Generete Log Data?", "Log Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (dialogResult == DialogResult.Yes)
+                await LogWrite();
         }
         private void ClearSerialGrid()
         {
@@ -420,6 +531,12 @@ namespace TestTCP1.Forms
             res = await mainConn.SendCommand($"WR CM8010 {xVal}");
             res = await mainConn.SendCommand($"WR CM8210 {yVal}");
             res = await mainConn.SendCommand($"WR CM8410 {zVal}");
+            if (data.Pos==12)
+            {
+                decimal[] _d = new decimal[] { data.X, data.Y, data.Z };
+                Console.WriteLine("POS 12: "+string.Join(",",_d));
+                Console.WriteLine("Current Cavity: " + cavities?.CurrentCavityItem.CavityNo);
+            }
             if (data.CameraCheckpoint != "")
                 res = await mainConn.SendCommand($"WR W0F2 {data.CameraCheckpoint}");
             if (data.X == 0 && data.Y == 0 && data.Z == 0)
@@ -517,6 +634,20 @@ namespace TestTCP1.Forms
             {
                 if (reset)
                     inputSerialView.Rows.Add(new object[] { $"Cavity {i + 1}", string.Empty, "-" });
+                else
+                {
+                    if (cavities is not null)
+                    {
+                        for (int j = 0; j < cavities.Cavities.Count; j++)
+                        {
+                            if (inputSerialView.Rows.Count > j)
+                            {
+                                cavities.Cavities[j].SerialNumber = inputSerialView[1, j].Value.ToString() ?? string.Empty;
+                            }
+                        }
+
+                    }
+                }
                 serialGridView.Rows.Add(new object[] { i + 1, string.Empty });
             }
             inputSerialView.Refresh();
@@ -665,7 +796,6 @@ namespace TestTCP1.Forms
             var res = frm.ShowDialog();
             if (res == DialogResult.OK)
             {
-                cavities.CurrentCavityItem.InspectionViews[index].Judgement = frm.resultVerification ? "PASS" : "NG";
                 //RecordInspectionModel record = mapper.Map<RecordInspectionModel>(pos);
                 //record.Judgement = InspectionViews[index].Judgement;
 
@@ -676,7 +806,10 @@ namespace TestTCP1.Forms
                 {
                     string reason = reasonForm.Result;
                     cavities.CurrentCavityItem.InspectionViews[index].Reason = reason;
+                    cavities.CurrentCavityItem.InspectionViews[index].Judgement = frm.resultVerification ? "PASS" : "NG";
                 }
+                else
+                    return;
                 if (frm.resultVerification)
                 {
                     var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
@@ -689,6 +822,7 @@ namespace TestTCP1.Forms
                     this.inspectionListGridView.Invoke(new Action(() =>
                     {
                         inspectionListGridView.DataSource = cavities.CurrentCavityItem.InspectionViews;
+                        inspectionListGridView[1,index].Style.ForeColor = frm.resultVerification ? Color.LimeGreen : Color.DarkRed;
                         inspectionListGridView.Refresh();
                     }));
                     bool finalJudge = cavities.CurrentCavityItem.InspectionViews.Select(x => x.Judgement).Any(x => x.Contains("NG"));
@@ -700,10 +834,11 @@ namespace TestTCP1.Forms
                     inputSerialView.Invoke(new Action(() =>
                     {
 
-                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
+                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge? Color.DarkRed : Color.Lime;
                         inputSerialView[2, cavities.CurrentCavity].Value = finalJudge ? "FAIL" : "PASS";
                     }));
                 }));
+                //                LogWrite();
             }
         }
 
@@ -713,98 +848,106 @@ namespace TestTCP1.Forms
         }
 
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private async void button1_Click_1(object sender, EventArgs e)
         {
-            int index = cavities!.CurrentCavityItem.InspectionViews.FindIndex(x => x.Area == _curInspectionView.Area);
-            if (index == -1)
-                return;
-            string prevJudgement = inputSerialView[2, cavities.CurrentCavity].Value.ToString()!;
-
-            var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
-            cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection] = new Tuple<string, string>(tup.Item1, tup.Item1);
-
-            cavities.CurrentCavityItem.InspectionViews[index].Judgement = "PASS";
-            LoadInspectionToGrid();
-            actualPictureBox.Image = null;
-            parameterPictureBox.Image = null;
-            button1.Enabled = false;
-            button2.Enabled = false;
-            if (cavities.CurrentCavityItem.InspectionViews.Count > 0 && cavities.CurrentCavityItem.InspectionViews.Any(x => x.Judgement != "PASS"))
+            Invoke(delegate
             {
-                if (prevJudgement == "PASS")
-                {
-                    finalJudgeLabel.Text = "FAIL";
-                    finalJudgeLabel.ForeColor = Color.DarkRed;
-                    inputSerialView[2, cavities.CurrentCavity].Value = "FAIL";
-                    inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = Color.DarkRed;
-                    countView.Pass--;
-                    countView.Fail++;
-                }
-            }
-            else
-            {
-                if (prevJudgement == "FAIL")
-                {
+                int index = cavities!.CurrentCavityItem.InspectionViews.FindIndex(x => x.Area == _curInspectionView.Area);
+                if (index == -1)
+                    return;
+                string prevJudgement = inputSerialView[2, cavities.CurrentCavity].Value.ToString()!;
 
-                    finalJudgeLabel.Text = "PASS";
-                    finalJudgeLabel.ForeColor = Color.LimeGreen;
-                    inputSerialView[2, cavities.CurrentCavity].Value = "PASS";
+                var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
+                cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection] = new Tuple<string, string>(tup.Item1, tup.Item1);
 
-                    inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = Color.LimeGreen;
-                    countView.Pass++;
-                    countView.Fail--;
+                cavities.CurrentCavityItem.InspectionViews[index].Judgement = "PASS";
+                LoadInspectionToGrid();
+                actualPictureBox.Image = null;
+                parameterPictureBox.Image = null;
+                button1.Enabled = false;
+                button2.Enabled = false;
+                if (cavities.CurrentCavityItem.InspectionViews.Count > 0 && cavities.CurrentCavityItem.InspectionViews.Any(x => x.Judgement != "PASS"))
+                {
+                    if (prevJudgement == "PASS")
+                    {
+                        finalJudgeLabel.Text = "FAIL";
+                        finalJudgeLabel.ForeColor = Color.DarkRed;
+                        inputSerialView[2, cavities.CurrentCavity].Value = "FAIL";
+                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = Color.DarkRed;
+                        countView.Pass--;
+                        countView.Fail++;
+                    }
                 }
-            }
-            countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
-            LoadCountView();
+                else
+                {
+                    if (prevJudgement == "FAIL")
+                    {
+
+                        finalJudgeLabel.Text = "PASS";
+                        finalJudgeLabel.ForeColor = Color.LimeGreen;
+                        inputSerialView[2, cavities.CurrentCavity].Value = "PASS";
+
+                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = Color.LimeGreen;
+                        countView.Pass++;
+                        countView.Fail--;
+                    }
+                }
+                countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
+                LoadCountView();
+            });
+            //            await LogWrite();
         }
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            int index = cavities!.CurrentCavityItem.InspectionViews.FindIndex(x => x.Area == _curInspectionView.Area);
-            if (index == -1)
-                return;
-            if (cavities.CurrentCavityItem.InspectionViews[index].Judgement == "NG")
+            Invoke(delegate
             {
-
-                ReasonForm reasonForm = new ReasonForm();
-                var _res = reasonForm.ShowDialog();
-                if (_res == DialogResult.OK)
+                int index = cavities!.CurrentCavityItem.InspectionViews.FindIndex(x => x.Area == _curInspectionView.Area);
+                if (index == -1)
+                    return;
+                if (cavities.CurrentCavityItem.InspectionViews[index].Judgement == "NG")
                 {
-                    string reason = reasonForm.Result;
-                    cavities.CurrentCavityItem.InspectionViews[index].Reason = reason;
-                }
-            }
-            var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
-            string prevJudgement = inputSerialView[2, cavities.CurrentCavity].Value.ToString()!;
-            //string name = Path.GetFileName(tup.Item2);
-            //await dbCon.SaveImage(_curPos.Model, _curPos.Pos, name);
-            //fileLib.SaveImage(tup.Item2, name);
 
-            cavities.CurrentCavityItem.InspectionViews[index].Judgement = "NG";
-            inspectionListGridView.Invoke(LoadInspectionToGrid);
-            actualPictureBox.Image = null;
-            parameterPictureBox.Image = null;
-            button1.Enabled = false;
-            button2.Enabled = false;
-            if (cavities.CurrentCavityItem.InspectionViews.Count > 0 && cavities.CurrentCavityItem.InspectionViews.Any(x => x.Judgement != "PASS"))
-            {
-                if (prevJudgement == "PASS")
-                {
-                    inputSerialView.Invoke(delegate
+                    ReasonForm reasonForm = new ReasonForm();
+                    var _res = reasonForm.ShowDialog();
+                    if (_res == DialogResult.OK)
                     {
-
-                        finalJudgeLabel.Text = "FAIL";
-                        finalJudgeLabel.ForeColor = Color.DarkRed;
-                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = Color.DarkRed;
-                        inputSerialView[2, cavities.CurrentCavity].Value = "FAIL";
-                    });
-                    countView.Pass--;
-                    countView.Fail++;
+                        string reason = reasonForm.Result;
+                        cavities.CurrentCavityItem.InspectionViews[index].Reason = reason;
+                    }
                 }
-            }
-            countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
-            LoadCountView();
+                var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
+                string prevJudgement = inputSerialView[2, cavities.CurrentCavity].Value.ToString()!;
+                //string name = Path.GetFileName(tup.Item2);
+                //await dbCon.SaveImage(_curPos.Model, _curPos.Pos, name);
+                //fileLib.SaveImage(tup.Item2, name);
+
+                cavities.CurrentCavityItem.InspectionViews[index].Judgement = "NG";
+                inspectionListGridView.Invoke(LoadInspectionToGrid);
+                actualPictureBox.Image = null;
+                parameterPictureBox.Image = null;
+                button1.Enabled = false;
+                button2.Enabled = false;
+                if (cavities.CurrentCavityItem.InspectionViews.Count > 0 && cavities.CurrentCavityItem.InspectionViews.Any(x => x.Judgement != "PASS"))
+                {
+                    if (prevJudgement == "PASS")
+                    {
+                        inputSerialView.Invoke(delegate
+                        {
+
+                            finalJudgeLabel.Text = "FAIL";
+                            finalJudgeLabel.ForeColor = Color.DarkRed;
+                            inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = Color.DarkRed;
+                            inputSerialView[2, cavities.CurrentCavity].Value = "FAIL";
+                        });
+                        countView.Pass--;
+                        countView.Fail++;
+                    }
+                }
+                countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
+                LoadCountView();
+            });
+            // await LogWrite();
         }
 
         private void inspectionListGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -826,8 +969,8 @@ namespace TestTCP1.Forms
             button2.Enabled = true;
             //            button2.Enabled = res.Judgement == "PASS";
 
-            button1.Visible = res.Judgement != "PASS";
-            button2.Visible = res.Judgement != "PASS";
+            button1.Visible = false;// res.Judgement != "PASS";
+            button2.Visible = false;// res.Judgement != "PASS";
             actualPictureBox.Image = fileLib.ReadImage(img.Item2, res.Judgement == "PASS"); //Image.FromFile(img.Item2);
             parameterPictureBox.Image = fileLib.ReadImage(img.Item1, true);
             _curPos = pcur;
@@ -861,7 +1004,7 @@ namespace TestTCP1.Forms
                 inputSerialView[2, i].Value = "-";
                 inputSerialView[2, i].Style.ForeColor = Color.Black;
                 inputSerialView.Refresh();
-                cavities!.Cavities[i].SerialNumber = serialGridView[1, i].Value.ToString() ?? String.Empty;
+                cavities!.Cavities[i].SerialNumber = val;
                 serialCheck[i] = val;
             }
             if (serialCheck.Length != serialCheck.Distinct().Count())
@@ -871,6 +1014,8 @@ namespace TestTCP1.Forms
             }
             button3.Enabled = false;
             button4.Enabled = false;
+            button6.Enabled = false;
+
             isRunning = true;
             Task.Run(async delegate
             {
@@ -938,6 +1083,7 @@ namespace TestTCP1.Forms
                     statusLabel.Text = "Cancelled...";
                 });
             }
+            await mainConn.SendCommand("WR MR3000 0");
             await mainConn.SendCommand("WR MR001 0");
             await mainConn.SendCommand("WR DM0 0");
             await mainConn.SendCommand("WR MR701 1");
@@ -952,6 +1098,11 @@ namespace TestTCP1.Forms
             await Task.Delay(DelayTimer);
             await mainConn.SendCommand("WR MR003 0");
             this.button5.Invoke(new Action(() => this.button5.Enabled = true));
+        }
+
+        private async void button6_Click(object sender, EventArgs e)
+        {
+            await ShowLogPopup();
         }
     }
 }

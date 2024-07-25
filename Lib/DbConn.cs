@@ -4,7 +4,9 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TestTCP1.Lib.DbUtil;
@@ -15,11 +17,16 @@ namespace TestTCP1.Lib
 {
     public class DbConn : DrawMarkPointUtil,IMarkPointDb
     {
-        public string ConnString { get; private set; } = string.Empty;
+        public string ConnString { get;  private set; } = string.Empty;
         public DbConn()
         {
             SqlMapper.Settings.CommandTimeout = 60;
             ConnString = ConfigurationManager.AppSettings["ConnString"] ?? ""; 
+        }
+        public DbConn(string conn)
+        {
+            SqlMapper.Settings.CommandTimeout = 60;
+            ConnString = conn;//ConfigurationManager.AppSettings["ConnString"] ?? "";
         }
         public SqlConnection GetConn()
         {
@@ -101,6 +108,8 @@ namespace TestTCP1.Lib
             {
                 await conn.OpenAsync();
                 string query = "Delete Tbl_Data where model=@model";
+                await conn.ExecuteAsync(query,new {model = model });
+                query = "Delete From tbl_Campoint where model=@model";
                 await conn.ExecuteAsync(query, new { model = model });
             }
         }
@@ -151,6 +160,32 @@ namespace TestTCP1.Lib
                 await conn.OpenAsync();
                 string query = "Insert Into Tbl_Record(Model,Position,X,Y,Z,CameraCheckPoint,AreaInspection,ScanCode,Judgement,ProcessDate,FileName,Reason) Values(@Model,@Position,@X,@Y,@Z,@c,@area,@scanCode,@judgement,GETDATE(),@filename,@reason)";
                 await conn.ExecuteAsync(query, new { Model = record.Model, Position = record.Pos, X = record.X, Y = record.Y, Z = record.Z, c = record.CameraCheckpoint, area = record.AreaInspection,scanCode=record.ScanCode,judgement=record.Judgement,filename=record.FileName,reason=record.Reason });
+            }
+        }
+        public async Task DeleteRecord(RecordInspectionModel record)
+        {
+            StringBuilder query = new StringBuilder("Delete From TBl_Record Where ProcessDate Between @from and @to and ScanCode=@ScanCode and Model=@Model and Position=@Position and AreaInspection=@AreaInspection");
+            using (var conn=  GetConn())
+            {
+                await conn.OpenAsync();
+                await conn.ExecuteAsync(query.ToString(), new { from = record.ProcessDate.AddDays(-1), to = record.ProcessDate.AddDays(1), ScanCode = record.ScanCode, Model = record.Model, Position = record.Pos, AreaInspection = record.AreaInspection });
+            }
+        }
+        public async Task<IEnumerable<RecordInspectionModel>> GetPosRecord( DateTime from ,DateTime to,string? scanCode= null, string? model = null)
+        {
+            using (var conn = GetConn())
+            {
+                await conn.OpenAsync();
+                StringBuilder query = new StringBuilder("Select Model,Position as Pos,X,Y,Z,CameraCheckPoint,AreaInspection,ScanCode,Judgement,ProcessDate,FileName,Reason From TBl_Record Where ProcessDate Between @from and @to and ");
+                List<string> additionalCondition = new List<string>(2);
+                if (model is not null)
+                    additionalCondition.Add("model=@model");
+                if (scanCode is not null)
+                    additionalCondition.Add("ScanCode=@scanCode");
+                if (additionalCondition.Count > 0)
+                    query.Append(string.Join(" and ", additionalCondition.ToArray()));
+                var records = await conn.QueryAsync<RecordInspectionModel>(query.ToString(),new {from=from,to=to,scanCode=scanCode,model=model});
+                return records;
             }
         }
         public async Task SaveImage(string model,int pos,string imgName)

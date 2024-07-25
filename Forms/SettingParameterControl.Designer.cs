@@ -44,6 +44,13 @@
             delPos = new NumericUpDown();
             button3 = new Button();
             groupBox2 = new GroupBox();
+            groupBox9 = new GroupBox();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            button20 = new Button();
+            button19 = new Button();
+            groupBox8 = new GroupBox();
+            button18 = new Button();
+            activeCavityBox = new NumericUpDown();
             groupBox6 = new GroupBox();
             button17 = new Button();
             tableLayoutPanel1 = new TableLayoutPanel();
@@ -56,31 +63,34 @@
             groupBox5 = new GroupBox();
             button14 = new Button();
             camPoint = new NumericUpDown();
+            groupBox4 = new GroupBox();
+            panel3 = new Panel();
+            button10 = new Button();
+            label1 = new Label();
+            button16 = new Button();
+            comboBox1 = new ComboBox();
+            button4 = new Button();
+            radioButton2 = new RadioButton();
+            button9 = new Button();
+            radioButton1 = new RadioButton();
+            button7 = new Button();
+            button15 = new Button();
+            button8 = new Button();
+            button13 = new Button();
+            button6 = new Button();
+            button12 = new Button();
+            button5 = new Button();
+            button11 = new Button();
+            groupBox7 = new GroupBox();
             pictureBox1 = new PictureBox();
             cameraTriggerBox = new TextBox();
-            inspectionAreaBox = new TextBox();
-            label5 = new Label();
-            label4 = new Label();
             pointLabel = new Label();
-            groupBox4 = new GroupBox();
-            button16 = new Button();
-            label1 = new Label();
-            comboBox1 = new ComboBox();
-            radioButton2 = new RadioButton();
-            radioButton1 = new RadioButton();
-            button15 = new Button();
-            button13 = new Button();
-            button12 = new Button();
-            button4 = new Button();
-            button11 = new Button();
-            button5 = new Button();
-            button9 = new Button();
-            button6 = new Button();
-            button10 = new Button();
-            button8 = new Button();
-            button7 = new Button();
+            inspectionAreaBox = new TextBox();
+            label4 = new Label();
+            label5 = new Label();
             timer1 = new System.Windows.Forms.Timer(components);
             button1 = new Button();
+            panel4 = new Panel();
             ((System.ComponentModel.ISupportInitialize)parameterDatsGridView).BeginInit();
             groupBox3.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -88,6 +98,10 @@
             ((System.ComponentModel.ISupportInitialize)insertAfter).BeginInit();
             ((System.ComponentModel.ISupportInitialize)delPos).BeginInit();
             groupBox2.SuspendLayout();
+            groupBox9.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
+            groupBox8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)activeCavityBox).BeginInit();
             groupBox6.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
@@ -96,8 +110,11 @@
             ((System.ComponentModel.ISupportInitialize)pitchingBox).BeginInit();
             groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)camPoint).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             groupBox4.SuspendLayout();
+            panel3.SuspendLayout();
+            groupBox7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            panel4.SuspendLayout();
             SuspendLayout();
             // 
             // parameterDatsGridView
@@ -113,7 +130,7 @@
             parameterDatsGridView.ReadOnly = true;
             parameterDatsGridView.RowHeadersWidth = 51;
             parameterDatsGridView.RowTemplate.Height = 29;
-            parameterDatsGridView.Size = new Size(458, 857);
+            parameterDatsGridView.Size = new Size(458, 908);
             parameterDatsGridView.TabIndex = 0;
             parameterDatsGridView.CellContentClick += parameterDatsGridView_CellContentClick;
             // 
@@ -125,7 +142,7 @@
             groupBox3.Margin = new Padding(3, 2, 3, 2);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new Padding(3, 2, 3, 2);
-            groupBox3.Size = new Size(464, 877);
+            groupBox3.Size = new Size(464, 928);
             groupBox3.TabIndex = 15;
             groupBox3.TabStop = false;
             groupBox3.Text = "Parameter Data";
@@ -145,7 +162,7 @@
             // 
             runningModel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             runningModel.AutoSize = true;
-            runningModel.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+            runningModel.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Italic);
             runningModel.Location = new Point(241, 9);
             runningModel.Name = "runningModel";
             runningModel.Size = new Size(97, 32);
@@ -170,7 +187,7 @@
             // zLabel
             // 
             zLabel.AutoSize = true;
-            zLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            zLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             zLabel.Location = new Point(494, 46);
             zLabel.Name = "zLabel";
             zLabel.Size = new Size(84, 21);
@@ -180,7 +197,7 @@
             // yLabel
             // 
             yLabel.AutoSize = true;
-            yLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            yLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             yLabel.Location = new Point(234, 46);
             yLabel.Name = "yLabel";
             yLabel.Size = new Size(84, 21);
@@ -190,7 +207,7 @@
             // xLabel
             // 
             xLabel.AutoSize = true;
-            xLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            xLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             xLabel.Location = new Point(15, 46);
             xLabel.Name = "xLabel";
             xLabel.Size = new Size(84, 21);
@@ -200,7 +217,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point);
+            label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Underline);
             label2.Location = new Point(222, 17);
             label2.Name = "label2";
             label2.Size = new Size(109, 21);
@@ -209,7 +226,7 @@
             // 
             // gotoValue
             // 
-            gotoValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+            gotoValue.Font = new Font("Segoe UI", 10.8F);
             gotoValue.Location = new Point(149, 154);
             gotoValue.Margin = new Padding(3, 2, 3, 2);
             gotoValue.Name = "gotoValue";
@@ -219,7 +236,7 @@
             // 
             // insertAfter
             // 
-            insertAfter.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+            insertAfter.Font = new Font("Segoe UI", 10.8F);
             insertAfter.Location = new Point(326, 155);
             insertAfter.Margin = new Padding(3, 2, 3, 2);
             insertAfter.Name = "insertAfter";
@@ -239,7 +256,7 @@
             // 
             // delPos
             // 
-            delPos.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+            delPos.Font = new Font("Segoe UI", 10.8F);
             delPos.Location = new Point(518, 155);
             delPos.Margin = new Padding(3, 2, 3, 2);
             delPos.Name = "delPos";
@@ -260,23 +277,106 @@
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            groupBox2.Controls.Add(groupBox9);
+            groupBox2.Controls.Add(groupBox8);
             groupBox2.Controls.Add(groupBox6);
             groupBox2.Controls.Add(groupBox5);
-            groupBox2.Controls.Add(pictureBox1);
-            groupBox2.Controls.Add(cameraTriggerBox);
-            groupBox2.Controls.Add(inspectionAreaBox);
-            groupBox2.Controls.Add(label5);
-            groupBox2.Controls.Add(label4);
-            groupBox2.Controls.Add(pointLabel);
             groupBox2.Controls.Add(groupBox4);
+            groupBox2.Controls.Add(groupBox7);
             groupBox2.Location = new Point(16, 196);
             groupBox2.Margin = new Padding(3, 2, 3, 2);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(3, 2, 3, 2);
-            groupBox2.Size = new Size(593, 698);
+            groupBox2.Size = new Size(593, 749);
             groupBox2.TabIndex = 23;
             groupBox2.TabStop = false;
             groupBox2.Text = "Setting Parameter";
+            // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(tableLayoutPanel2);
+            groupBox9.Location = new Point(229, 130);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Padding = new Padding(5);
+            groupBox9.Size = new Size(358, 72);
+            groupBox9.TabIndex = 38;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Cylinder Enable/Disable";
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.ColumnCount = 2;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Controls.Add(button20, 0, 0);
+            tableLayoutPanel2.Controls.Add(button19, 0, 0);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(5, 21);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.Padding = new Padding(3);
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Size = new Size(348, 46);
+            tableLayoutPanel2.TabIndex = 0;
+            // 
+            // button20
+            // 
+            button20.Dock = DockStyle.Fill;
+            button20.Location = new Point(177, 5);
+            button20.Margin = new Padding(3, 2, 3, 2);
+            button20.Name = "button20";
+            button20.Size = new Size(165, 36);
+            button20.TabIndex = 20;
+            button20.Tag = "0";
+            button20.Text = "Disable";
+            button20.UseVisualStyleBackColor = true;
+            button20.Click += CylinderTrigger;
+            // 
+            // button19
+            // 
+            button19.Dock = DockStyle.Fill;
+            button19.Location = new Point(6, 5);
+            button19.Margin = new Padding(3, 2, 3, 2);
+            button19.Name = "button19";
+            button19.Size = new Size(165, 36);
+            button19.TabIndex = 19;
+            button19.Tag = "1";
+            button19.Text = "Enable";
+            button19.UseVisualStyleBackColor = true;
+            button19.Click += CylinderTrigger;
+            // 
+            // groupBox8
+            // 
+            groupBox8.Controls.Add(button18);
+            groupBox8.Controls.Add(activeCavityBox);
+            groupBox8.Location = new Point(7, 130);
+            groupBox8.Name = "groupBox8";
+            groupBox8.Size = new Size(216, 78);
+            groupBox8.TabIndex = 37;
+            groupBox8.TabStop = false;
+            groupBox8.Text = "Active Cavity";
+            // 
+            // button18
+            // 
+            button18.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            button18.Location = new Point(6, 49);
+            button18.Name = "button18";
+            button18.Size = new Size(204, 23);
+            button18.TabIndex = 37;
+            button18.Text = "Set";
+            button18.UseVisualStyleBackColor = true;
+            button18.Click += button18_Click;
+            // 
+            // activeCavityBox
+            // 
+            activeCavityBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            activeCavityBox.Location = new Point(6, 22);
+            activeCavityBox.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            activeCavityBox.Name = "activeCavityBox";
+            activeCavityBox.Size = new Size(204, 23);
+            activeCavityBox.TabIndex = 1;
+            activeCavityBox.TextAlign = HorizontalAlignment.Right;
+            activeCavityBox.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // groupBox6
             // 
@@ -384,18 +484,18 @@
             groupBox5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox5.Controls.Add(button14);
             groupBox5.Controls.Add(camPoint);
-            groupBox5.Location = new Point(362, 20);
+            groupBox5.Location = new Point(367, 20);
             groupBox5.Margin = new Padding(3, 2, 3, 2);
             groupBox5.Name = "groupBox5";
             groupBox5.Padding = new Padding(3, 2, 3, 2);
-            groupBox5.Size = new Size(226, 79);
+            groupBox5.Size = new Size(226, 104);
             groupBox5.TabIndex = 34;
             groupBox5.TabStop = false;
             groupBox5.Text = "Camera Program";
             // 
             // button14
             // 
-            button14.Location = new Point(11, 48);
+            button14.Location = new Point(6, 71);
             button14.Name = "button14";
             button14.Size = new Size(209, 23);
             button14.TabIndex = 1;
@@ -405,253 +505,55 @@
             // 
             // camPoint
             // 
-            camPoint.Location = new Point(11, 20);
+            camPoint.Font = new Font("Segoe UI", 18F);
+            camPoint.Location = new Point(6, 20);
             camPoint.Margin = new Padding(3, 2, 3, 2);
             camPoint.Name = "camPoint";
-            camPoint.Size = new Size(209, 23);
+            camPoint.Size = new Size(209, 39);
             camPoint.TabIndex = 0;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox1.Location = new Point(17, 210);
-            pictureBox1.Margin = new Padding(3, 2, 3, 2);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(320, 198);
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox1.TabIndex = 5;
-            pictureBox1.TabStop = false;
-            // 
-            // cameraTriggerBox
-            // 
-            cameraTriggerBox.Location = new Point(117, 179);
-            cameraTriggerBox.Margin = new Padding(3, 2, 3, 2);
-            cameraTriggerBox.Name = "cameraTriggerBox";
-            cameraTriggerBox.Size = new Size(110, 23);
-            cameraTriggerBox.TabIndex = 4;
-            // 
-            // inspectionAreaBox
-            // 
-            inspectionAreaBox.Location = new Point(117, 150);
-            inspectionAreaBox.Margin = new Padding(3, 2, 3, 2);
-            inspectionAreaBox.Name = "inspectionAreaBox";
-            inspectionAreaBox.Size = new Size(110, 23);
-            inspectionAreaBox.TabIndex = 3;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(13, 182);
-            label5.Name = "label5";
-            label5.Size = new Size(103, 15);
-            label5.TabIndex = 2;
-            label5.Text = "Camera Execution";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(13, 153);
-            label4.Name = "label4";
-            label4.Size = new Size(89, 15);
-            label4.TabIndex = 1;
-            label4.Text = "Inspection Area";
-            label4.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // pointLabel
-            // 
-            pointLabel.AutoSize = true;
-            pointLabel.Location = new Point(13, 127);
-            pointLabel.Name = "pointLabel";
-            pointLabel.Size = new Size(38, 15);
-            pointLabel.TabIndex = 0;
-            pointLabel.Text = "Point:";
             // 
             // groupBox4
             // 
-            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            groupBox4.Controls.Add(button16);
-            groupBox4.Controls.Add(label1);
-            groupBox4.Controls.Add(comboBox1);
-            groupBox4.Controls.Add(radioButton2);
-            groupBox4.Controls.Add(radioButton1);
-            groupBox4.Controls.Add(button15);
-            groupBox4.Controls.Add(button13);
-            groupBox4.Controls.Add(button12);
-            groupBox4.Controls.Add(button4);
-            groupBox4.Controls.Add(button11);
-            groupBox4.Controls.Add(button5);
-            groupBox4.Controls.Add(button9);
-            groupBox4.Controls.Add(button6);
-            groupBox4.Controls.Add(button10);
-            groupBox4.Controls.Add(button8);
-            groupBox4.Controls.Add(button7);
-            groupBox4.Location = new Point(361, 109);
+            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            groupBox4.Controls.Add(panel3);
+            groupBox4.Location = new Point(359, 228);
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(226, 377);
+            groupBox4.Size = new Size(226, 521);
             groupBox4.TabIndex = 33;
             groupBox4.TabStop = false;
             groupBox4.Text = "Axis Position";
             // 
-            // button16
+            // panel3
             // 
-            button16.Location = new Point(52, 329);
-            button16.Name = "button16";
-            button16.Size = new Size(121, 23);
-            button16.TabIndex = 39;
-            button16.Text = "Reset";
-            button16.UseVisualStyleBackColor = true;
-            button16.Click += button16_Click;
-            // 
-            // label1
-            // 
-            label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label1.AutoSize = true;
-            label1.Location = new Point(186, 80);
-            label1.Name = "label1";
-            label1.Size = new Size(29, 15);
-            label1.TabIndex = 38;
-            label1.Text = "mm";
-            // 
-            // comboBox1
-            // 
-            comboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "0.1", "0.5", "1", "1.5", "2" });
-            comboBox1.Location = new Point(125, 80);
-            comboBox1.Margin = new Padding(3, 2, 3, 2);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(56, 23);
-            comboBox1.TabIndex = 37;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
-            // 
-            // radioButton2
-            // 
-            radioButton2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(130, 58);
-            radioButton2.Margin = new Padding(3, 2, 3, 2);
-            radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(74, 19);
-            radioButton2.TabIndex = 36;
-            radioButton2.Text = "INCHING";
-            radioButton2.UseVisualStyleBackColor = true;
-            radioButton2.CheckedChanged += radioButton2_CheckedChanged;
-            // 
-            // radioButton1
-            // 
-            radioButton1.AutoSize = true;
-            radioButton1.Checked = true;
-            radioButton1.Location = new Point(12, 58);
-            radioButton1.Margin = new Padding(3, 2, 3, 2);
-            radioButton1.Name = "radioButton1";
-            radioButton1.Size = new Size(46, 19);
-            radioButton1.TabIndex = 35;
-            radioButton1.TabStop = true;
-            radioButton1.Text = "JOG";
-            radioButton1.UseVisualStyleBackColor = true;
-            radioButton1.CheckedChanged += radioButton1_CheckedChanged;
-            // 
-            // button15
-            // 
-            button15.Location = new Point(52, 298);
-            button15.Margin = new Padding(3, 2, 3, 2);
-            button15.Name = "button15";
-            button15.Size = new Size(122, 26);
-            button15.TabIndex = 34;
-            button15.Text = "Mark Point";
-            button15.UseVisualStyleBackColor = true;
-            button15.Click += button15_Click;
-            // 
-            // button13
-            // 
-            button13.Location = new Point(51, 269);
-            button13.Name = "button13";
-            button13.Size = new Size(122, 23);
-            button13.TabIndex = 33;
-            button13.Text = "Zero";
-            button13.UseVisualStyleBackColor = true;
-            button13.Click += button13_Click;
-            // 
-            // button12
-            // 
-            button12.Location = new Point(51, 238);
-            button12.Margin = new Padding(3, 2, 3, 2);
-            button12.Name = "button12";
-            button12.Size = new Size(122, 26);
-            button12.TabIndex = 32;
-            button12.Text = "Add";
-            button12.UseVisualStyleBackColor = true;
-            button12.Click += button12_Click;
-            // 
-            // button4
-            // 
-            button4.Location = new Point(52, 20);
-            button4.Margin = new Padding(3, 2, 3, 2);
-            button4.Name = "button4";
-            button4.Size = new Size(122, 26);
-            button4.TabIndex = 24;
-            button4.Text = "Origin";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
-            // 
-            // button11
-            // 
-            button11.Location = new Point(51, 208);
-            button11.Margin = new Padding(3, 2, 3, 2);
-            button11.Name = "button11";
-            button11.Size = new Size(122, 26);
-            button11.TabIndex = 31;
-            button11.Text = "Trigger";
-            button11.UseVisualStyleBackColor = true;
-            button11.Click += button11_Click;
-            // 
-            // button5
-            // 
-            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button5.Location = new Point(11, 110);
-            button5.Margin = new Padding(3, 2, 3, 2);
-            button5.Name = "button5";
-            button5.Size = new Size(100, 26);
-            button5.TabIndex = 25;
-            button5.Tag = "X-";
-            button5.Text = "<- -X";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += moveCoordinate;
-            // 
-            // button9
-            // 
-            button9.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button9.Location = new Point(116, 172);
-            button9.Margin = new Padding(3, 2, 3, 2);
-            button9.Name = "button9";
-            button9.Size = new Size(100, 26);
-            button9.TabIndex = 30;
-            button9.Tag = "Z+";
-            button9.Text = "+Z ->";
-            button9.UseVisualStyleBackColor = true;
-            button9.Click += moveCoordinate;
-            // 
-            // button6
-            // 
-            button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button6.Location = new Point(116, 109);
-            button6.Margin = new Padding(3, 2, 3, 2);
-            button6.Name = "button6";
-            button6.Size = new Size(100, 26);
-            button6.TabIndex = 26;
-            button6.Tag = "X+";
-            button6.Text = "+X ->";
-            button6.UseVisualStyleBackColor = true;
-            button6.Click += moveCoordinate;
+            panel3.AutoScroll = true;
+            panel3.Controls.Add(button10);
+            panel3.Controls.Add(label1);
+            panel3.Controls.Add(button16);
+            panel3.Controls.Add(comboBox1);
+            panel3.Controls.Add(button4);
+            panel3.Controls.Add(radioButton2);
+            panel3.Controls.Add(button9);
+            panel3.Controls.Add(radioButton1);
+            panel3.Controls.Add(button7);
+            panel3.Controls.Add(button15);
+            panel3.Controls.Add(button8);
+            panel3.Controls.Add(button13);
+            panel3.Controls.Add(button6);
+            panel3.Controls.Add(button12);
+            panel3.Controls.Add(button5);
+            panel3.Controls.Add(button11);
+            panel3.Dock = DockStyle.Fill;
+            panel3.Location = new Point(3, 18);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(220, 501);
+            panel3.TabIndex = 40;
             // 
             // button10
             // 
-            button10.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button10.Location = new Point(11, 172);
+            button10.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button10.Location = new Point(8, 172);
             button10.Margin = new Padding(3, 2, 3, 2);
             button10.Name = "button10";
             button10.Size = new Size(100, 26);
@@ -661,10 +563,118 @@
             button10.UseVisualStyleBackColor = true;
             button10.Click += moveCoordinate;
             // 
+            // label1
+            // 
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label1.AutoSize = true;
+            label1.Location = new Point(184, 80);
+            label1.Name = "label1";
+            label1.Size = new Size(29, 15);
+            label1.TabIndex = 38;
+            label1.Text = "mm";
+            // 
+            // button16
+            // 
+            button16.Location = new Point(49, 329);
+            button16.Name = "button16";
+            button16.Size = new Size(121, 23);
+            button16.TabIndex = 39;
+            button16.Text = "Reset";
+            button16.UseVisualStyleBackColor = true;
+            button16.Click += button16_Click;
+            // 
+            // comboBox1
+            // 
+            comboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "0.1", "0.5", "1", "1.5", "2" });
+            comboBox1.Location = new Point(123, 80);
+            comboBox1.Margin = new Padding(3, 2, 3, 2);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(56, 23);
+            comboBox1.TabIndex = 37;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(49, 20);
+            button4.Margin = new Padding(3, 2, 3, 2);
+            button4.Name = "button4";
+            button4.Size = new Size(122, 26);
+            button4.TabIndex = 24;
+            button4.Text = "Origin";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
+            // radioButton2
+            // 
+            radioButton2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            radioButton2.AutoSize = true;
+            radioButton2.Location = new Point(128, 58);
+            radioButton2.Margin = new Padding(3, 2, 3, 2);
+            radioButton2.Name = "radioButton2";
+            radioButton2.Size = new Size(74, 19);
+            radioButton2.TabIndex = 36;
+            radioButton2.Text = "INCHING";
+            radioButton2.UseVisualStyleBackColor = true;
+            radioButton2.CheckedChanged += radioButton2_CheckedChanged;
+            // 
+            // button9
+            // 
+            button9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button9.Location = new Point(114, 172);
+            button9.Margin = new Padding(3, 2, 3, 2);
+            button9.Name = "button9";
+            button9.Size = new Size(100, 26);
+            button9.TabIndex = 30;
+            button9.Tag = "Z+";
+            button9.Text = "+Z ->";
+            button9.UseVisualStyleBackColor = true;
+            button9.Click += moveCoordinate;
+            // 
+            // radioButton1
+            // 
+            radioButton1.AutoSize = true;
+            radioButton1.Checked = true;
+            radioButton1.Location = new Point(10, 58);
+            radioButton1.Margin = new Padding(3, 2, 3, 2);
+            radioButton1.Name = "radioButton1";
+            radioButton1.Size = new Size(46, 19);
+            radioButton1.TabIndex = 35;
+            radioButton1.TabStop = true;
+            radioButton1.Text = "JOG";
+            radioButton1.UseVisualStyleBackColor = true;
+            radioButton1.CheckedChanged += radioButton1_CheckedChanged;
+            // 
+            // button7
+            // 
+            button7.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button7.Location = new Point(114, 140);
+            button7.Margin = new Padding(3, 2, 3, 2);
+            button7.Name = "button7";
+            button7.Size = new Size(100, 26);
+            button7.TabIndex = 28;
+            button7.Tag = "Y+";
+            button7.Text = "+Y ->";
+            button7.UseVisualStyleBackColor = true;
+            button7.Click += moveCoordinate;
+            // 
+            // button15
+            // 
+            button15.Location = new Point(50, 298);
+            button15.Margin = new Padding(3, 2, 3, 2);
+            button15.Name = "button15";
+            button15.Size = new Size(122, 26);
+            button15.TabIndex = 34;
+            button15.Text = "Mark Point";
+            button15.UseVisualStyleBackColor = true;
+            button15.Click += button15_Click;
+            // 
             // button8
             // 
-            button8.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button8.Location = new Point(10, 140);
+            button8.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button8.Location = new Point(8, 140);
             button8.Margin = new Padding(3, 2, 3, 2);
             button8.Name = "button8";
             button8.Size = new Size(100, 26);
@@ -674,18 +684,129 @@
             button8.UseVisualStyleBackColor = true;
             button8.Click += moveCoordinate;
             // 
-            // button7
+            // button13
             // 
-            button7.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button7.Location = new Point(116, 140);
-            button7.Margin = new Padding(3, 2, 3, 2);
-            button7.Name = "button7";
-            button7.Size = new Size(100, 26);
-            button7.TabIndex = 28;
-            button7.Tag = "Y+";
-            button7.Text = "+Y ->";
-            button7.UseVisualStyleBackColor = true;
-            button7.Click += moveCoordinate;
+            button13.Location = new Point(49, 269);
+            button13.Name = "button13";
+            button13.Size = new Size(122, 23);
+            button13.TabIndex = 33;
+            button13.Text = "Zero";
+            button13.UseVisualStyleBackColor = true;
+            button13.Click += button13_Click;
+            // 
+            // button6
+            // 
+            button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button6.Location = new Point(114, 109);
+            button6.Margin = new Padding(3, 2, 3, 2);
+            button6.Name = "button6";
+            button6.Size = new Size(100, 26);
+            button6.TabIndex = 26;
+            button6.Tag = "X+";
+            button6.Text = "+X ->";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += moveCoordinate;
+            // 
+            // button12
+            // 
+            button12.Location = new Point(49, 238);
+            button12.Margin = new Padding(3, 2, 3, 2);
+            button12.Name = "button12";
+            button12.Size = new Size(122, 26);
+            button12.TabIndex = 32;
+            button12.Text = "Add";
+            button12.UseVisualStyleBackColor = true;
+            button12.Click += button12_Click;
+            // 
+            // button5
+            // 
+            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button5.Location = new Point(9, 110);
+            button5.Margin = new Padding(3, 2, 3, 2);
+            button5.Name = "button5";
+            button5.Size = new Size(100, 26);
+            button5.TabIndex = 25;
+            button5.Tag = "X-";
+            button5.Text = "<- -X";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += moveCoordinate;
+            // 
+            // button11
+            // 
+            button11.Location = new Point(49, 208);
+            button11.Margin = new Padding(3, 2, 3, 2);
+            button11.Name = "button11";
+            button11.Size = new Size(122, 26);
+            button11.TabIndex = 31;
+            button11.Text = "Trigger";
+            button11.UseVisualStyleBackColor = true;
+            button11.Click += button11_Click;
+            // 
+            // groupBox7
+            // 
+            groupBox7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            groupBox7.Controls.Add(panel4);
+            groupBox7.Location = new Point(13, 228);
+            groupBox7.Name = "groupBox7";
+            groupBox7.Size = new Size(340, 518);
+            groupBox7.TabIndex = 36;
+            groupBox7.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pictureBox1.BorderStyle = BorderStyle.FixedSingle;
+            pictureBox1.Location = new Point(12, 98);
+            pictureBox1.Margin = new Padding(3, 2, 3, 2);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(313, 198);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 5;
+            pictureBox1.TabStop = false;
+            // 
+            // cameraTriggerBox
+            // 
+            cameraTriggerBox.Location = new Point(116, 71);
+            cameraTriggerBox.Margin = new Padding(3, 2, 3, 2);
+            cameraTriggerBox.Name = "cameraTriggerBox";
+            cameraTriggerBox.Size = new Size(110, 23);
+            cameraTriggerBox.TabIndex = 4;
+            // 
+            // pointLabel
+            // 
+            pointLabel.AutoSize = true;
+            pointLabel.Location = new Point(12, 19);
+            pointLabel.Name = "pointLabel";
+            pointLabel.Size = new Size(38, 15);
+            pointLabel.TabIndex = 0;
+            pointLabel.Text = "Point:";
+            // 
+            // inspectionAreaBox
+            // 
+            inspectionAreaBox.Location = new Point(116, 42);
+            inspectionAreaBox.Margin = new Padding(3, 2, 3, 2);
+            inspectionAreaBox.Name = "inspectionAreaBox";
+            inspectionAreaBox.Size = new Size(110, 23);
+            inspectionAreaBox.TabIndex = 3;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(12, 45);
+            label4.Name = "label4";
+            label4.Size = new Size(89, 15);
+            label4.TabIndex = 1;
+            label4.Text = "Inspection Area";
+            label4.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(12, 74);
+            label5.Name = "label5";
+            label5.Size = new Size(103, 15);
+            label5.TabIndex = 2;
+            label5.Text = "Camera Execution";
             // 
             // timer1
             // 
@@ -703,11 +824,28 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // panel4
+            // 
+            panel4.Controls.Add(pictureBox1);
+            panel4.Controls.Add(pointLabel);
+            panel4.Controls.Add(cameraTriggerBox);
+            panel4.Controls.Add(label5);
+            panel4.Controls.Add(label4);
+            panel4.Controls.Add(inspectionAreaBox);
+            panel4.Dock = DockStyle.Fill;
+            panel4.Location = new Point(3, 19);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(334, 496);
+            panel4.TabIndex = 6;
+            panel4.AutoScroll = true;
+            panel4.Paint += panel4_Paint;
+            // 
             // SettingParameterControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             Controls.Add(groupBox2);
             Controls.Add(delPos);
             Controls.Add(button3);
@@ -721,7 +859,7 @@
             Controls.Add(runningModel);
             Margin = new Padding(3, 2, 3, 2);
             Name = "SettingParameterControl";
-            Size = new Size(1085, 927);
+            Size = new Size(1085, 978);
             Load += SettingParameterControl_Load;
             ((System.ComponentModel.ISupportInitialize)parameterDatsGridView).EndInit();
             groupBox3.ResumeLayout(false);
@@ -731,7 +869,10 @@
             ((System.ComponentModel.ISupportInitialize)insertAfter).EndInit();
             ((System.ComponentModel.ISupportInitialize)delPos).EndInit();
             groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
+            groupBox9.ResumeLayout(false);
+            tableLayoutPanel2.ResumeLayout(false);
+            groupBox8.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)activeCavityBox).EndInit();
             groupBox6.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
@@ -741,9 +882,13 @@
             ((System.ComponentModel.ISupportInitialize)pitchingBox).EndInit();
             groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)camPoint).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             groupBox4.ResumeLayout(false);
-            groupBox4.PerformLayout();
+            panel3.ResumeLayout(false);
+            panel3.PerformLayout();
+            groupBox7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            panel4.ResumeLayout(false);
+            panel4.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -801,5 +946,15 @@
         private NumericUpDown cavityBox;
         private Panel panel2;
         private NumericUpDown pitchingBox;
+        private GroupBox groupBox7;
+        private GroupBox groupBox8;
+        private Button button18;
+        private NumericUpDown activeCavityBox;
+        private GroupBox groupBox9;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Button button20;
+        private Button button19;
+        private Panel panel3;
+        private Panel panel4;
     }
 }

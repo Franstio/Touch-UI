@@ -38,6 +38,8 @@ namespace TestTCP1.Forms
         private bool isPressed = false;
         private Button[] _buttons = new Button[0];
         private readonly int CameraDelay = 0;
+        private decimal activePitching = 0;
+        private int activeCavity = 1;
         private Dictionary<string, Dictionary<string, string>> CommandDict = new Dictionary<string, Dictionary<string, string>>
         {
             ["JOG"] = new Dictionary<string, string>
@@ -119,7 +121,7 @@ namespace TestTCP1.Forms
             decimal initVal = 80;
             initVal = initVal * mmVal;
             for (int i = 0; i < InchingCommand.Count; i++)
-                await mainConn.SendCommand($"WR {InchingCommand[i]}{(i > 2 ? ".L" :string.Empty)} {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
+                await mainConn.SendCommand($"WR {InchingCommand[i]}{(i > 2 ? ".L" : string.Empty)} {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
         }
         private async void SettingParameterControl_Load(object sender, EventArgs e)
         {
@@ -132,6 +134,10 @@ namespace TestTCP1.Forms
             camPoint.Invoke(new Action(() => camPoint.Value = cPoint ?? 1));
             await LoadJogState("JOG");
             var data = await dbCon.GetCAvity(Model);
+            activePitching = data?.Pitching ?? 0;
+            activeCavity = 1;
+            activeCavityBox.Maximum = data?.CavityTotal ?? 1;
+            activeCavityBox.Value = 1;
             pitchingBox.Value = data?.Pitching ?? 0;
             cavityBox.Value = data?.CavityTotal ?? 1;
         }
@@ -300,9 +306,9 @@ namespace TestTCP1.Forms
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
             curModel.Model = Model;
             curModel.AreaInspection = inspectionAreaBox.Text;
-            curModel.X = curModel.X / 1600 * 20;
-            curModel.Y = curModel.Y / 1600 * 20;
-            curModel.Z = curModel.Z / 1600 * 20;
+            curModel.X = (curModel.X * 20 / 1600) - ((activeCavity - 1) * activePitching);
+            curModel.Y = curModel.Y * 20 / 1600;
+            curModel.Z = curModel.Z * 20 / 1600;
             PosView v = map.Map<PosView>(curModel);
             v.CameraPoint = int.Parse(camPoint.Value.ToString());
             await dbCon.SavePosition(v);
@@ -374,7 +380,12 @@ namespace TestTCP1.Forms
             curModel.Pos = newPos + 1;
             curModel.AreaInspection = inspectionAreaBox.Text;
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
+
+            curModel.X = (curModel.X * 20 / 1600) - ((activeCavity - 1) * activePitching);
+            curModel.Y = curModel.Y *20/ 1600 ;
+            curModel.Z = curModel.Z *20/ 1600 ;
             PosView v = map.Map<PosView>(curModel);
+
             v.CameraPoint = int.Parse(camPoint.Value.ToString());
             await dbCon.InsertAter(newPos, v);
             await ReloadData();
@@ -394,7 +405,7 @@ namespace TestTCP1.Forms
         {
             //string res = string.Empty;
             curModel = new PositionModel(_data);
-            curModel.X = _data.X * 1600 / 20;
+            curModel.X = (_data.X + ( (activeCavity - 1) * activePitching) ) * 1600 / 20;
             curModel.Y = _data.Y * 1600 / 20;
             curModel.Z = _data.Z * 1600 / 20;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -584,10 +595,36 @@ namespace TestTCP1.Forms
                 button17.Enabled = false;
             });
             await dbCon.SaveCavity(Model, new TestTCP1.Model.ViewModel.CavityModel() { CavityTotal = int.Parse(cavityBox.Value.ToString() ?? "0"), Pitching = pitchingBox.Value });
+
+            var data = await dbCon.GetCAvity(Model);
+            activePitching = data?.Pitching ?? 0;
             button17.Invoke(delegate
             {
+                activeCavityBox.Value = 1;
+                activeCavity = 1;
+                activeCavityBox.Maximum = data?.CavityTotal ?? 1;
                 button17.Enabled = true;
             });
+
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+            activeCavity = Convert.ToInt32(activeCavityBox.Value.ToString());
+        }
+
+        private async void CylinderTrigger(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            Action<bool> enableButton = (status) => btn.Invoke(delegate { btn.Enabled = status; });
+            enableButton(false);
+            string payload = btn.Tag?.ToString() ?? "0";
+            await mainConn.SendCommand("WR MR3000 " + payload);
+            enableButton(true);
+        }
+
+        private void panel4_Paint(object sender, PaintEventArgs e)
+        {
 
         }
     }

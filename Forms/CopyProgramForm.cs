@@ -31,7 +31,16 @@ namespace TestTCP1.Forms
         }
 
         private async void button1_Click(object sender, EventArgs e)
-        {
+        {;
+            var check = await db.GetPositionByModel(newModelNameBox.Text);
+            if (check.Count > 0)
+            {
+                Invoke(delegate
+                {
+                    MessageBox.Show("Model With Given Name is Already Exists");
+                });
+                return;
+            }
             await db.FullCopyPosition(((PositionModel)comboBox1.SelectedItem).Model, newModelNameBox.Text);
             MessageBox.Show("Copy Complete");
             this.Close();

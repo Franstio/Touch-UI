@@ -12,10 +12,10 @@ namespace TestTCP1.Model.ViewModel
         public int CurrentCavity { get; set; } = 0;
         public CavityModel Cavity { get; set; } = new CavityModel();
         public List<CavityItemModel> Cavities { get;private set; }
-        public DashboardCavityModel(int _pitchign, int cavityNumber)
+        public DashboardCavityModel(int _pitching, int cavityNumber)
         {
             Cavity.CavityTotal = cavityNumber;
-            Cavity.Pitching = _pitchign;
+            Cavity.Pitching = _pitching;
             Cavities = new List<CavityItemModel>();
         }
         public DashboardCavityModel(CavityModel cavity,List<PositionModel> Positions)
@@ -61,6 +61,10 @@ namespace TestTCP1.Model.ViewModel
             }
 
         }
+        public bool isCavitiesPass()
+        {
+           return !Cavities.Any(x => x.isNg());
+        }
         public void AddToImageList(int cavityNo,string areaName, string actualImage,string ngImage)
         {
             if (Cavities.ElementAtOrDefault(cavityNo) == null)
@@ -94,6 +98,11 @@ namespace TestTCP1.Model.ViewModel
         public Dictionary<string, Tuple<string, string>> ImageList = new Dictionary<string, Tuple<string, string>>();
         public string SerialNumber { get; set; } = string.Empty;
         public List<InspectionView> InspectionViews { get; set; } = new List<InspectionView>();
+
+        public bool isNg()
+        {
+            return InspectionViews.Any(x => x.Judgement.ToUpper() == "NG");
+        }
     }
     
 }

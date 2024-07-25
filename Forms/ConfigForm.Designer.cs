@@ -36,6 +36,8 @@
             label3 = new Label();
             ipBox = new TextBox();
             groupBox2 = new GroupBox();
+            snResultDelay = new NumericUpDown();
+            label16 = new Label();
             ngCameraDelay = new NumericUpDown();
             label6 = new Label();
             cameraTriggerDelay = new NumericUpDown();
@@ -46,6 +48,9 @@
             label2 = new Label();
             label1 = new Label();
             groupBox3 = new GroupBox();
+            button9 = new Button();
+            label15 = new Label();
+            snResultPath = new TextBox();
             button8 = new Button();
             label12 = new Label();
             reportLogPath = new TextBox();
@@ -73,6 +78,7 @@
             currentPasswordBox = new TextBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)snResultDelay).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ngCameraDelay).BeginInit();
             ((System.ComponentModel.ISupportInitialize)cameraTriggerDelay).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dashboardDelay).BeginInit();
@@ -151,6 +157,8 @@
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            groupBox2.Controls.Add(snResultDelay);
+            groupBox2.Controls.Add(label16);
             groupBox2.Controls.Add(ngCameraDelay);
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(cameraTriggerDelay);
@@ -162,10 +170,28 @@
             groupBox2.Controls.Add(label1);
             groupBox2.Location = new Point(3, 122);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(378, 197);
+            groupBox2.Size = new Size(378, 229);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Delay Setting";
+            // 
+            // snResultDelay
+            // 
+            snResultDelay.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            snResultDelay.Location = new Point(182, 151);
+            snResultDelay.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            snResultDelay.Name = "snResultDelay";
+            snResultDelay.Size = new Size(190, 23);
+            snResultDelay.TabIndex = 12;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new Point(6, 153);
+            label16.Name = "label16";
+            label16.Size = new Size(121, 15);
+            label16.TabIndex = 11;
+            label16.Text = "SN Result Delay Time:";
             // 
             // ngCameraDelay
             // 
@@ -206,7 +232,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(182, 151);
+            button1.Location = new Point(182, 181);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 6;
@@ -253,6 +279,9 @@
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox3.Controls.Add(button9);
+            groupBox3.Controls.Add(label15);
+            groupBox3.Controls.Add(snResultPath);
             groupBox3.Controls.Add(button8);
             groupBox3.Controls.Add(label12);
             groupBox3.Controls.Add(reportLogPath);
@@ -273,15 +302,46 @@
             groupBox3.Controls.Add(triggerImgSaveDir);
             groupBox3.Location = new Point(390, 5);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(445, 211);
+            groupBox3.Size = new Size(451, 243);
             groupBox3.TabIndex = 3;
             groupBox3.TabStop = false;
             groupBox3.Text = "Directory Setting";
             // 
+            // button9
+            // 
+            button9.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button9.Location = new Point(370, 197);
+            button9.Name = "button9";
+            button9.Size = new Size(75, 23);
+            button9.TabIndex = 21;
+            button9.Tag = "SNResultPath";
+            button9.Text = "Change";
+            button9.UseVisualStyleBackColor = true;
+            button9.Click += openDialogFolder;
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new Point(6, 201);
+            label15.Name = "label15";
+            label15.Size = new Size(87, 15);
+            label15.TabIndex = 20;
+            label15.Text = "SN Result Path:";
+            // 
+            // snResultPath
+            // 
+            snResultPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            snResultPath.Location = new Point(143, 198);
+            snResultPath.Name = "snResultPath";
+            snResultPath.ReadOnly = true;
+            snResultPath.Size = new Size(222, 23);
+            snResultPath.TabIndex = 19;
+            snResultPath.Tag = "LogPath";
+            // 
             // button8
             // 
             button8.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button8.Location = new Point(364, 168);
+            button8.Location = new Point(370, 168);
             button8.Name = "button8";
             button8.Size = new Size(75, 23);
             button8.TabIndex = 18;
@@ -305,14 +365,14 @@
             reportLogPath.Location = new Point(143, 169);
             reportLogPath.Name = "reportLogPath";
             reportLogPath.ReadOnly = true;
-            reportLogPath.Size = new Size(216, 23);
+            reportLogPath.Size = new Size(222, 23);
             reportLogPath.TabIndex = 16;
             reportLogPath.Tag = "LogPath";
             // 
             // button7
             // 
             button7.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button7.Location = new Point(364, 139);
+            button7.Location = new Point(370, 139);
             button7.Name = "button7";
             button7.Size = new Size(75, 23);
             button7.TabIndex = 15;
@@ -324,7 +384,7 @@
             // button6
             // 
             button6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button6.Location = new Point(364, 111);
+            button6.Location = new Point(370, 111);
             button6.Name = "button6";
             button6.Size = new Size(75, 23);
             button6.TabIndex = 14;
@@ -336,7 +396,7 @@
             // button5
             // 
             button5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button5.Location = new Point(364, 82);
+            button5.Location = new Point(370, 82);
             button5.Name = "button5";
             button5.Size = new Size(75, 23);
             button5.TabIndex = 13;
@@ -348,7 +408,7 @@
             // button4
             // 
             button4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button4.Location = new Point(364, 53);
+            button4.Location = new Point(370, 53);
             button4.Name = "button4";
             button4.Size = new Size(75, 23);
             button4.TabIndex = 12;
@@ -360,7 +420,7 @@
             // button3
             // 
             button3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button3.Location = new Point(364, 23);
+            button3.Location = new Point(370, 23);
             button3.Name = "button3";
             button3.Size = new Size(75, 23);
             button3.TabIndex = 11;
@@ -384,7 +444,7 @@
             debugLogPath.Location = new Point(143, 140);
             debugLogPath.Name = "debugLogPath";
             debugLogPath.ReadOnly = true;
-            debugLogPath.Size = new Size(216, 23);
+            debugLogPath.Size = new Size(222, 23);
             debugLogPath.TabIndex = 8;
             debugLogPath.Tag = "DebugLogPath";
             // 
@@ -403,7 +463,7 @@
             ftpCameraDir.Location = new Point(143, 111);
             ftpCameraDir.Name = "ftpCameraDir";
             ftpCameraDir.ReadOnly = true;
-            ftpCameraDir.Size = new Size(216, 23);
+            ftpCameraDir.Size = new Size(222, 23);
             ftpCameraDir.TabIndex = 6;
             ftpCameraDir.Tag = "ImageDirName";
             // 
@@ -422,7 +482,7 @@
             markedImgSaveDir.Location = new Point(143, 82);
             markedImgSaveDir.Name = "markedImgSaveDir";
             markedImgSaveDir.ReadOnly = true;
-            markedImgSaveDir.Size = new Size(216, 23);
+            markedImgSaveDir.Size = new Size(222, 23);
             markedImgSaveDir.TabIndex = 4;
             markedImgSaveDir.Tag = "MarkSaveDir";
             // 
@@ -441,7 +501,7 @@
             ngImgSaveDir.Location = new Point(143, 53);
             ngImgSaveDir.Name = "ngImgSaveDir";
             ngImgSaveDir.ReadOnly = true;
-            ngImgSaveDir.Size = new Size(216, 23);
+            ngImgSaveDir.Size = new Size(222, 23);
             ngImgSaveDir.TabIndex = 2;
             // 
             // label7
@@ -459,20 +519,20 @@
             triggerImgSaveDir.Location = new Point(143, 24);
             triggerImgSaveDir.Name = "triggerImgSaveDir";
             triggerImgSaveDir.ReadOnly = true;
-            triggerImgSaveDir.Size = new Size(216, 23);
+            triggerImgSaveDir.Size = new Size(222, 23);
             triggerImgSaveDir.TabIndex = 0;
             // 
             // groupBox4
             // 
-            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox4.Controls.Add(button2);
             groupBox4.Controls.Add(newPasswordBox);
             groupBox4.Controls.Add(label14);
             groupBox4.Controls.Add(label13);
             groupBox4.Controls.Add(currentPasswordBox);
-            groupBox4.Location = new Point(390, 219);
+            groupBox4.Location = new Point(390, 251);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(439, 100);
+            groupBox4.Size = new Size(445, 100);
             groupBox4.TabIndex = 4;
             groupBox4.TabStop = false;
             groupBox4.Text = "Setting Parameter Password";
@@ -492,7 +552,7 @@
             newPasswordBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             newPasswordBox.Location = new Point(115, 49);
             newPasswordBox.Name = "newPasswordBox";
-            newPasswordBox.Size = new Size(0, 23);
+            newPasswordBox.Size = new Size(324, 23);
             newPasswordBox.TabIndex = 3;
             // 
             // label14
@@ -518,7 +578,7 @@
             currentPasswordBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             currentPasswordBox.Location = new Point(115, 22);
             currentPasswordBox.Name = "currentPasswordBox";
-            currentPasswordBox.Size = new Size(0, 23);
+            currentPasswordBox.Size = new Size(324, 23);
             currentPasswordBox.TabIndex = 0;
             // 
             // ConfigForm
@@ -530,12 +590,13 @@
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Name = "ConfigForm";
-            Size = new Size(838, 322);
+            Size = new Size(844, 354);
             Load += ConfigForm_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)snResultDelay).EndInit();
             ((System.ComponentModel.ISupportInitialize)ngCameraDelay).EndInit();
             ((System.ComponentModel.ISupportInitialize)cameraTriggerDelay).EndInit();
             ((System.ComponentModel.ISupportInitialize)dashboardDelay).EndInit();
@@ -592,5 +653,10 @@
         private Label label14;
         private Label label13;
         private TextBox currentPasswordBox;
+        private Button button9;
+        private Label label15;
+        private TextBox snResultPath;
+        private NumericUpDown snResultDelay;
+        private Label label16;
     }
 }
