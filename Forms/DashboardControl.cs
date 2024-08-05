@@ -85,7 +85,7 @@ namespace TestTCP1.Forms
             inspectionListGridView.DataSource = dt;
             Task.Run(GetLivePosition, cts.Token);
             LoadCountView();
-            
+
         }
         private async Task GetLivePosition()
         {
@@ -101,7 +101,7 @@ namespace TestTCP1.Forms
                 if (res.Contains("1") && !isSensorActive)
                 {
                     prevStatus = statusLabel.Text;
-                    isSensorActive  = true;
+                    isSensorActive = true;
                     statusLabel.Invoke(delegate
                     {
                         statusLabel.Text = "M/C Paused, Waiting Start Button";
@@ -142,6 +142,7 @@ namespace TestTCP1.Forms
         {
             if (cavities is not null)
             {
+                Dictionary<string, string> _msg = new Dictionary<string, string>();
                 foreach (var _cavity in cavities.Cavities)
                 {
                     bool checkIfJudgementEmpty = _cavity.InspectionViews.Any(x => x.Judgement == string.Empty || x.Judgement == "" || x.Judgement is null);
@@ -172,23 +173,33 @@ namespace TestTCP1.Forms
                         {
                             label6.Text += ";" + logname;
                         });
+                        var temp = await fileLib.ValidateLog();
+                        if (temp is not null)
+                        {
+                            foreach (var item in temp)
+                                if (!_msg.ContainsKey(item.Key))
+                                    _msg.Add(item.Key, item.Value);
+                        }
                     }
                 }
-                var msg = await fileLib.ValidateLog();
-                if (msg is null)
+                if (!_msg.Any())
                     return;
                 StringBuilder sb = new StringBuilder();
-                foreach (var item in msg)
+                foreach (var item in _msg)
                 {
                     var _cavity = cavities.Cavities.Where(x => x.SerialNumber == item.Key).FirstOrDefault();
                     if (_cavity == null)
                         continue;
-                    sb.AppendLine($"Cavity {_cavity.CavityNo}: ");
-                    sb.AppendLine($"{item.Value}\n");
+                    sb = sb.AppendLine($"Cavity {_cavity.CavityNo+1}: ");
+                    sb = sb.AppendLine($"{item.Value}\n");
                 }
+                if (string.IsNullOrEmpty(sb.ToString()))
+                    return;
                 Invoke(delegate
                 {
-                    MessageBox.Show(sb.ToString(),"Notification",MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult res = MessageBox.Show(sb.ToString(), "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (res == DialogResult.OK)
+                        fileLib.ClearSN();
                 });
             }
         }
@@ -313,15 +324,7 @@ namespace TestTCP1.Forms
             processTimer.Start();
             Task.Run(delegate
             {
-                try
-                {
-                    ScanRun();
-                }
-                catch(SqlException ex)
-                {
-                    Invoke(delegate { MessageBox.Show("SQL Error, please restart sql service."); });
-                }
-                
+                ScanRun();
             });
         }
         private void LoadInspectionToGrid()
@@ -531,10 +534,10 @@ namespace TestTCP1.Forms
             res = await mainConn.SendCommand($"WR CM8010 {xVal}");
             res = await mainConn.SendCommand($"WR CM8210 {yVal}");
             res = await mainConn.SendCommand($"WR CM8410 {zVal}");
-            if (data.Pos==12)
+            if (data.Pos == 12)
             {
                 decimal[] _d = new decimal[] { data.X, data.Y, data.Z };
-                Console.WriteLine("POS 12: "+string.Join(",",_d));
+                Console.WriteLine("POS 12: " + string.Join(",", _d));
                 Console.WriteLine("Current Cavity: " + cavities?.CurrentCavityItem.CavityNo);
             }
             if (data.CameraCheckpoint != "")
@@ -822,7 +825,7 @@ namespace TestTCP1.Forms
                     this.inspectionListGridView.Invoke(new Action(() =>
                     {
                         inspectionListGridView.DataSource = cavities.CurrentCavityItem.InspectionViews;
-                        inspectionListGridView[1,index].Style.ForeColor = frm.resultVerification ? Color.LimeGreen : Color.DarkRed;
+                        inspectionListGridView[1, index].Style.ForeColor = frm.resultVerification ? Color.LimeGreen : Color.DarkRed;
                         inspectionListGridView.Refresh();
                     }));
                     bool finalJudge = cavities.CurrentCavityItem.InspectionViews.Select(x => x.Judgement).Any(x => x.Contains("NG"));
@@ -834,7 +837,7 @@ namespace TestTCP1.Forms
                     inputSerialView.Invoke(new Action(() =>
                     {
 
-                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge? Color.DarkRed : Color.Lime;
+                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
                         inputSerialView[2, cavities.CurrentCavity].Value = finalJudge ? "FAIL" : "PASS";
                     }));
                 }));
@@ -1019,8 +1022,17 @@ namespace TestTCP1.Forms
             isRunning = true;
             Task.Run(async delegate
             {
-                await ScanRun();
-
+                try
+                {
+                    await ScanRun();
+                }
+                catch (SqlException)
+                {
+                    Invoke(delegate
+                    {
+                        MessageBox.Show("SQL Error, Please Restart SQL Service", "SQL Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    });
+                }
                 Invoke(delegate
                 {
                     button3.Enabled = true;

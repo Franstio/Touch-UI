@@ -27,7 +27,7 @@ namespace TestTCP1.Lib
             string ngSavePath = Properties.Settings.Default["NgImageDirName"]?.ToString() ?? "ng";
             string logPath = Properties.Settings.Default["LogPath"]?.ToString() ?? "log";
             string markSaveDir = Properties.Settings.Default["MarkSaveDir"]?.ToString() ?? "markImg";
-            string snResultPath = Properties.Settings.Default["SNResultPath"]?.ToString() ?? "result";
+            string snResultPath = Properties.Settings.Default["SNResultPath"]?.ToString() ?? "/result";
             _filePath = settingPath.Contains(":\\") || settingPath.Contains(":/") ? settingPath :  Path.Combine( AppDomain.CurrentDomain.BaseDirectory,
                  settingPath);
             _savePath = savePath.Contains(":\\") || savePath.Contains(":/") ? savePath  : Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
@@ -193,21 +193,45 @@ namespace TestTCP1.Lib
                 return false;
             }
             return true;
-        } 
-        public async Task<Dictionary<string,string>?> ValidateLog()
+        }
+        public async Task<Dictionary<string, string>?> ValidateLog()
         {
-            await Task.Delay(TimeSpan.FromSeconds(_snResultDelay));
+            //await Task.Delay(TimeSpan.FromSeconds(_snResultDelay));
             string[] files = Directory.GetFiles(_snResultPath);
-            if (files.Length == 0)
+            if (files.Length < 1)
                 return null;
             Dictionary<string, string> Dict = new Dictionary<string, string>();
-            for (int i=0;i<files.Length; i++)
+            string text = string.Empty;
+            for (int i = 0; i < files.Length; i++)
             {
-                using (StreamReader reader = new StreamReader(File.OpenRead(files[i])))
-                    Dict.Add(files[i].Split(" ").Last().Replace(" ","").Trim(),reader.ReadToEnd());
-                File.Delete(files[i]);
+                do
+                {
+                    if (!File.Exists(files[i]))
+                        continue;
+                    using (StreamReader reader = new StreamReader(File.OpenRead(files[i])))
+                    {
+                        text = reader.ReadToEnd();
+                        string sn = files[i].Split(" ").Last().Split(".").First().Replace(" ", "").Trim();
+                        if (!Dict.ContainsKey(sn))
+                            Dict.Add(sn, text);
+                    }
+                    await Task.Delay(100);
+                }
+                while ((string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text)) && File.Exists(files[i]));
+                //if (File.Exists(files[i]))
+                //    File.Delete(files[i]);
             }
-            return Dict ;
+            return Dict.Any() ? Dict : null ;
+        }
+        public Task ClearSN()
+        {
+            string[] files = Directory.GetFiles(_snResultPath);
+            if (files.Length < 1)
+                return Task.CompletedTask;
+            for (int i = 0; i < files.Length; i++)
+                if (File.Exists(files[i]))
+                    File.Delete(files[i]);
+            return Task.CompletedTask;
         }
     }
 }
