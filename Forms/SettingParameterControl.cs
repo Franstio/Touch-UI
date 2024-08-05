@@ -121,7 +121,8 @@ namespace TestTCP1.Forms
             decimal initVal = 80;
             initVal = initVal * mmVal;
             for (int i = 0; i < InchingCommand.Count; i++)
-                await mainConn.SendCommand($"WR {InchingCommand[i]}{(i > 2 ? ".L" : string.Empty)} {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
+                await mainConn.SendCommand($"WR {InchingCommand[i]} {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
+            //       await mainConn.SendCommand($"WR {InchingCommand[i]}{(i > 2 ? ".L" : string.Empty)} {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
         }
         private async void SettingParameterControl_Load(object sender, EventArgs e)
         {
@@ -210,37 +211,37 @@ namespace TestTCP1.Forms
             {
                 case "X+":
                     //await mainConn.SendCommand($"WR MR14 1");
-                    result = await mainConn.SendCommand("RD CM8830");
+                    result = await mainConn.SendCommand("RD CM8830.L");
                     res = "X";
                     curModel.X = decimal.Parse(result);
                     break;
                 case "X-":
                     //await mainConn.SendCommand("WR MR15 1");
-                    result = await mainConn.SendCommand("RD CM8830");
+                    result = await mainConn.SendCommand("RD CM8830.L");
                     res = "X";
                     curModel.X = decimal.Parse(result);
                     break;
                 case "Y+":
                     //await mainConn.SendCommand("WR MR12.L 1");
-                    result = await mainConn.SendCommand("RD CM8870");
+                    result = await mainConn.SendCommand("RD CM8870.L");
                     res = "Y";
                     curModel.Y = decimal.Parse(result);
                     break;
                 case "Y-":
                     //await mainConn.SendCommand("WR MR13.L 1");
-                    result = await mainConn.SendCommand("RD CM8870");
+                    result = await mainConn.SendCommand("RD CM8870.L");
                     res = "Y";
                     curModel.Y = decimal.Parse(result);
                     break;
                 case "Z+":
                     //await mainConn.SendCommand("WR MR10 1");
-                    result = await mainConn.SendCommand("RD CM8910");
+                    result = await mainConn.SendCommand("RD CM8910.L");
                     res = "Z";
                     curModel.Z = decimal.Parse(result);
                     break;
                 case "Z-":
                     //await mainConn.SendCommand("WR MR11 1");
-                    result = await mainConn.SendCommand("RD CM8910");
+                    result = await mainConn.SendCommand("RD CM8910.L");
                     res = "Z";
                     curModel.Z = decimal.Parse(result);
                     break;
@@ -273,11 +274,11 @@ namespace TestTCP1.Forms
         }
         private async Task LoadPosition()
         {
-            curModel.X = await LoadValue("RD CM8830", curModel.X);
-            curModel.Y = await LoadValue("RD CM8870", curModel.Y);
+            curModel.X = await LoadValue("RD CM8830.L", curModel.X);
+            curModel.Y = await LoadValue("RD CM8870.L", curModel.Y);
             //            if (debug)
             //                debug = false;
-            curModel.Z = await LoadValue("RD CM8910", curModel.Z);
+            curModel.Z = await LoadValue("RD CM8910.L", curModel.Z);
         }
         private async Task<decimal> LoadValue(string command, decimal defaultValue)
         {
@@ -420,10 +421,10 @@ namespace TestTCP1.Forms
             string yVal = String.Format("{0:0}", curModel.Y);
             string zVal = String.Format("{0:0}", curModel.Z);
             string res = string.Empty;
-            res = await mainConn.SendCommand($"WR CM8010 {xVal}");
-            res = await mainConn.SendCommand($"WR CM8210 {yVal}");
+            res = await mainConn.SendCommand($"WR CM8010.L {xVal}");
+            res = await mainConn.SendCommand($"WR CM8210.L {yVal}");
             //            debug = true;
-            res = await mainConn.SendCommand($"WR CM8410 {zVal}");
+            res = await mainConn.SendCommand($"WR CM8410.L {zVal}");
 
             await mainConn.SendCommand($"WR MR800 1");
             await Task.Delay(DelayTimer);

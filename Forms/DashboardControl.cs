@@ -134,7 +134,7 @@ namespace TestTCP1.Forms
         {
             decimal[] values = new decimal[3];
             values[0] = await LoadValue("RD CM8830", 0);
-            values[1] = await LoadValue("RD CM8870", 0);
+            values[1] = await LoadValue("RD CM8870.L", 0);
             values[2] = await LoadValue("RD CM8910", 0);
             return values;
         }
@@ -532,7 +532,7 @@ namespace TestTCP1.Forms
             string yVal = String.Format("{0:0}", data.Y * 1600 / 20);
             string zVal = String.Format("{0:0}", data.Z * 1600 / 20);
             res = await mainConn.SendCommand($"WR CM8010 {xVal}");
-            res = await mainConn.SendCommand($"WR CM8210 {yVal}");
+            res = await mainConn.SendCommand($"WR CM8210.L {yVal}");
             res = await mainConn.SendCommand($"WR CM8410 {zVal}");
             if (data.Pos == 12)
             {
