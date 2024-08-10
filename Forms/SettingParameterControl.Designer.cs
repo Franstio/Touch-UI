@@ -82,15 +82,15 @@
             button5 = new Button();
             button11 = new Button();
             groupBox7 = new GroupBox();
+            panel4 = new Panel();
             pictureBox1 = new PictureBox();
-            cameraTriggerBox = new TextBox();
             pointLabel = new Label();
-            inspectionAreaBox = new TextBox();
-            label4 = new Label();
+            cameraTriggerBox = new TextBox();
             label5 = new Label();
+            label4 = new Label();
+            inspectionAreaBox = new TextBox();
             timer1 = new System.Windows.Forms.Timer(components);
             button1 = new Button();
-            panel4 = new Panel();
             ((System.ComponentModel.ISupportInitialize)parameterDatsGridView).BeginInit();
             groupBox3.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -113,8 +113,8 @@
             groupBox4.SuspendLayout();
             panel3.SuspendLayout();
             groupBox7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // parameterDatsGridView
@@ -162,7 +162,7 @@
             // 
             runningModel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             runningModel.AutoSize = true;
-            runningModel.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Italic);
+            runningModel.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             runningModel.Location = new Point(241, 9);
             runningModel.Name = "runningModel";
             runningModel.Size = new Size(97, 32);
@@ -187,7 +187,7 @@
             // zLabel
             // 
             zLabel.AutoSize = true;
-            zLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            zLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             zLabel.Location = new Point(494, 46);
             zLabel.Name = "zLabel";
             zLabel.Size = new Size(84, 21);
@@ -197,7 +197,7 @@
             // yLabel
             // 
             yLabel.AutoSize = true;
-            yLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            yLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             yLabel.Location = new Point(234, 46);
             yLabel.Name = "yLabel";
             yLabel.Size = new Size(84, 21);
@@ -207,7 +207,7 @@
             // xLabel
             // 
             xLabel.AutoSize = true;
-            xLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            xLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             xLabel.Location = new Point(15, 46);
             xLabel.Name = "xLabel";
             xLabel.Size = new Size(84, 21);
@@ -217,7 +217,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Underline);
+            label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point);
             label2.Location = new Point(222, 17);
             label2.Name = "label2";
             label2.Size = new Size(109, 21);
@@ -226,7 +226,7 @@
             // 
             // gotoValue
             // 
-            gotoValue.Font = new Font("Segoe UI", 10.8F);
+            gotoValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
             gotoValue.Location = new Point(149, 154);
             gotoValue.Margin = new Padding(3, 2, 3, 2);
             gotoValue.Name = "gotoValue";
@@ -236,7 +236,7 @@
             // 
             // insertAfter
             // 
-            insertAfter.Font = new Font("Segoe UI", 10.8F);
+            insertAfter.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
             insertAfter.Location = new Point(326, 155);
             insertAfter.Margin = new Padding(3, 2, 3, 2);
             insertAfter.Name = "insertAfter";
@@ -256,7 +256,7 @@
             // 
             // delPos
             // 
-            delPos.Font = new Font("Segoe UI", 10.8F);
+            delPos.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
             delPos.Location = new Point(518, 155);
             delPos.Margin = new Padding(3, 2, 3, 2);
             delPos.Name = "delPos";
@@ -505,7 +505,7 @@
             // 
             // camPoint
             // 
-            camPoint.Font = new Font("Segoe UI", 18F);
+            camPoint.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             camPoint.Location = new Point(6, 20);
             camPoint.Margin = new Padding(3, 2, 3, 2);
             camPoint.Name = "camPoint";
@@ -552,7 +552,7 @@
             // 
             // button10
             // 
-            button10.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button10.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             button10.Location = new Point(8, 172);
             button10.Margin = new Padding(3, 2, 3, 2);
             button10.Name = "button10";
@@ -622,7 +622,7 @@
             // 
             // button9
             // 
-            button9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button9.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             button9.Location = new Point(114, 172);
             button9.Margin = new Padding(3, 2, 3, 2);
             button9.Name = "button9";
@@ -649,7 +649,7 @@
             // 
             // button7
             // 
-            button7.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button7.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             button7.Location = new Point(114, 140);
             button7.Margin = new Padding(3, 2, 3, 2);
             button7.Name = "button7";
@@ -673,7 +673,7 @@
             // 
             // button8
             // 
-            button8.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button8.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             button8.Location = new Point(8, 140);
             button8.Margin = new Padding(3, 2, 3, 2);
             button8.Name = "button8";
@@ -696,7 +696,7 @@
             // 
             // button6
             // 
-            button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             button6.Location = new Point(114, 109);
             button6.Margin = new Padding(3, 2, 3, 2);
             button6.Name = "button6";
@@ -720,7 +720,7 @@
             // 
             // button5
             // 
-            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             button5.Location = new Point(9, 110);
             button5.Margin = new Padding(3, 2, 3, 2);
             button5.Name = "button5";
@@ -752,6 +752,22 @@
             groupBox7.TabIndex = 36;
             groupBox7.TabStop = false;
             // 
+            // panel4
+            // 
+            panel4.AutoScroll = true;
+            panel4.Controls.Add(pictureBox1);
+            panel4.Controls.Add(pointLabel);
+            panel4.Controls.Add(cameraTriggerBox);
+            panel4.Controls.Add(label5);
+            panel4.Controls.Add(label4);
+            panel4.Controls.Add(inspectionAreaBox);
+            panel4.Dock = DockStyle.Fill;
+            panel4.Location = new Point(3, 19);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(334, 496);
+            panel4.TabIndex = 6;
+            panel4.Paint += panel4_Paint;
+            // 
             // pictureBox1
             // 
             pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -764,14 +780,6 @@
             pictureBox1.TabIndex = 5;
             pictureBox1.TabStop = false;
             // 
-            // cameraTriggerBox
-            // 
-            cameraTriggerBox.Location = new Point(116, 71);
-            cameraTriggerBox.Margin = new Padding(3, 2, 3, 2);
-            cameraTriggerBox.Name = "cameraTriggerBox";
-            cameraTriggerBox.Size = new Size(110, 23);
-            cameraTriggerBox.TabIndex = 4;
-            // 
             // pointLabel
             // 
             pointLabel.AutoSize = true;
@@ -781,13 +789,22 @@
             pointLabel.TabIndex = 0;
             pointLabel.Text = "Point:";
             // 
-            // inspectionAreaBox
+            // cameraTriggerBox
             // 
-            inspectionAreaBox.Location = new Point(116, 42);
-            inspectionAreaBox.Margin = new Padding(3, 2, 3, 2);
-            inspectionAreaBox.Name = "inspectionAreaBox";
-            inspectionAreaBox.Size = new Size(110, 23);
-            inspectionAreaBox.TabIndex = 3;
+            cameraTriggerBox.Location = new Point(116, 71);
+            cameraTriggerBox.Margin = new Padding(3, 2, 3, 2);
+            cameraTriggerBox.Name = "cameraTriggerBox";
+            cameraTriggerBox.Size = new Size(110, 23);
+            cameraTriggerBox.TabIndex = 4;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(12, 74);
+            label5.Name = "label5";
+            label5.Size = new Size(103, 15);
+            label5.TabIndex = 2;
+            label5.Text = "Camera Execution";
             // 
             // label4
             // 
@@ -799,14 +816,13 @@
             label4.Text = "Inspection Area";
             label4.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // label5
+            // inspectionAreaBox
             // 
-            label5.AutoSize = true;
-            label5.Location = new Point(12, 74);
-            label5.Name = "label5";
-            label5.Size = new Size(103, 15);
-            label5.TabIndex = 2;
-            label5.Text = "Camera Execution";
+            inspectionAreaBox.Location = new Point(116, 42);
+            inspectionAreaBox.Margin = new Padding(3, 2, 3, 2);
+            inspectionAreaBox.Name = "inspectionAreaBox";
+            inspectionAreaBox.Size = new Size(110, 23);
+            inspectionAreaBox.TabIndex = 3;
             // 
             // timer1
             // 
@@ -823,22 +839,6 @@
             button1.Text = "Go Point";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
-            // 
-            // panel4
-            // 
-            panel4.Controls.Add(pictureBox1);
-            panel4.Controls.Add(pointLabel);
-            panel4.Controls.Add(cameraTriggerBox);
-            panel4.Controls.Add(label5);
-            panel4.Controls.Add(label4);
-            panel4.Controls.Add(inspectionAreaBox);
-            panel4.Dock = DockStyle.Fill;
-            panel4.Location = new Point(3, 19);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(334, 496);
-            panel4.TabIndex = 6;
-            panel4.AutoScroll = true;
-            panel4.Paint += panel4_Paint;
             // 
             // SettingParameterControl
             // 
@@ -886,9 +886,9 @@
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             groupBox7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }

@@ -77,7 +77,7 @@ namespace TestTCP1.Forms
         public SettingParameterControl(string Model)
         {
             InitializeComponent();
-            minusButtons = new Button[] { button5, button8, button10 };
+            minusButtons = new Button[] { button5, button7, button10 };
             this.Model = Model;
             runningModel.Text = $"Model: {Model}";
 
@@ -145,7 +145,7 @@ namespace TestTCP1.Forms
         private void checkMinusButton()
         {
             minusButtons[0].Enabled = curModel.X > 0;
-            minusButtons[1].Enabled = curModel.Y > 0;
+            minusButtons[1].Enabled = curModel.Y < 0;
             minusButtons[2].Enabled = curModel.Z > 0;
         }
         private async Task ReloadData()
