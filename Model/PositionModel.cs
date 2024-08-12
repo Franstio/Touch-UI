@@ -14,7 +14,6 @@ namespace TestTCP1.Model
         public decimal Z { get; set; }
         public string CameraCheckpoint { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;
-        public string AreaInspection { get; set; } = string.Empty;
         public object[] GetValues()
         {
             return new object[] { Pos, Model, X, Y, Z, CameraCheckpoint };
@@ -28,7 +27,6 @@ namespace TestTCP1.Model
             Z = other.Z;
             CameraCheckpoint = other.CameraCheckpoint;
             Model = other.Model;
-            AreaInspection = other.AreaInspection;
         }
     }
 }

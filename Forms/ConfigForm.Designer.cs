@@ -48,6 +48,9 @@
             label2 = new Label();
             label1 = new Label();
             groupBox3 = new GroupBox();
+            button10 = new Button();
+            label17 = new Label();
+            snLocation = new TextBox();
             button9 = new Button();
             label15 = new Label();
             snResultPath = new TextBox();
@@ -170,7 +173,7 @@
             groupBox2.Controls.Add(label1);
             groupBox2.Location = new Point(3, 122);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(378, 229);
+            groupBox2.Size = new Size(378, 274);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Delay Setting";
@@ -279,6 +282,9 @@
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox3.Controls.Add(button10);
+            groupBox3.Controls.Add(label17);
+            groupBox3.Controls.Add(snLocation);
             groupBox3.Controls.Add(button9);
             groupBox3.Controls.Add(label15);
             groupBox3.Controls.Add(snResultPath);
@@ -302,10 +308,41 @@
             groupBox3.Controls.Add(triggerImgSaveDir);
             groupBox3.Location = new Point(390, 5);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(451, 243);
+            groupBox3.Size = new Size(451, 285);
             groupBox3.TabIndex = 3;
             groupBox3.TabStop = false;
             groupBox3.Text = "Directory Setting";
+            // 
+            // button10
+            // 
+            button10.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button10.Location = new Point(370, 226);
+            button10.Name = "button10";
+            button10.Size = new Size(75, 23);
+            button10.TabIndex = 24;
+            button10.Tag = "SNLocation";
+            button10.Text = "Change";
+            button10.UseVisualStyleBackColor = true;
+            button10.Click += openDialogFolder;
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Location = new Point(6, 230);
+            label17.Name = "label17";
+            label17.Size = new Size(74, 15);
+            label17.TabIndex = 23;
+            label17.Text = "SN Location:";
+            // 
+            // snLocation
+            // 
+            snLocation.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            snLocation.Location = new Point(143, 227);
+            snLocation.Name = "snLocation";
+            snLocation.ReadOnly = true;
+            snLocation.Size = new Size(222, 23);
+            snLocation.TabIndex = 22;
+            snLocation.Tag = "SNLocation";
             // 
             // button9
             // 
@@ -530,7 +567,7 @@
             groupBox4.Controls.Add(label14);
             groupBox4.Controls.Add(label13);
             groupBox4.Controls.Add(currentPasswordBox);
-            groupBox4.Location = new Point(390, 251);
+            groupBox4.Location = new Point(390, 296);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(445, 100);
             groupBox4.TabIndex = 4;
@@ -590,7 +627,7 @@
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Name = "ConfigForm";
-            Size = new Size(844, 354);
+            Size = new Size(844, 399);
             Load += ConfigForm_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
@@ -658,5 +695,8 @@
         private TextBox snResultPath;
         private NumericUpDown snResultDelay;
         private Label label16;
+        private Button button10;
+        private Label label17;
+        private TextBox snLocation;
     }
 }

@@ -22,7 +22,7 @@ namespace TestTCP1.Forms
         private readonly IMarkPointDb conn = new DbConn();
         private string originalPathImage = string.Empty;
         private string originalFileName = string.Empty;
-        private List<PositionModel> posModels = new List<PositionModel>();
+        private List<ImageAreaModel> posModels = new List<ImageAreaModel>();
         private List<MarkPointModel> markModels = new List<MarkPointModel>();
         private MarkPointModel newModel = new MarkPointModel();
         private FileLib fileLib = new FileLib();
@@ -140,7 +140,7 @@ namespace TestTCP1.Forms
                 pictureBox1.Image = fileLib.ReadImage(originalPathImage, manualPath: fileLib._markSaveDir);
                 pictureBox1.Refresh();
             }
-            posModels = await ((DbConn)conn).GetPositionByModel(model);
+            posModels = await ((DbConn)conn).GetAreaImageByModel(model);
             markModels = ret.ToList();
             this.Invoke(new Action(LoadDataGridView));
             this.Invoke(new Action(LoadComboBox));
@@ -162,9 +162,9 @@ namespace TestTCP1.Forms
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            var item = (PositionModel)comboBox1.SelectedItem;
+            var item = (ImageAreaModel)comboBox1.SelectedItem;
             newModel.AreaInspection = item.AreaInspection;
-            newModel.Position = item.Pos;
+            newModel.Position = item.Position;
             await conn.SaveMarkPoint(newModel);
             var data = await conn.GetMarkPoint(model);
             if (data is null)

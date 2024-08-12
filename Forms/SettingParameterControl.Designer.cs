@@ -80,15 +80,14 @@
             button6 = new Button();
             button12 = new Button();
             button5 = new Button();
-            button11 = new Button();
             groupBox7 = new GroupBox();
             panel4 = new Panel();
-            pictureBox1 = new PictureBox();
+            button22 = new Button();
+            button21 = new Button();
+            inspectionAreaList = new DataGridView();
             pointLabel = new Label();
             cameraTriggerBox = new TextBox();
             label5 = new Label();
-            label4 = new Label();
-            inspectionAreaBox = new TextBox();
             timer1 = new System.Windows.Forms.Timer(components);
             button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)parameterDatsGridView).BeginInit();
@@ -114,7 +113,7 @@
             panel3.SuspendLayout();
             groupBox7.SuspendLayout();
             panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)inspectionAreaList).BeginInit();
             SuspendLayout();
             // 
             // parameterDatsGridView
@@ -543,7 +542,6 @@
             panel3.Controls.Add(button6);
             panel3.Controls.Add(button12);
             panel3.Controls.Add(button5);
-            panel3.Controls.Add(button11);
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(3, 18);
             panel3.Name = "panel3";
@@ -575,7 +573,7 @@
             // 
             // button16
             // 
-            button16.Location = new Point(49, 329);
+            button16.Location = new Point(49, 305);
             button16.Name = "button16";
             button16.Size = new Size(121, 23);
             button16.TabIndex = 39;
@@ -662,7 +660,7 @@
             // 
             // button15
             // 
-            button15.Location = new Point(50, 298);
+            button15.Location = new Point(50, 274);
             button15.Margin = new Padding(3, 2, 3, 2);
             button15.Name = "button15";
             button15.Size = new Size(122, 26);
@@ -686,7 +684,7 @@
             // 
             // button13
             // 
-            button13.Location = new Point(49, 269);
+            button13.Location = new Point(49, 245);
             button13.Name = "button13";
             button13.Size = new Size(122, 23);
             button13.TabIndex = 33;
@@ -709,7 +707,7 @@
             // 
             // button12
             // 
-            button12.Location = new Point(49, 238);
+            button12.Location = new Point(49, 214);
             button12.Margin = new Padding(3, 2, 3, 2);
             button12.Name = "button12";
             button12.Size = new Size(122, 26);
@@ -731,17 +729,6 @@
             button5.UseVisualStyleBackColor = true;
             button5.Click += moveCoordinate;
             // 
-            // button11
-            // 
-            button11.Location = new Point(49, 208);
-            button11.Margin = new Padding(3, 2, 3, 2);
-            button11.Name = "button11";
-            button11.Size = new Size(122, 26);
-            button11.TabIndex = 31;
-            button11.Text = "Trigger";
-            button11.UseVisualStyleBackColor = true;
-            button11.Click += button11_Click;
-            // 
             // groupBox7
             // 
             groupBox7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -755,12 +742,12 @@
             // panel4
             // 
             panel4.AutoScroll = true;
-            panel4.Controls.Add(pictureBox1);
+            panel4.Controls.Add(button22);
+            panel4.Controls.Add(button21);
+            panel4.Controls.Add(inspectionAreaList);
             panel4.Controls.Add(pointLabel);
             panel4.Controls.Add(cameraTriggerBox);
             panel4.Controls.Add(label5);
-            panel4.Controls.Add(label4);
-            panel4.Controls.Add(inspectionAreaBox);
             panel4.Dock = DockStyle.Fill;
             panel4.Location = new Point(3, 19);
             panel4.Name = "panel4";
@@ -768,17 +755,40 @@
             panel4.TabIndex = 6;
             panel4.Paint += panel4_Paint;
             // 
-            // pictureBox1
+            // button22
             // 
-            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox1.Location = new Point(12, 98);
-            pictureBox1.Margin = new Padding(3, 2, 3, 2);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(313, 198);
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox1.TabIndex = 5;
-            pictureBox1.TabStop = false;
+            button22.Location = new Point(136, 73);
+            button22.Name = "button22";
+            button22.Size = new Size(127, 29);
+            button22.TabIndex = 7;
+            button22.Text = "Delete";
+            button22.UseVisualStyleBackColor = true;
+            button22.Click += button22_Click;
+            // 
+            // button21
+            // 
+            button21.Location = new Point(12, 72);
+            button21.Name = "button21";
+            button21.Size = new Size(118, 29);
+            button21.TabIndex = 6;
+            button21.Text = "ADD";
+            button21.UseVisualStyleBackColor = true;
+            button21.Click += button21_Click;
+            // 
+            // inspectionAreaList
+            // 
+            inspectionAreaList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            inspectionAreaList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            inspectionAreaList.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllHeaders;
+            inspectionAreaList.BackgroundColor = SystemColors.Control;
+            inspectionAreaList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            inspectionAreaList.Location = new Point(12, 107);
+            inspectionAreaList.Name = "inspectionAreaList";
+            inspectionAreaList.RowTemplate.Height = 25;
+            inspectionAreaList.Size = new Size(314, 374);
+            inspectionAreaList.TabIndex = 5;
+            inspectionAreaList.CellContentClick += inspectionAreaList_CellContentClick;
+            inspectionAreaList.DataBindingComplete += inspectionAreaList_DataBindingComplete;
             // 
             // pointLabel
             // 
@@ -791,7 +801,7 @@
             // 
             // cameraTriggerBox
             // 
-            cameraTriggerBox.Location = new Point(116, 71);
+            cameraTriggerBox.Location = new Point(116, 43);
             cameraTriggerBox.Margin = new Padding(3, 2, 3, 2);
             cameraTriggerBox.Name = "cameraTriggerBox";
             cameraTriggerBox.Size = new Size(110, 23);
@@ -800,29 +810,11 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(12, 74);
+            label5.Location = new Point(12, 46);
             label5.Name = "label5";
             label5.Size = new Size(103, 15);
             label5.TabIndex = 2;
             label5.Text = "Camera Execution";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(12, 45);
-            label4.Name = "label4";
-            label4.Size = new Size(89, 15);
-            label4.TabIndex = 1;
-            label4.Text = "Inspection Area";
-            label4.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // inspectionAreaBox
-            // 
-            inspectionAreaBox.Location = new Point(116, 42);
-            inspectionAreaBox.Margin = new Padding(3, 2, 3, 2);
-            inspectionAreaBox.Name = "inspectionAreaBox";
-            inspectionAreaBox.Size = new Size(110, 23);
-            inspectionAreaBox.TabIndex = 3;
             // 
             // timer1
             // 
@@ -888,7 +880,7 @@
             groupBox7.ResumeLayout(false);
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)inspectionAreaList).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -909,7 +901,6 @@
         private NumericUpDown delPos;
         private Button button3;
         private GroupBox groupBox2;
-        private Button button11;
         private Button button9;
         private Button button10;
         private Button button7;
@@ -917,11 +908,8 @@
         private Button button6;
         private Button button5;
         private Button button4;
-        private PictureBox pictureBox1;
         private TextBox cameraTriggerBox;
-        private TextBox inspectionAreaBox;
         private Label label5;
-        private Label label4;
         private Label pointLabel;
         private Button button12;
         private System.Windows.Forms.Timer timer1;
@@ -956,5 +944,8 @@
         private Button button19;
         private Panel panel3;
         private Panel panel4;
+        private DataGridView inspectionAreaList;
+        private Button button22;
+        private Button button21;
     }
 }

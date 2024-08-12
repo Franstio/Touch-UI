@@ -14,8 +14,8 @@ namespace TestTCP1
         {
             var config = new MapperConfiguration(cfg => {
                 cfg.CreateMap<PositionModel, JudgementView>();
-                cfg.CreateMap<PositionModel,ModelPosView>().ForMember(x=>x.Area,x=>x.MapFrom(z=>z.AreaInspection)).ForMember(a=>a.Axis,b=>b.MapFrom(c=>$"{c.X}, {c.Y}, {c.Z}"));
-                cfg.CreateMap<PositionModel, InspectionView>().ForMember(x => x.Area, x => x.MapFrom(z => z.AreaInspection));
+                cfg.CreateMap<PositionModel,ModelPosView>().ForMember(a=>a.Axis,b=>b.MapFrom(c=>$"{c.X}, {c.Y}, {c.Z}"));
+                cfg.CreateMap<PositionModel, InspectionView>();
                 cfg.CreateMap<PositionModel, RecordInspectionModel>();
                 cfg.CreateMap<PositionModel, PosView>();
                 });

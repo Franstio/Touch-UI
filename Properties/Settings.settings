@@ -47,5 +47,11 @@
     <Setting Name="SNResultPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">result/</Value>
     </Setting>
+    <Setting Name="SNLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)">sn/</Value>
+    </Setting>
+    <Setting Name="JudgementPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">res/</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

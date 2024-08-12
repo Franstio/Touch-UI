@@ -27,7 +27,8 @@ namespace TestTCP1.Forms
             InitializeComponent();
             positionModel = pos;
             this.isPassed = isPassed;
-            this.label1.Text = "Verification: " + positionModel.AreaInspection;
+            var data = dbCon.GetAreaImageByModel(pos.Model, pos.Pos).Result.First();
+            this.label1.Text = "Verification: " + data.AreaInspection;
             _img = img;
         }
 

@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             runningModel = new Label();
             groupBox2 = new GroupBox();
             panel7 = new Panel();
@@ -86,16 +84,13 @@
             Label = new DataGridViewTextBoxColumn();
             Serial = new DataGridViewTextBoxColumn();
             Decision = new DataGridViewTextBoxColumn();
-            button3 = new Button();
-            groupBox1 = new GroupBox();
-            serialGridView = new DataGridView();
-            No = new DataGridViewTextBoxColumn();
-            SerialNumber = new DataGridViewTextBoxColumn();
             groupBox10 = new GroupBox();
             button4 = new Button();
             comboBox1 = new ComboBox();
             button5 = new Button();
             button6 = new Button();
+            ngWatcher = new FileSystemWatcher();
+            snWatcher = new FileSystemWatcher();
             groupBox2.SuspendLayout();
             panel7.SuspendLayout();
             panel5.SuspendLayout();
@@ -121,9 +116,9 @@
             tableLayoutPanel8.SuspendLayout();
             groupBox9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inputSerialView).BeginInit();
-            groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)serialGridView).BeginInit();
             groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ngWatcher).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)snWatcher).BeginInit();
             SuspendLayout();
             // 
             // runningModel
@@ -423,7 +418,7 @@
             // 
             processTimeLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             processTimeLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
-            processTimeLabel.Location = new Point(670, 603);
+            processTimeLabel.Location = new Point(675, 455);
             processTimeLabel.Name = "processTimeLabel";
             processTimeLabel.Size = new Size(222, 31);
             processTimeLabel.TabIndex = 13;
@@ -708,7 +703,7 @@
             groupBox8.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox8.Controls.Add(tableLayoutPanel8);
             groupBox8.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox8.Location = new Point(669, 524);
+            groupBox8.Location = new Point(674, 376);
             groupBox8.Name = "groupBox8";
             groupBox8.Size = new Size(222, 77);
             groupBox8.TabIndex = 22;
@@ -819,73 +814,6 @@
             Decision.Name = "Decision";
             Decision.ReadOnly = true;
             // 
-            // button3
-            // 
-            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            button3.Location = new Point(6, 121);
-            button3.Name = "button3";
-            button3.Size = new Size(207, 29);
-            button3.TabIndex = 1;
-            button3.Text = "Submit";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            groupBox1.Controls.Add(serialGridView);
-            groupBox1.Controls.Add(button3);
-            groupBox1.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox1.Location = new Point(670, 368);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(222, 156);
-            groupBox1.TabIndex = 24;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Serial Input";
-            // 
-            // serialGridView
-            // 
-            serialGridView.AllowUserToAddRows = false;
-            serialGridView.AllowUserToDeleteRows = false;
-            serialGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            serialGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-            serialGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
-            serialGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
-            serialGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            serialGridView.Columns.AddRange(new DataGridViewColumn[] { No, SerialNumber });
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = SystemColors.Window;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle6.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
-            serialGridView.DefaultCellStyle = dataGridViewCellStyle6;
-            serialGridView.Location = new Point(6, 25);
-            serialGridView.Name = "serialGridView";
-            serialGridView.Size = new Size(207, 90);
-            serialGridView.TabIndex = 2;
-            // 
-            // No
-            // 
-            No.HeaderText = "No";
-            No.Name = "No";
-            No.ReadOnly = true;
-            No.Width = 48;
-            // 
-            // SerialNumber
-            // 
-            SerialNumber.HeaderText = "Serial Number";
-            SerialNumber.Name = "SerialNumber";
-            SerialNumber.Width = 112;
-            // 
             // groupBox10
             // 
             groupBox10.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -945,6 +873,19 @@
             button6.UseVisualStyleBackColor = true;
             button6.Click += button6_Click;
             // 
+            // ngWatcher
+            // 
+            ngWatcher.EnableRaisingEvents = true;
+            ngWatcher.NotifyFilter = NotifyFilters.FileName;
+            ngWatcher.SynchronizingObject = this;
+            // 
+            // snWatcher
+            // 
+            snWatcher.EnableRaisingEvents = true;
+            snWatcher.Filter = "*.txt";
+            snWatcher.NotifyFilter = NotifyFilters.FileName;
+            snWatcher.SynchronizingObject = this;
+            // 
             // DashboardControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -952,7 +893,6 @@
             Controls.Add(button6);
             Controls.Add(button5);
             Controls.Add(groupBox10);
-            Controls.Add(groupBox1);
             Controls.Add(groupBox9);
             Controls.Add(groupBox8);
             Controls.Add(tableLayoutPanel7);
@@ -1004,9 +944,9 @@
             tableLayoutPanel8.PerformLayout();
             groupBox9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)inputSerialView).EndInit();
-            groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)serialGridView).EndInit();
             groupBox10.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ngWatcher).EndInit();
+            ((System.ComponentModel.ISupportInitialize)snWatcher).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1064,19 +1004,16 @@
         private Label failCountLabel;
         private Label yieldLabel;
         private GroupBox groupBox9;
-        private Button button3;
         private DataGridView inputSerialView;
-        private GroupBox groupBox1;
-        private DataGridView serialGridView;
         private DataGridViewTextBoxColumn Label;
         private DataGridViewTextBoxColumn Serial;
         private DataGridViewTextBoxColumn Decision;
-        private DataGridViewTextBoxColumn No;
-        private DataGridViewTextBoxColumn SerialNumber;
         private GroupBox groupBox10;
         private Button button4;
         private ComboBox comboBox1;
         private Button button5;
         private Button button6;
+        private FileSystemWatcher ngWatcher;
+        private FileSystemWatcher snWatcher;
     }
 }

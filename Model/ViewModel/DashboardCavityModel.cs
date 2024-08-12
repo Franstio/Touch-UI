@@ -36,7 +36,6 @@ namespace TestTCP1.Model.ViewModel
                 X = model.X,
                 Y = model.Y,
                 Z = model.Z,
-                AreaInspection = model.AreaInspection,
                 CameraCheckpoint = model.CameraCheckpoint,
                 Model = model.Model,
                 Pos = model.Pos

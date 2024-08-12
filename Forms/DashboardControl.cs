@@ -20,30 +20,47 @@ namespace TestTCP1.Forms
 {
     public partial class DashboardControl : UserControl
     {
+        private CancellationTokenSource mainCts = new CancellationTokenSource();
+        private CancellationTokenSource cts = new CancellationTokenSource();
+        private CancellationTokenSource cTokenSource = new CancellationTokenSource();
         public string Model { get; private set; } = string.Empty;
+        private string prevStatus = string.Empty;
+        private List<string> ngImage = new List<string>();
+
+        private int? CamPoint = null;
+
         private readonly FileLib fileLib = new FileLib();
+        
         private readonly DbConn dbCon = new DbConn();
+        
         private readonly TCPConn mainConn = TCPConn.newInstance();
         private readonly TCPConn? livePositionConn = null;
+        
         private List<PositionModel> Positions = new List<PositionModel>();
-        private readonly IMarkPointDb markDb;
-        private int? CamPoint = null;
-        private readonly Mapper mapper = AutoMapConfig.GetMapper();
-        private List<MarkPointModel> markPoint = new List<MarkPointModel>();
-        private DateTime startTime = DateTime.Now;
-        private CancellationTokenSource cts = new CancellationTokenSource();
-        private TimeSpan delayTimer = TimeSpan.FromSeconds(1);
         private PositionModel _curPos = new PositionModel();
+
+        private readonly IMarkPointDb markDb;
+        private readonly Mapper mapper = AutoMapConfig.GetMapper();
+
+        private List<MarkPointModel> markPoint = new List<MarkPointModel>();
+
+        private DateTime startTime = DateTime.Now;
+        private TimeSpan delayTimer = TimeSpan.FromSeconds(1);
+
         private InspectionView _curInspectionView = new InspectionView();
+
         private readonly int DelayTimer = 0;
         private readonly int CameraDelay = 0;
+
         private CountViewModel countView = new CountViewModel();
-        //private TouchUITemp touchUITemp = new TouchUITemp();
+
         private DashboardCavityModel? cavities;
+
         private bool isRunning = false;
-        private CancellationTokenSource cTokenSource = new CancellationTokenSource();
         private bool isSensorActive = false;
-        private string prevStatus = string.Empty;
+        private Task ProcessTask = Task.CompletedTask;
+
+        private List<ImageAreaModel> areaData = new List<ImageAreaModel>();
 
         public DashboardControl()
         {
@@ -68,13 +85,10 @@ namespace TestTCP1.Forms
         public DashboardControl(string _Model)
         {
             InitializeComponent();
-
             DelayTimer = int.Parse(Properties.Settings.Default["DelayDashboardProcess"].ToString() ?? "0");
             CameraDelay = int.Parse(Properties.Settings.Default["NgCameraDelay"].ToString() ?? "0");
             markDb = dbCon;
             finalJudgeLabel.Text = string.Empty;
-            //            touchUITemp.Multiplier = 0;
-            //            touchUITemp.TargetPos = "X";
             livePositionConn = TCPConn.newInstance();
             livePositionConn.setLog(false);
             Model = _Model;
@@ -85,7 +99,7 @@ namespace TestTCP1.Forms
             inspectionListGridView.DataSource = dt;
             Task.Run(GetLivePosition, cts.Token);
             LoadCountView();
-
+            ngWatcher.Path = fileLib._filePath;
         }
         private async Task GetLivePosition()
         {
@@ -205,42 +219,7 @@ namespace TestTCP1.Forms
         }
         private async Task GetPos()
         {
-            /*if (cavities is not null)
-            {
-                label6.Invoke(delegate { label6.Text = string.Empty; });
-                foreach (var _cavity in cavities.Cavities)
-                {
-                    bool checkIfJudgementEmpty = _cavity.InspectionViews.Any(x => x.Judgement == string.Empty || x.Judgement == "" || x.Judgement is null);
-                    if (!checkIfJudgementEmpty && _cavity.InspectionViews.Count >= Positions.Count)
-                    {
-                        List<RecordInspectionModel> records = new List<RecordInspectionModel>();
-                        for (int i = 0; i < Positions.Count; i++)
-                        {
-                            RecordInspectionModel record = mapper.Map<RecordInspectionModel>(Positions[i]);
-                            record.ScanCode = _cavity.SerialNumber;
-                            record.Judgement = _cavity.InspectionViews[i].Judgement;
-                            record.Reason = _cavity.InspectionViews[i].Reason;
-                            record.FileName = (record.Judgement == "PASS" ? fileLib._savePath : fileLib._ngSavePath) + _cavity.InspectionViews[i].Image;
-                            await dbCon.SavePosRecord(record);
-                            records.Add(record);
-                        }
-                        string logname = await fileLib.GenerateLog(records, _cavity.SerialNumber);
-                        bool isValid = await fileLib.ValidateLog(_cavity.SerialNumber);
-                        if (!isValid)
-                        {
-                            MessageBox.Show("BOT tidak ditemukan", "Log Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            SwitchControlState("Error");
-                            return;
-
-                        }
-                        label6.Invoke(delegate
-                        {
-                            label6.Text += ";" + logname;
-                        });
-                    }
-                }
-            }*/
-            CavityModel? cavityModel = await dbCon.GetCAvity(Model);
+            CavityModel? cavityModel = await dbCon.GetCavity(Model);
 
             if (cavityModel is null)
                 return;
@@ -259,6 +238,7 @@ namespace TestTCP1.Forms
         {
 
             Positions = await dbCon.GetPositionByModel(Model);
+            areaData = await dbCon.GetAreaImageByModel(Model);
             cavities = new DashboardCavityModel(cavityModel, Positions);
             Positions = cavities.Cavities.First().Models;
             comboBox1.Invoke(delegate
@@ -266,7 +246,11 @@ namespace TestTCP1.Forms
                 comboBox1.SelectedIndex = comboBox1.Items.IndexOf(cavities.Cavity.CavityTotal.ToString());
             });
             cavities.CurrentCavityItem.InspectionViews = mapper.Map<List<InspectionView>>(Positions);
-
+            for (int i=0;i<cavities.CurrentCavityItem.InspectionViews.Count;i++)
+            {
+                var cur = Positions[i];
+                cavities.CurrentCavityItem.InspectionViews[i].Area = areaData.Where(x => x.Position == cur.Pos).First().AreaInspection;
+            }
         }
         private async Task TriggerCamPoint()
         {
@@ -309,24 +293,6 @@ namespace TestTCP1.Forms
                     break;
             }
         }
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.Enter)
-                return;
-            finalJudgeLabel.Text = string.Empty;
-            areaLabel.Text = string.Empty;
-            decisionLabel.Text = string.Empty;
-            processTimeLabel.Invoke(new Action(() => processTimeLabel.Text = "Process Time: 00:00:00"));
-            actualPictureBox.Image = null;
-            parameterPictureBox.Image = null;
-            startTime = DateTime.Now;
-            processTimer.Enabled = true;
-            processTimer.Start();
-            Task.Run(delegate
-            {
-                ScanRun();
-            });
-        }
         private void LoadInspectionToGrid()
         {
 
@@ -337,21 +303,8 @@ namespace TestTCP1.Forms
         }
         private async Task ScanRun()
         {
-            await GetPos();
-            LoadCavityGridTable(false);
-            cavities!.CurrentCavity = 0;
-            SwitchControlState("waiting");
             string res = string.Empty;
-            await mainConn.SendCommand("WR MR002 1");
-            await mainConn.SendCommand("WR MR004 1");
-            do
-            {
-
-                if (cTokenSource.IsCancellationRequested)
-                    return;
-                res = await mainConn.SendCommand($"RD MR8000");
-            }
-            while (!res.Contains("1") && !res.Contains("ok"));
+            await GetPos();
             for (int i = 0; i < cavities!.Cavity.CavityTotal && !cTokenSource.IsCancellationRequested; i++)
             {
                 cavities!.CurrentCavity = i;
@@ -364,22 +317,6 @@ namespace TestTCP1.Forms
                 });
 
                 await RunProcess(i);
-                if (!cTokenSource.IsCancellationRequested)
-                    this.Invoke(new Action(() =>
-                    {
-                        bool finalJudge = cavities.CurrentCavityItem.InspectionViews.Select(x => x.Judgement).Any(x => x.Contains("NG"));
-                        inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
-                        inputSerialView[2, cavities.CurrentCavity].Value = finalJudge ? "FAIL" : "PASS";
-                        finalJudgeLabel.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
-                        finalJudgeLabel.Text = finalJudge ? "FAIL" : "PASS";
-                        countView.Count++;
-                        if (finalJudge)
-                            countView.Fail++;
-                        else
-                            countView.Pass++;
-                        countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
-                        LoadCountView();
-                    }));
             }
             string res1, res2;
             do
@@ -395,21 +332,6 @@ namespace TestTCP1.Forms
 
             processTimer.Stop();
             processTimer.Enabled = false;
-            if (cavities!.isCavitiesPass())
-                await LogWrite();
-            else
-            {
-                Invoke(delegate
-                {
-                    statusLabel.Text = "Complete (Need Verification)";
-                    button6.Enabled = true;
-                });
-            }
-            this.Invoke(new Action(() =>
-            {
-                ClearSerialGrid();
-                //touchUITemp.Multiplier = touchUITemp.Multiplier + 1;
-            }));
         }
         private async Task ShowLogPopup()
         {
@@ -422,9 +344,10 @@ namespace TestTCP1.Forms
 
             actualPictureBox.Image = null;
             parameterPictureBox.Image = null;
-            serialGridView.Rows.Clear();
-            for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
-                serialGridView.Rows.Add(new object[] { i + 1, string.Empty });
+        }
+        private ImageAreaModel getArea(PositionModel pos)
+        {
+            return areaData.Where(x => x.Position == pos.Pos && x.Model == pos.Model).First();
         }
         private async Task RunProcess(int cavityNo)
         {
@@ -437,35 +360,10 @@ namespace TestTCP1.Forms
                 var _pos = /*Model.ToLower()=="touch-ui" ? touchUITemp.Setup( Positions[i]) :*/ Positions[i];
                 await StartProcess(_pos);
                 Task.Run(() => LoadImage(Positions[i]), cTokenSource.Token);
-                var _isPassed = await Trigger(_pos.CameraCheckpoint);
-                if (_isPassed is null || cTokenSource.IsCancellationRequested)
-                    return;
-                bool isPassed = _isPassed!.Value;
-                cavities.CurrentCavityItem.InspectionViews[i].Judgement = isPassed ? "PASS" : "NG";
-                string localImage = await dbCon.GetLocalImage(_pos);
 
                 int temp = Convert.ToInt32(i.ToString());
-                cavities.CurrentCavityItem.InspectionViews[temp].Image = isPassed ? localImage : await GetTriggerImgPath();
-                cavities!.AddToImageList(cavityNo, Positions[temp].AreaInspection, localImage, cavities.CurrentCavityItem.InspectionViews[temp].Image);
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                RecordInspectionModel record = mapper.Map<RecordInspectionModel>(_pos);
-                record.ScanCode = inputSerialView.Rows[cavityNo].Cells[1].Value.ToString() ?? string.Empty;
-                record.Judgement = cavities.CurrentCavityItem.InspectionViews[i].Judgement;
-
-                this.inspectionListGridView.Invoke(new Action(() =>
-                {
-                    LoadInspectionToGrid();
-                }));
-
-                this.areaLabel.Invoke(new Action(() => areaLabel.Text = _pos.AreaInspection));
-                this.decisionLabel.Invoke(new Action(() =>
-                {
-                    decisionLabel.Text = record.Judgement;
-                    decisionLabel.ForeColor = isPassed ? Color.Lime : Color.DarkRed;
-                }));
+                this.areaLabel.Invoke(new Action(() => areaLabel.Text = getArea(_pos).AreaInspection));
                 /*#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                                 Task.Run(new Action(() =>
                                 {
@@ -622,15 +520,16 @@ namespace TestTCP1.Forms
                 if (markPoint.Count > 1 && markPoint[0].Position == 1)
                     LoadMarking(markPoint[0]);
             }
-
+            ngWatcher.Created += NGWatcherEvent;
+            snWatcher.Created += SNWatcherEvent;
             LoadCavityGridTable();
+            ProcessTask = Task.Run(LoopProcess);
+
         }
         private void LoadCavityGridTable(bool reset = true) => Invoke(delegate
         {
             if (reset) inputSerialView.Rows.Clear();
-            serialGridView.Rows.Clear();
-            inputSerialView.Refresh();
-            serialGridView.Refresh();
+
             if (cavities is null)
                 return;
             for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
@@ -651,10 +550,8 @@ namespace TestTCP1.Forms
 
                     }
                 }
-                serialGridView.Rows.Add(new object[] { i + 1, string.Empty });
             }
             inputSerialView.Refresh();
-            serialGridView.Refresh();
 
         });
         private async Task<decimal> LoadValue(string command, decimal defaultValue)
@@ -815,8 +712,8 @@ namespace TestTCP1.Forms
                     return;
                 if (frm.resultVerification)
                 {
-                    var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
-                    cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection] = new Tuple<string, string>(tup.Item1, tup.Item1);
+                    var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[getArea(_curPos).AreaInspection];
+                    cavities!.Cavities[cavities.CurrentCavity].ImageList[getArea(_curPos).AreaInspection] = new Tuple<string, string>(tup.Item1, tup.Item1);
                     //                    await dbCon.SaveImage(pos.Model, pos.Pos, frm._image);
                     //                    fileLib.SaveImage(frm._imageFull, frm._image);
                 }
@@ -860,8 +757,8 @@ namespace TestTCP1.Forms
                     return;
                 string prevJudgement = inputSerialView[2, cavities.CurrentCavity].Value.ToString()!;
 
-                var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
-                cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection] = new Tuple<string, string>(tup.Item1, tup.Item1);
+                var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[getArea(_curPos).AreaInspection];
+                cavities!.Cavities[cavities.CurrentCavity].ImageList[getArea(_curPos).AreaInspection] = new Tuple<string, string>(tup.Item1, tup.Item1);
 
                 cavities.CurrentCavityItem.InspectionViews[index].Judgement = "PASS";
                 LoadInspectionToGrid();
@@ -919,7 +816,7 @@ namespace TestTCP1.Forms
                         cavities.CurrentCavityItem.InspectionViews[index].Reason = reason;
                     }
                 }
-                var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[_curPos.AreaInspection];
+                var tup = cavities!.Cavities[cavities.CurrentCavity].ImageList[getArea(_curPos).AreaInspection];
                 string prevJudgement = inputSerialView[2, cavities.CurrentCavity].Value.ToString()!;
                 //string name = Path.GetFileName(tup.Item2);
                 //await dbCon.SaveImage(_curPos.Model, _curPos.Pos, name);
@@ -961,11 +858,11 @@ namespace TestTCP1.Forms
             MarkPointModel? mark = markPoint.Where(x => x.Position == pcur.Pos).FirstOrDefault();
             if (mark is not null)
                 LoadImage(pcur, 0);
-            var res = cavities!.CurrentCavityItem.InspectionViews.Where(x => x.Area == pcur.AreaInspection).FirstOrDefault();
+            var res = cavities!.CurrentCavityItem.InspectionViews.Where(x => x.Area == getArea(pcur).AreaInspection).FirstOrDefault();
 
-            if (!cavities!.Cavities[cavities.CurrentCavity].ImageList.ContainsKey(pcur.AreaInspection))
+            if (!cavities!.Cavities[cavities.CurrentCavity].ImageList.ContainsKey(getArea(pcur).AreaInspection))
                 return;
-            var img = cavities!.Cavities[cavities.CurrentCavity].ImageList[pcur.AreaInspection];
+            var img = cavities!.Cavities[cavities.CurrentCavity].ImageList[getArea(pcur).AreaInspection];
             if (res is null)
                 return;
             button1.Enabled = res.Judgement != "PASS";
@@ -979,69 +876,148 @@ namespace TestTCP1.Forms
             _curPos = pcur;
             _curInspectionView = res;
         }
-
-        private void button3_Click(object sender, EventArgs e)
+        protected override void OnLeave(EventArgs e)
         {
-            cTokenSource.Dispose();
-            cTokenSource = new CancellationTokenSource();
-            finalJudgeLabel.Text = string.Empty;
-            areaLabel.Text = string.Empty;
-            decisionLabel.Text = string.Empty;
-            processTimeLabel.Invoke(new Action(() => processTimeLabel.Text = "Process Time: 00:00:00"));
-            actualPictureBox.Image = null;
-            parameterPictureBox.Image = null;
-            startTime = DateTime.Now;
-            processTimer.Enabled = true;
-            processTimer.Start();
-            string[] serialCheck = new string[serialGridView.Rows.Count];
-            for (int i = 0; i < serialGridView.Rows.Count; i++)
+            base.OnLeave(e);
+            mainCts.Cancel();
+        }
+        private async Task LoopProcess()
+        {
+            mainCts = new CancellationTokenSource();
+            while (!mainCts.IsCancellationRequested)
             {
-                var val = serialGridView[1, i].Value.ToString();
-                if (val is null || val == string.Empty || val.Trim().Replace(" ", "").Length < 1)
+                await GetPos();
+                LoadCavityGridTable(false);
+                cavities!.CurrentCavity = 0;
+                SwitchControlState("waiting");
+                string res = string.Empty;
+                await mainConn.SendCommand("WR MR002 1");
+                await mainConn.SendCommand("WR MR004 1");
+                do
                 {
-                    MessageBox.Show("Please fill all of serial numbers first");
-                    return;
-                }
 
-                inputSerialView[1, i].Value = serialGridView[1, i].Value.ToString();
-                inputSerialView[2, i].Value = "-";
-                inputSerialView[2, i].Style.ForeColor = Color.Black;
-                inputSerialView.Refresh();
-                cavities!.Cavities[i].SerialNumber = val;
-                serialCheck[i] = val;
-            }
-            if (serialCheck.Length != serialCheck.Distinct().Count())
-            {
-                MessageBox.Show("Duplicate serial detected");
-                return;
-            }
-            button3.Enabled = false;
-            button4.Enabled = false;
-            button6.Enabled = false;
-
-            isRunning = true;
-            Task.Run(async delegate
-            {
-                try
-                {
-                    await ScanRun();
+                    if (cTokenSource.IsCancellationRequested)
+                        return;
+                    res = await mainConn.SendCommand($"RD MR8000");
                 }
-                catch (SqlException)
-                {
-                    Invoke(delegate
-                    {
-                        MessageBox.Show("SQL Error, Please Restart SQL Service", "SQL Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    });
-                }
+                while (!res.Contains("1") && !res.Contains("ok"));
+                isRunning = true;
                 Invoke(delegate
                 {
-                    button3.Enabled = true;
-                    button4.Enabled = true;
-                    isRunning = false;
+                    cTokenSource.Dispose();
+                    cTokenSource = new CancellationTokenSource();
+                    finalJudgeLabel.Text = string.Empty;
+                    areaLabel.Text = string.Empty;
+                    decisionLabel.Text = string.Empty;
+                    processTimeLabel.Invoke(new Action(() => processTimeLabel.Text = "Process Time: 00:00:00"));
+                    actualPictureBox.Image = null;
+                    parameterPictureBox.Image = null;
+                    startTime = DateTime.Now;
+                    processTimer.Enabled = true;
+                    processTimer.Start();
+                    button4.Enabled = false;
+                    button6.Enabled = false;
                 });
-            }, cancellationToken: cTokenSource.Token);
-        }
+                await ScanRun();
+                int loading = 0;
+                while (isRunning)
+                {
+                    loading = (loading + 1) % 6;
+                    statusLabel.Text = "loading" + new string('.', loading);
+                }
+                if (cavities!.isCavitiesPass())
+                    await LogWrite();
+                else
+                {
 
+                    Invoke(delegate
+                    {
+                        statusLabel.Text = "Complete (Need Verification)";
+                        button6.Enabled = true;
+                    });
+                    
+                }
+            }
+        }
+        private void NGWatcherEvent(object sender,FileSystemEventArgs e)
+        {
+            if (e.Name is null && !isRunning)
+                return;
+            ngImage.Add(e.Name!);
+        }
+        private async void SNWatcherEvent(object sender,FileSystemEventArgs e)
+        {
+            if (e.Name is null && !isRunning)
+                return;
+            string[] text = File.ReadAllLines(e.Name);
+            for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
+            {
+                string[] judgement = text[i].Replace(",#", "").Split(',');
+                string sn = text[i + 1].Replace(",#", "");
+                inputSerialView[1, i].Value = sn;
+                inputSerialView[2, i].Value = judgement.Any(x=>x!="0") ? "FAIL" : "PASS";
+                inputSerialView[2, i].Style.ForeColor = judgement.Any(x=>x!="0") ? Color.DarkRed : Color.LimeGreen;
+                inputSerialView.Refresh();
+                cavities!.Cavities[i].SerialNumber = sn;
+                int ngCount = 0;
+                for (int j = 0; j < judgement.Length; j++)
+                {
+                    bool isPassed = judgement[j] == "0";
+                    cavities.Cavities[i].InspectionViews[j].Judgement = isPassed ? "PASS" : "NG";
+                    string localImage = await dbCon.GetLocalImage(Positions[j]);
+                    cavities.CurrentCavityItem.InspectionViews[j].Image = isPassed ? localImage : ngImage[ngCount];
+                    ngCount = isPassed ? ngCount : ngCount + 1;
+                    cavities!.AddToImageList(j + 1, getArea(Positions[j]).AreaInspection, localImage, cavities.CurrentCavityItem.InspectionViews[j].Image);
+
+                    RecordInspectionModel record = mapper.Map<RecordInspectionModel>(Positions[j]);
+                    record.ScanCode = inputSerialView.Rows[j + 1].Cells[1].Value.ToString() ?? string.Empty;
+                    record.Judgement = cavities.CurrentCavityItem.InspectionViews[i].Judgement;
+                }
+                this.inspectionListGridView.Invoke(new Action(() =>
+                {
+                    LoadInspectionToGrid();
+                }));
+                this.Invoke(new Action(() =>
+                {
+                    bool finalJudge = cavities.CurrentCavityItem.InspectionViews.Select(x => x.Judgement).Any(x => x.Contains("NG"));
+                    inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
+                    inputSerialView[2, cavities.CurrentCavity].Value = finalJudge ? "FAIL" : "PASS";
+                    finalJudgeLabel.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
+                    finalJudgeLabel.Text = finalJudge ? "FAIL" : "PASS";
+                    countView.Count++;
+                    if (finalJudge)
+                        countView.Fail++;
+                    else
+                        countView.Pass++;
+                    countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
+                    LoadCountView();
+                }));
+
+            }
+            this.Invoke(new Action(() =>
+            {
+                bool finalJudge = cavities.CurrentCavityItem.InspectionViews.Select(x => x.Judgement).Any(x => x.Contains("NG"));
+                inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
+                inputSerialView[2, cavities.CurrentCavity].Value = finalJudge ? "FAIL" : "PASS";
+                finalJudgeLabel.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
+                finalJudgeLabel.Text = finalJudge ? "FAIL" : "PASS";
+                countView.Count++;
+                if (finalJudge)
+                    countView.Fail++;
+                else
+                    countView.Pass++;
+                countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
+                LoadCountView();
+            }));
+            isRunning = false;
+            Invoke(delegate
+            {
+                button4.Enabled = true;
+                isRunning = false;
+            });
+        }
+        
+        
         private void inputSerialView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || isRunning)
@@ -1066,7 +1042,7 @@ namespace TestTCP1.Forms
                 var cModel = cavities!.Cavity;
                 cModel.CavityTotal = int.Parse(comboBox1.Text);
                 await dbCon.SaveCavity(Model, cModel);
-                cModel = await dbCon.GetCAvity(Model);
+                cModel = await dbCon.GetCavity(Model);
                 if (cModel is null)
                     return;
                 await ReloadCavity(cModel);
@@ -1089,7 +1065,6 @@ namespace TestTCP1.Forms
                 await GetPos();
                 Invoke(delegate
                 {
-                    button3.Enabled = true;
                     button4.Enabled = true;
                     isRunning = false;
                     statusLabel.Text = "Cancelled...";

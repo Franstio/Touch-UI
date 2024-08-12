@@ -40,6 +40,7 @@ namespace TestTCP1.Forms
         private readonly int CameraDelay = 0;
         private decimal activePitching = 0;
         private int activeCavity = 1;
+        private List<ImageAreaModel> areaData = new List<ImageAreaModel>();
         private Dictionary<string, Dictionary<string, string>> CommandDict = new Dictionary<string, Dictionary<string, string>>
         {
             ["JOG"] = new Dictionary<string, string>
@@ -82,17 +83,40 @@ namespace TestTCP1.Forms
             runningModel.Text = $"Model: {Model}";
 
             checkMinusButton();
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Point");
-            dt.Columns.Add("Area");
-            dt.Columns.Add("Camera Set");
-            dt.Columns.Add("Axis (X,Y,Z)");
-            parameterDatsGridView.DataSource = dt; ;
+
+            parameterDatsGridView.DataSource = LoadParamterGridView();
+            LoadInspectionAreGridView();
             Task.Run(LoadLivePosition, tokenSource.Token);
             selectedCommand = CommandDict["JOG"];
             _buttons = this.groupBox4.Controls.Cast<Control>().Where(x => x.GetType() == typeof(Button)).Cast<Button>().ToArray();
             DelayTimer = int.Parse(Properties.Settings.Default["DelaySettingParameter"].ToString() ?? "0");
             CameraDelay = int.Parse(Properties.Settings.Default["CameraDelay"].ToString() ?? "0");
+        }
+        private DataTable LoadParamterGridView()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Point");
+            dt.Columns.Add("Camera Set");
+            dt.Columns.Add("Axis (X,Y,Z)");
+            return dt;
+        }
+        private void LoadInspectionAreGridView()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Area");
+            dt.Columns.Add("Image");
+            for (int i = 0; i < areaData.Count; i++)
+                dt.Rows.Add(new object[] { areaData[i].AreaInspection, "View" });
+            if (inspectionAreaList.IsHandleCreated)
+            inspectionAreaList.Invoke(delegate
+            {
+
+                inspectionAreaList.DataSource = null;
+                inspectionAreaList.Refresh();
+
+                inspectionAreaList.DataSource = dt;
+                inspectionAreaList.Refresh();
+            });
         }
         private async Task LoadLivePosition()
         {
@@ -134,7 +158,7 @@ namespace TestTCP1.Forms
             fileLib.FolderCode = cPoint ?? 1;
             camPoint.Invoke(new Action(() => camPoint.Value = cPoint ?? 1));
             await LoadJogState("JOG");
-            var data = await dbCon.GetCAvity(Model);
+            var data = await dbCon.GetCavity(Model);
             activePitching = data?.Pitching ?? 0;
             activeCavity = 1;
             activeCavityBox.Maximum = data?.CavityTotal ?? 1;
@@ -157,6 +181,7 @@ namespace TestTCP1.Forms
             if (!livePositionConn.IsRunning())
                 await livePositionConn.StartConnection();
             var res = await dbCon.GetPositionByModel(Model);
+            areaData = await dbCon.GetAreaImageByModel(Model);
             if (res is null || res.Count < 1)
             {
                 curModel.Pos = 1;
@@ -172,23 +197,19 @@ namespace TestTCP1.Forms
             Positions = res;
             var v = map.Map<List<ModelPosView>>(res);
             parameterDatsGridView.DataSource = v;
-            parameterDatsGridView.Columns[3].HeaderText = "Axis (X,Y,Z)";
+            parameterDatsGridView.Columns[2].HeaderText = "Axis (X,Y,Z)";
             parameterDatsGridView.Refresh();
             curModel.Pos = v.Select(x => x.Pos).Max() + 1;
             pointLabel.Invoke(new Action(() =>
             {
                 pointLabel.Text = "Point: " + curModel.Pos;
             }));
-            inspectionAreaBox.Invoke(new Action(() =>
-            {
-                inspectionAreaBox.Text = "";
-            }));
             cameraTriggerBox.Invoke(new Action(() =>
             {
                 cameraTriggerBox.Text = "";
             }));
+            LoadInspectionAreGridView();
         }
-
         private async void moveCoordinate(object sender, EventArgs e)
         {
             Button b = (Button)sender;
@@ -306,16 +327,12 @@ namespace TestTCP1.Forms
             button12.Invoke(new Action(() => { button12.Enabled = false; }));
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
             curModel.Model = Model;
-            curModel.AreaInspection = inspectionAreaBox.Text;
             curModel.X = (curModel.X * 20 / 1600) - ((activeCavity - 1) * activePitching);
             curModel.Y = curModel.Y * 20 / 1600;
             curModel.Z = curModel.Z * 20 / 1600;
             PosView v = map.Map<PosView>(curModel);
             v.CameraPoint = int.Parse(camPoint.Value.ToString());
             await dbCon.SavePosition(v);
-            await dbCon.SaveImage(curModel.Model, curModel.Pos, _image);
-            fileLib.SaveImage(_imageFull, _image);
-            pictureBox1.Invoke(new Action(() => pictureBox1.Image = null));
             await ReloadData();
             button12.Invoke(new Action(() => { button12.Enabled = true; }));
         }
@@ -330,61 +347,17 @@ namespace TestTCP1.Forms
             var pv = map.Map<PosView>(curModel);
             await dbCon.SaveCamPoint(pv, int.Parse(camPoint.Value.ToString()));
         }
-        private async void button11_Click(object sender, EventArgs e)
-        {
-            this.button11.Invoke(new Action(() => { button11.Enabled = false; }));
-            curModel.AreaInspection = inspectionAreaBox.Text;
-            curModel.CameraCheckpoint = cameraTriggerBox.Text;
-            await mainConn.SendCommand($"WR W0F2 {cameraTriggerBox.Text}");
-            await mainConn.SendCommand("WR MR400 1");
-            await Task.Delay(CameraDelay);
-            await mainConn.SendCommand("WR MR400 0");
-            //            MessageBox.Show("Send Trigger Command Complete", "Send Trigger Command");
-            await Task.Delay(DelayTimer);
-            await GetTriggerImage(curModel);
-            this.button11.Invoke(new Action(() => { button11.Enabled = true; }));
-        }
-        private async Task GetTriggerImage(PositionModel data)
-        {
-            string foldername = $"{DateTime.Now.ToString("yyMMdd")}";
-            string[] folders = fileLib.GetFolders(foldername);
-            if (folders.Length < 1)
-            {
-                MessageBox.Show($"No Folder with prefix {foldername} Found", "Error");
-                return;
-            }
-            string latestDir = Path.Combine(folders[0], "CAM1");
-            string[] img = await fileLib.GetFiles(latestDir);
-            if (img.Length < 1)
-                return;
-            FileInfo file = new FileInfo(img[0]);
-            _image = file.Name;
-            _imageFull = img[0];
-            pictureBox1.Invoke(new Action(() =>
-            {
-                try
-                {
-                    pictureBox1.Image = Image.FromFile(img[0]);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-            }));
-
-        }
         private async void button2_Click(object sender, EventArgs e)
         {
 
             button2.Invoke(new Action(() => { button2.Enabled = false; }));
             int newPos = int.Parse(insertAfter.Value.ToString());
             curModel.Pos = newPos + 1;
-            curModel.AreaInspection = inspectionAreaBox.Text;
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
 
             curModel.X = (curModel.X * 20 / 1600) - ((activeCavity - 1) * activePitching);
-            curModel.Y = curModel.Y *20/ 1600 ;
-            curModel.Z = curModel.Z *20/ 1600 ;
+            curModel.Y = curModel.Y * 20 / 1600;
+            curModel.Z = curModel.Z * 20 / 1600;
             PosView v = map.Map<PosView>(curModel);
 
             v.CameraPoint = int.Parse(camPoint.Value.ToString());
@@ -406,7 +379,7 @@ namespace TestTCP1.Forms
         {
             //string res = string.Empty;
             curModel = new PositionModel(_data);
-            curModel.X = (_data.X + ( (activeCavity - 1) * activePitching) ) * 1600 / 20;
+            curModel.X = (_data.X + ((activeCavity - 1) * activePitching)) * 1600 / 20;
             curModel.Y = _data.Y * 1600 / 20;
             curModel.Z = _data.Z * 1600 / 20;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -429,9 +402,6 @@ namespace TestTCP1.Forms
             await mainConn.SendCommand($"WR MR800 1");
             await Task.Delay(DelayTimer);
             await mainConn.SendCommand($"WR MR800 0");
-
-            string img = await dbCon.GetLocalImage(curModel);
-            pictureBox1.Invoke(new Action(() => pictureBox1.Image = fileLib.ReadImage(img, true)));
             this.button1.Invoke(new Action(() => { button1.Enabled = true; }));
         }
         private async void button1_Click(object sender, EventArgs e)
@@ -458,7 +428,6 @@ namespace TestTCP1.Forms
             {
                 pointLabel.Text = "Point: " + curModel.Pos;
                 cameraTriggerBox.Text = curModel.CameraCheckpoint;
-                inspectionAreaBox.Text = curModel.AreaInspection;
                 xLabel.Text = $"X: {(curModel.X / 1600 * 20).ToString("0.00")} mm";
                 yLabel.Text = $"Y: {(curModel.Y / 1600 * 20).ToString("0.00")} mm";
                 zLabel.Text = $"Z: {(curModel.Z / 1600 * 20).ToString("0.00")} mm";
@@ -597,7 +566,7 @@ namespace TestTCP1.Forms
             });
             await dbCon.SaveCavity(Model, new TestTCP1.Model.ViewModel.CavityModel() { CavityTotal = int.Parse(cavityBox.Value.ToString() ?? "0"), Pitching = pitchingBox.Value });
 
-            var data = await dbCon.GetCAvity(Model);
+            var data = await dbCon.GetCavity(Model);
             activePitching = data?.Pitching ?? 0;
             button17.Invoke(delegate
             {
@@ -627,6 +596,48 @@ namespace TestTCP1.Forms
         private void panel4_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+            AreaImageForm frm = new AreaImageForm(Model, false, false, -1);
+            var dialog = frm.ShowDialog();
+            if (dialog == DialogResult.OK)
+            {
+                ReloadData();
+            }
+        }
+
+        private void button22_Click(object sender, EventArgs e)
+        {
+            AreaImageForm frm = new AreaImageForm(Model, true, false, -1);
+            var dialog = frm.ShowDialog();
+            if (dialog == DialogResult.OK)
+            {
+                ReloadData();
+            }
+        }
+
+        private void inspectionAreaList_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            foreach (DataGridViewRow row in inspectionAreaList.Rows)
+            {
+                row.Cells["Image"] = new DataGridViewLinkCell();
+            }
+        }
+
+        private async void inspectionAreaList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 1 && e.RowIndex >= 0)
+            {
+                await ReloadData();
+                AreaImageForm frm = new AreaImageForm(Model, false, true, e.RowIndex+1);
+                var dialog = frm.ShowDialog();
+                if (dialog == DialogResult.OK)
+                {
+                    ReloadData();
+                }
+            }
         }
     }
 }
