@@ -9,7 +9,8 @@ namespace TestTCP1.Model
     public class ImageAreaModel
     {
         public string Model { get; set; } = string.Empty;
-        public int Position { get; set; } = 1;
+        public int Position { get; set; } = -1;
+        public int No { get; set; } = -1;
         public string AreaInspection { get; set; } = string.Empty;
         public string Image { get; set;} = string.Empty;    
     }

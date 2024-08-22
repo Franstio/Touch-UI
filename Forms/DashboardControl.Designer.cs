@@ -260,6 +260,7 @@
             inspectionListGridView.Dock = DockStyle.Fill;
             inspectionListGridView.Location = new Point(3, 24);
             inspectionListGridView.Margin = new Padding(3, 2, 3, 2);
+            inspectionListGridView.MultiSelect = false;
             inspectionListGridView.Name = "inspectionListGridView";
             inspectionListGridView.ReadOnly = true;
             inspectionListGridView.RowHeadersWidth = 51;

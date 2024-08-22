@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            positionBox = new ComboBox();
+            label2 = new Label();
             areaNameBox = new ComboBox();
             actionButton = new Button();
             panelNewArea = new TableLayoutPanel();
@@ -49,29 +51,53 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(positionBox);
+            groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(areaNameBox);
             groupBox1.Controls.Add(actionButton);
             groupBox1.Controls.Add(panelNewArea);
             groupBox1.Controls.Add(label1);
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(502, 120);
+            groupBox1.Size = new Size(502, 149);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Area Inspection";
             // 
+            // positionBox
+            // 
+            positionBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            positionBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            positionBox.FormattingEnabled = true;
+            positionBox.Location = new Point(107, 48);
+            positionBox.Name = "positionBox";
+            positionBox.Size = new Size(386, 23);
+            positionBox.TabIndex = 8;
+            // 
+            // label2
+            // 
+            label2.Location = new Point(6, 48);
+            label2.Name = "label2";
+            label2.Size = new Size(79, 23);
+            label2.TabIndex = 7;
+            label2.Text = "Position:";
+            label2.TextAlign = ContentAlignment.MiddleLeft;
+            // 
             // areaNameBox
             // 
+            areaNameBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             areaNameBox.FormattingEnabled = true;
             areaNameBox.Location = new Point(107, 19);
             areaNameBox.Name = "areaNameBox";
             areaNameBox.Size = new Size(389, 23);
             areaNameBox.TabIndex = 6;
+            areaNameBox.SelectedIndexChanged += areaNameBox_SelectedIndexChanged;
+            areaNameBox.TextUpdate += areaNameBox_TextUpdate;
             // 
             // actionButton
             // 
             actionButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            actionButton.Location = new Point(303, 84);
+            actionButton.Location = new Point(303, 120);
             actionButton.Name = "actionButton";
             actionButton.Size = new Size(193, 23);
             actionButton.TabIndex = 5;
@@ -89,7 +115,7 @@
             panelNewArea.Controls.Add(label3, 0, 0);
             panelNewArea.Controls.Add(button1, 1, 0);
             panelNewArea.Controls.Add(button2, 2, 0);
-            panelNewArea.Location = new Point(6, 45);
+            panelNewArea.Location = new Point(6, 81);
             panelNewArea.Name = "panelNewArea";
             panelNewArea.RowCount = 1;
             panelNewArea.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -152,9 +178,9 @@
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox2.Controls.Add(areaImage);
-            groupBox2.Location = new Point(12, 138);
+            groupBox2.Location = new Point(12, 167);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(502, 295);
+            groupBox2.Size = new Size(502, 308);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Area Image";
@@ -164,7 +190,7 @@
             areaImage.Dock = DockStyle.Fill;
             areaImage.Location = new Point(3, 19);
             areaImage.Name = "areaImage";
-            areaImage.Size = new Size(496, 273);
+            areaImage.Size = new Size(496, 286);
             areaImage.SizeMode = PictureBoxSizeMode.Zoom;
             areaImage.TabIndex = 0;
             areaImage.TabStop = false;
@@ -173,7 +199,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(526, 445);
+            ClientSize = new Size(526, 487);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Name = "AreaImageForm";
@@ -201,5 +227,7 @@
         private FileSystemWatcher triggerWatcher;
         private GroupBox groupBox2;
         private PictureBox areaImage;
+        private ComboBox positionBox;
+        private Label label2;
     }
 }

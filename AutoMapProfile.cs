@@ -18,6 +18,7 @@ namespace TestTCP1
                 cfg.CreateMap<PositionModel, InspectionView>();
                 cfg.CreateMap<PositionModel, RecordInspectionModel>();
                 cfg.CreateMap<PositionModel, PosView>();
+                cfg.CreateMap<ImageAreaModel,InspectionView>().ForMember(a=>a.Area,b=>b.MapFrom(c=>c.AreaInspection)).ForMember(a=>a.Image,b=>b.MapFrom(c=>c.Image));
                 });
             return new Mapper(config);
         }

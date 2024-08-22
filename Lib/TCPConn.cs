@@ -98,36 +98,32 @@ namespace TestTCP1.Lib
         {
             if (!IsRunning())
                 await StartConnection();
-            int tryCount = 0;
 
-            do
-            {
                 try
                 {
                     string msg = string.Empty;
                     do
                     {
                         byte[] buffer = Encoding.ASCII.GetBytes($"{cmd}\r\n");
-                        Debug.WriteLineIf(log, $"Writing {cmd} Command, Count: {tryCount + 1}");
+                        Debug.WriteLineIf(log, $"Writing {cmd} Command");
+                        await _tcpClient.GetStream().FlushAsync();
                         await _tcpClient.GetStream().WriteAsync(buffer, 0, buffer.Length);
                         await _tcpClient.GetStream().FlushAsync();
                         //Thread.Sleep(100);
                         msg = await ReadIncomingMsg(cmd);
-                        tryCount = tryCount + 1;
+
                     }
-                    while ((msg.Contains("E1") || msg == string.Empty) && tryCount <= 7);
-                    return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty);
+                    while ((msg.Contains("E1") || msg == string.Empty) );
+                await Task.Delay(10);
+                    return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty).Trim().Replace("\r", "").Replace("\n", "");
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message + " " + ex.InnerException?.Message);
                     StopConnection();
                     await StartConnection();
-                    tryCount++;
+                    return await SendCommand(cmd);
                 }
-            }
-            while (tryCount <= 10);
-            return string.Empty;
         }
         private async Task<string> ReadIncomingMsg(string? logCommand=null)
         {
@@ -153,7 +149,7 @@ namespace TestTCP1.Lib
                 StopConnection();
                 await StartConnection();
 //                MessageBox.Show(ex.Message);
-                return string.Empty;
+                return await ReadIncomingMsg(logCommand);
             }
         }
     }

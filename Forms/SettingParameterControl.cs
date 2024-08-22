@@ -598,23 +598,23 @@ namespace TestTCP1.Forms
 
         }
 
-        private void button21_Click(object sender, EventArgs e)
+        private async void button21_Click(object sender, EventArgs e)
         {
-            AreaImageForm frm = new AreaImageForm(Model, false, false, -1);
+            AreaImageForm frm = new AreaImageForm(Model,null, false, false);
             var dialog = frm.ShowDialog();
             if (dialog == DialogResult.OK)
             {
-                ReloadData();
+                await ReloadData();
             }
         }
 
-        private void button22_Click(object sender, EventArgs e)
+        private async void button22_Click(object sender, EventArgs e)
         {
-            AreaImageForm frm = new AreaImageForm(Model, true, false, -1);
+            AreaImageForm frm = new AreaImageForm(Model,null, true, false);
             var dialog = frm.ShowDialog();
             if (dialog == DialogResult.OK)
             {
-                ReloadData();
+                await ReloadData();
             }
         }
 
@@ -631,11 +631,11 @@ namespace TestTCP1.Forms
             if (e.ColumnIndex == 1 && e.RowIndex >= 0)
             {
                 await ReloadData();
-                AreaImageForm frm = new AreaImageForm(Model, false, true, e.RowIndex+1);
+                AreaImageForm frm = new AreaImageForm(Model, inspectionAreaList[0,e.RowIndex].Value.ToString(), false, true);
                 var dialog = frm.ShowDialog();
                 if (dialog == DialogResult.OK)
                 {
-                    ReloadData();
+                    await ReloadData();
                 }
             }
         }

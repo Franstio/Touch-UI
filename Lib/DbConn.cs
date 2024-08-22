@@ -54,10 +54,10 @@ namespace TestTCP1.Lib
         {
             string[] queries = new string[]
                 {
-                    "Insert Into tbl_data(Model,Position,X,Y,Z,CameraCheckPoint) Select @newModelName,Position,x,y,z,CameraCheckPoint,AreaInspection From TBl_Data where model=@oldModelName;",
+                    "Insert Into tbl_data(Model,Position,X,Y,Z,CameraCheckPoint) Select @newModelName,Position,x,y,z,CameraCheckPoint From TBl_Data where model=@oldModelName;",
                     "Insert Into Tbl_CamPoint(Model,CameraPoint,Pitching,CavityTotal) Select @newModelName,CameraPoint,Pitching,CavityTotal From Tbl_CamPoint where model=@oldModelName",
                     "Insert Into Tbl_MarkPoint(Model,Position,AreaInspection,X,Y,ImageName) Select @newModelName,Position,AreaInspection,X,Y,ImageName From TBl_MarkPoint Where model=@oldModelName",
-                    "Insert Into Tbl_Image(Model,Position,ImageName,AreaInspection) Select @newModelName,Position,ImageName,AreaInspection From Tbl_Image Where Model=@oldModelName"
+                    "Insert Into Tbl_Image(Model,Position,ImageName,AreaInspection,No) Select @newModelName,Position,ImageName,AreaInspection,No From Tbl_Image Where Model=@oldModelName"
                 };
             using (var conn = GetConn())
             {
@@ -159,7 +159,7 @@ namespace TestTCP1.Lib
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
-                string query = "Select Model,Position,AreaInspection,ImageName as Image From Tbl_Image Where Model=@Model Order By Position Asc";
+                string query = "Select Model,Position,No,AreaInspection,ImageName as Image From Tbl_Image Where Model=@Model Order By Position,No Asc";
                 var find = await conn.QueryAsync<ImageAreaModel>(query, new { Model = Model });
                 if (find != null && find?.Count() > 0)
                     list = find.ToList();
@@ -172,22 +172,44 @@ namespace TestTCP1.Lib
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
-                string query = "Select Model,Position,AreaInspection,ImageName as Image From Tbl_Image Where Model=@Model and Position=@Position Order By Position Asc";
+                string query = "Select Model,Position,No,AreaInspection,ImageName as Image From Tbl_Image Where Model=@Model and Position=@Position  Order By Position,No Asc";
                 var find = await conn.QueryAsync<ImageAreaModel>(query, new { Model = Model,Position=Position });
                 if (find != null && find?.Count() > 0)
                     list = find.ToList();
             }
             return list;
         }
-        public async Task DeleteAreaImage(string model,int position)
+        public async Task<List<ImageAreaModel>> GetAreaImageByModel(string Model, int Position,int no)
+        {
+            List<ImageAreaModel> list = new List<ImageAreaModel>();
+            using (var conn = GetConn())
+            {
+                await conn.OpenAsync();
+                string query = "Select Model,Position,No,AreaInspection,ImageName as Image From Tbl_Image Where Model=@Model and Position=@Position and No=@no Order By Position,No Asc";
+                var find = await conn.QueryAsync<ImageAreaModel>(query, new { Model = Model, Position = Position,no=no });
+                if (find != null && find?.Count() > 0)
+                    list = find.ToList();
+            }
+            return list;
+        }
+        public async Task DeleteAreaImage(string model,int position,int no)
         {
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
-                string query = "Delete Tbl_Image Where model=@model and position=@position;";
-                await conn.ExecuteAsync(query, new { model = model, position = position });
-                query = "Update Tbl_Image set Position=Position-1 where model=@model and position > @position;";
-                await conn.ExecuteAsync(query, new { model = model, position = position });
+                string query = "Delete Tbl_Image Where model=@model and position=@position and No=@no;";
+                await conn.ExecuteAsync(query, new { model = model, position = position, No=@no });
+                var areaImages = await GetAreaImageByModel(model, position);
+                if (areaImages.Count > 0)
+                {
+                    query = "Update TBl_Image set No=No-1 where model=@model and position=@position and No > @no";
+                    await conn.ExecuteAsync(query, new { model = model, position = position, no = no });
+                }
+                else
+                {
+                    query = "Update Tbl_Image set Position=Position-1 where model=@model and position > @position;";
+                    await conn.ExecuteAsync(query, new { model = model, position = position});
+                }
             }
         }
         public async Task SavePosRecord(RecordInspectionModel record)
@@ -230,26 +252,26 @@ namespace TestTCP1.Lib
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
-                string query = "Select Count(*) as c from Tbl_Image where Model=@model and position=@position";
-                var res = await conn.ExecuteReaderAsync(query, new { model = model.Model, position = model.Position });
+                string query = "Select Count(*) as c from Tbl_Image where Model=@model and position=@position and No=@no";
+                var res = await conn.ExecuteReaderAsync(query, new { model = model.Model, position = model.Position,no=model.No });
                 await res.ReadAsync();
                 int c = int.Parse(res[0]?.ToString() ?? "0");
                 await res.CloseAsync();
                 if (c < 1)
-                    query = "Insert into Tbl_image(model,position,imageName,AreaInspection) Values(@Model,@Position,@Image,@AreaInspection)";
+                    query = "Insert into Tbl_image(model,position,imageName,AreaInspection,No) Values(@Model,@Position,@Image,@AreaInspection,@No)";
                 else
-                    query = "Update Tbl_Image set imageName=@Image,AreaInspection=@AreaInspection where model=@Model and position=@Position";
+                    query = "Update Tbl_Image set imageName=@Image,AreaInspection=@AreaInspection where model=@Model and position=@Position and No=@No";
                 await conn.ExecuteAsync(query, model);
             }
         }
-        public async Task<string> GetLocalImage(PositionModel model)
+        public async Task<string> GetLocalImage(ImageAreaModel model)
         {
             string img = string.Empty;
             using (var conn = GetConn())
             {
                 await conn.OpenAsync();
-                string query = "Select imageName From Tbl_Image where Model=@model and Position=@pos";
-                var rd = await conn.ExecuteReaderAsync(query, new { model = model.Model, pos = model.Pos });
+                string query = "Select imageName From Tbl_Image where Model=@model and Position=@pos and no=@No";
+                var rd = await conn.ExecuteReaderAsync(query, new { model = model.Model, pos = model.Position,no=model.No });
                 if (await rd.ReadAsync())
                 {
                     img = rd[0].ToString() ?? string.Empty;
