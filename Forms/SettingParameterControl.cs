@@ -108,15 +108,15 @@ namespace TestTCP1.Forms
             for (int i = 0; i < areaData.Count; i++)
                 dt.Rows.Add(new object[] { areaData[i].AreaInspection, "View" });
             if (inspectionAreaList.IsHandleCreated)
-            inspectionAreaList.Invoke(delegate
-            {
+                inspectionAreaList.Invoke(delegate
+                {
 
-                inspectionAreaList.DataSource = null;
-                inspectionAreaList.Refresh();
+                    inspectionAreaList.DataSource = null;
+                    inspectionAreaList.Refresh();
 
-                inspectionAreaList.DataSource = dt;
-                inspectionAreaList.Refresh();
-            });
+                    inspectionAreaList.DataSource = dt;
+                    inspectionAreaList.Refresh();
+                });
         }
         private async Task LoadLivePosition()
         {
@@ -600,7 +600,7 @@ namespace TestTCP1.Forms
 
         private async void button21_Click(object sender, EventArgs e)
         {
-            AreaImageForm frm = new AreaImageForm(Model,null, false, false);
+            AreaImageForm frm = new AreaImageForm(Model, null, false, false);
             var dialog = frm.ShowDialog();
             if (dialog == DialogResult.OK)
             {
@@ -610,7 +610,7 @@ namespace TestTCP1.Forms
 
         private async void button22_Click(object sender, EventArgs e)
         {
-            AreaImageForm frm = new AreaImageForm(Model,null, true, false);
+            AreaImageForm frm = new AreaImageForm(Model, null, true, false);
             var dialog = frm.ShowDialog();
             if (dialog == DialogResult.OK)
             {
@@ -631,13 +631,18 @@ namespace TestTCP1.Forms
             if (e.ColumnIndex == 1 && e.RowIndex >= 0)
             {
                 await ReloadData();
-                AreaImageForm frm = new AreaImageForm(Model, inspectionAreaList[0,e.RowIndex].Value.ToString(), false, true);
+                AreaImageForm frm = new AreaImageForm(Model, inspectionAreaList[0, e.RowIndex].Value.ToString(), false, true);
                 var dialog = frm.ShowDialog();
                 if (dialog == DialogResult.OK)
                 {
                     await ReloadData();
                 }
             }
+        }
+
+        private void cameraTriggerBox_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
