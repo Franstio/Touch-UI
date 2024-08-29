@@ -106,11 +106,10 @@ namespace TestTCP1.Lib
                     {
                         byte[] buffer = Encoding.ASCII.GetBytes($"{cmd}\r\n");
                         Debug.WriteLineIf(log, $"Writing {cmd} Command");
-                        await _tcpClient.GetStream().FlushAsync();
                         await _tcpClient.GetStream().WriteAsync(buffer, 0, buffer.Length);
                         await _tcpClient.GetStream().FlushAsync();
-                        //Thread.Sleep(100);
-                        msg = await ReadIncomingMsg(cmd);
+                    //Thread.Sleep(100);
+                    msg = await ReadIncomingMsg(cmd);
 
                     }
                     while ((msg.Contains("E1") || msg == string.Empty) );
@@ -136,10 +135,11 @@ namespace TestTCP1.Lib
                 }
                 byte[] buffer = new byte[512];
                 Debug.WriteLineIf(log,$"Reading Stream TCP {(logCommand is not null ? "From "+logCommand : "") }...");
+                await Task.Delay(50);
                 var stream = _tcpClient.GetStream();
                 await stream.ReadAsync(buffer, 0, buffer.Length);
                 string msg = Encoding.ASCII.GetString(buffer, 0, buffer.Length);
-                //await stream.FlushAsync();
+                await stream.FlushAsync();
                 Debug.WriteLineIf(log, $"Result: {msg}");
                 return msg;
             }
