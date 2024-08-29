@@ -132,33 +132,33 @@
             parameterDatsGridView.ReadOnly = true;
             parameterDatsGridView.RowHeadersWidth = 51;
             parameterDatsGridView.RowTemplate.Height = 29;
-            parameterDatsGridView.Size = new Size(458, 908);
+            parameterDatsGridView.Size = new Size(446, 430);
             parameterDatsGridView.TabIndex = 0;
             parameterDatsGridView.CellContentClick += parameterDatsGridView_CellContentClick;
             // 
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox3.Controls.Add(groupBox10);
             groupBox3.Controls.Add(parameterDatsGridView);
-            groupBox3.Location = new Point(618, 43);
+            groupBox3.Location = new Point(620, 43);
             groupBox3.Margin = new Padding(3, 2, 3, 2);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new Padding(3, 2, 3, 2);
-            groupBox3.Size = new Size(464, 928);
+            groupBox3.Size = new Size(452, 450);
             groupBox3.TabIndex = 15;
             groupBox3.TabStop = false;
             groupBox3.Text = "Parameter Data";
             // 
             // groupBox10
             // 
-            groupBox10.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox10.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox10.Controls.Add(panel4);
-            groupBox10.Location = new Point(6, 342);
+            groupBox10.Location = new Point(620, 544);
             groupBox10.Name = "groupBox10";
-            groupBox10.Size = new Size(452, 528);
+            groupBox10.Size = new Size(452, 357);
             groupBox10.TabIndex = 7;
             groupBox10.TabStop = false;
+            groupBox10.Text = "Registration";
             // 
             // panel4
             // 
@@ -170,7 +170,7 @@
             panel4.Dock = DockStyle.Fill;
             panel4.Location = new Point(3, 19);
             panel4.Name = "panel4";
-            panel4.Size = new Size(446, 506);
+            panel4.Size = new Size(446, 335);
             panel4.TabIndex = 6;
             panel4.Paint += panel4_Paint;
             // 
@@ -214,7 +214,7 @@
             inspectionAreaList.Location = new Point(12, 107);
             inspectionAreaList.Name = "inspectionAreaList";
             inspectionAreaList.RowTemplate.Height = 25;
-            inspectionAreaList.Size = new Size(426, 384);
+            inspectionAreaList.Size = new Size(426, 213);
             inspectionAreaList.TabIndex = 5;
             inspectionAreaList.CellContentClick += inspectionAreaList_CellContentClick;
             inspectionAreaList.DataBindingComplete += inspectionAreaList_DataBindingComplete;
@@ -358,7 +358,7 @@
             groupBox2.Margin = new Padding(3, 2, 3, 2);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(3, 2, 3, 2);
-            groupBox2.Size = new Size(593, 749);
+            groupBox2.Size = new Size(593, 702);
             groupBox2.TabIndex = 23;
             groupBox2.TabStop = false;
             groupBox2.Text = "Setting Parameter";
@@ -411,6 +411,7 @@
             cameraTriggerBox.Name = "cameraTriggerBox";
             cameraTriggerBox.Size = new Size(110, 23);
             cameraTriggerBox.TabIndex = 4;
+            cameraTriggerBox.TextChanged += cameraTriggerBox_TextChanged;
             // 
             // groupBox9
             // 
@@ -639,7 +640,7 @@
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(585, 325);
+            groupBox4.Size = new Size(585, 295);
             groupBox4.TabIndex = 33;
             groupBox4.TabStop = false;
             groupBox4.Text = "Axis Position";
@@ -664,7 +665,7 @@
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(3, 18);
             panel3.Name = "panel3";
-            panel3.Size = new Size(579, 305);
+            panel3.Size = new Size(579, 275);
             panel3.TabIndex = 40;
             // 
             // button10
@@ -859,6 +860,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Controls.Add(groupBox10);
             Controls.Add(groupBox2);
             Controls.Add(delPos);
             Controls.Add(button3);
