@@ -35,7 +35,7 @@ namespace TestTCP1.Forms
         private readonly DbConn dbCon = new DbConn();
         
         private readonly TCPConn mainConn = TCPConn.newInstance();
-        private readonly TCPConn? livePositionConn = null;
+        private TCPConn? livePositionConn = null;
         private readonly TCPConn statusConn = TCPConn.newInstance();
         
         private List<PositionModel> Positions = new List<PositionModel>();
@@ -176,7 +176,7 @@ namespace TestTCP1.Forms
                     string res = string.Empty;
                     decimal val = 0;
                     if (livePositionConn is null)
-                        return;
+                        livePositionConn = TCPConn.newInstance();
                     if (!livePositionConn.IsRunning())
                         await livePositionConn.StartConnection();
                     if (!statusConn.IsRunning())
@@ -449,11 +449,11 @@ namespace TestTCP1.Forms
         }
         private async Task ReadSN()
         {
+            await Task.Delay(3000);
             if (snFile is null)
                 throw new Exception("SN File not detected");
             if (!File.Exists(snFile))
                 throw new Exception("SN File Path not found");
-            await Task.Delay(3000);
             string[] text = File.ReadAllLines(snFile);
             var sortedArea = areaData.OrderBy(x => x.Position).ThenBy(x => x.No).ToArray();
             for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
@@ -1200,7 +1200,7 @@ namespace TestTCP1.Forms
                             statusLabel.Invoke(delegate
                             {
                                 statusLabel.Text = "Complete (Need Verification)"+new string('.',loading);
-                                loading = (loading + 1) % 5;
+                                loading = (loading + 1) % 1;
                             });
                         }
                     }
@@ -1216,7 +1216,7 @@ namespace TestTCP1.Forms
             }
             finally
             {
-                MessageBox.Show("Process Finished");
+//                MessageBox.Show("Process Finished");
                 Debug.WriteLine("Process Finished/Stopped");
                 if (cts.IsCancellationRequested)
                     Debug.WriteLine("Cancelled");

@@ -139,7 +139,7 @@ namespace TestTCP1.Lib
                 var stream = _tcpClient.GetStream();
                 await stream.ReadAsync(buffer, 0, buffer.Length);
                 string msg = Encoding.ASCII.GetString(buffer, 0, buffer.Length);
-                await stream.FlushAsync();
+//                await stream.FlushAsync();
                 Debug.WriteLineIf(log, $"Result: {msg}");
                 return msg;
             }
