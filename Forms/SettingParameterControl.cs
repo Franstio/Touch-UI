@@ -223,50 +223,55 @@ namespace TestTCP1.Forms
             {
                 foreach (var btn in _buttons)
                     if (btn.Name != b.Name)
-                        btn.Enabled = isPressed;
+                        btn.Invoke(delegate { btn.Enabled = isPressed; });
                 isPressed = !isPressed;
                 if (isPressed)
                     return;
             }
-            switch (b.Tag.ToString())
+            try
             {
-                case "X+":
-                    //await mainConn.SendCommand($"WR MR14 1");
-                    result = await mainConn.SendCommand("RD CM8830.L");
-                    res = "X";
-                    curModel.X = decimal.Parse(result);
-                    break;
-                case "X-":
-                    //await mainConn.SendCommand("WR MR15 1");
-                    result = await mainConn.SendCommand("RD CM8830.L");
-                    res = "X";
-                    curModel.X = decimal.Parse(result);
-                    break;
-                case "Y+":
-                    //await mainConn.SendCommand("WR MR12.L 1");
-                    result = await mainConn.SendCommand("RD CM8870.L");
-                    res = "Y";
-                    curModel.Y = decimal.Parse(result);
-                    break;
-                case "Y-":
-                    //await mainConn.SendCommand("WR MR13.L 1");
-                    result = await mainConn.SendCommand("RD CM8870.L");
-                    res = "Y";
-                    curModel.Y = decimal.Parse(result);
-                    break;
-                case "Z+":
-                    //await mainConn.SendCommand("WR MR10 1");
-                    result = await mainConn.SendCommand("RD CM8910.L");
-                    res = "Z";
-                    curModel.Z = decimal.Parse(result);
-                    break;
-                case "Z-":
-                    //await mainConn.SendCommand("WR MR11 1");
-                    result = await mainConn.SendCommand("RD CM8910.L");
-                    res = "Z";
-                    curModel.Z = decimal.Parse(result);
-                    break;
+                switch (b.Tag.ToString())
+                {
+                    case "X+":
+                        //await mainConn.SendCommand($"WR MR14 1");
+                        result = await mainConn.SendCommand("RD CM8830.L");
+                        res = "X";
+                        curModel.X = decimal.Parse(result);
+                        break;
+                    case "X-":
+                        //await mainConn.SendCommand("WR MR15 1");
+                        result = await mainConn.SendCommand("RD CM8830.L");
+                        res = "X";
+                        curModel.X = decimal.Parse(result);
+                        break;
+                    case "Y+":
+                        //await mainConn.SendCommand("WR MR12.L 1");
+                        result = await mainConn.SendCommand("RD CM8870.L");
+                        res = "Y";
+                        curModel.Y = decimal.Parse(result);
+                        break;
+                    case "Y-":
+                        //await mainConn.SendCommand("WR MR13.L 1");
+                        result = await mainConn.SendCommand("RD CM8870.L");
+                        res = "Y";
+                        curModel.Y = decimal.Parse(result);
+                        break;
+                    case "Z+":
+                        //await mainConn.SendCommand("WR MR10 1");
+                        result = await mainConn.SendCommand("RD CM8910.L");
+                        res = "Z";
+                        curModel.Z = decimal.Parse(result);
+                        break;
+                    case "Z-":
+                        //await mainConn.SendCommand("WR MR11 1");
+                        result = await mainConn.SendCommand("RD CM8910.L");
+                        res = "Z";
+                        curModel.Z = decimal.Parse(result);
+                        break;
+                }
             }
+            catch
+            { }
             this.Invoke(new Action(() => updatePosition(res)));
         }
 
