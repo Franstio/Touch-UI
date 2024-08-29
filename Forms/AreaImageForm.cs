@@ -146,10 +146,10 @@ namespace TestTCP1.Forms
         {
 
             this.button2.Invoke(new Action(() => { button2.Text = "Loading..."; button2.Enabled = false; }));
-            /*await mainConn.SendCommand($"WR W0F2 {_posData.CameraCheckpoint}");
+            await mainConn.SendCommand($"WR W0F2 {_posData.First().CameraCheckpoint}");
             await mainConn.SendCommand("WR MR400 1");
             await Task.Delay(CameraDelay);
-            await mainConn.SendCommand("WR MR400 0");*/
+            await mainConn.SendCommand("WR MR400 0");
             //            MessageBox.Show("Send Trigger Command Complete", "Send Trigger Command");
             await Task.Delay(DelayTimer);
 
