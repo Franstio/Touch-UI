@@ -1,4 +1,4 @@
-﻿namespace TestTCP1
+﻿namespace TouchUI
 {
     partial class CommandCenter
     {

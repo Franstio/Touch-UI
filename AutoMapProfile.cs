@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestTCP1.Model;
+using TouchUI.Model;
 
-namespace TestTCP1
+namespace TouchUI
 {
     public class AutoMapConfig
     {

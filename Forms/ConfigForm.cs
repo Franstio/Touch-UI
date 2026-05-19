@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Lib;
+using TouchUI.Lib;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class ConfigForm : UserControl
     {

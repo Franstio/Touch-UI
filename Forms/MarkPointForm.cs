@@ -9,11 +9,11 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Lib;
-using TestTCP1.Lib.DbUtil;
-using TestTCP1.Model;
+using TouchUI.Lib;
+using TouchUI.Lib.DbUtil;
+using TouchUI.Model;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class MarkPointForm : Form
     {

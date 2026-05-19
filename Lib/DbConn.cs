@@ -9,11 +9,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using TestTCP1.Lib.DbUtil;
-using TestTCP1.Model;
-using TestTCP1.Model.ViewModel;
+using TouchUI.Lib.DbUtil;
+using TouchUI.Model;
+using TouchUI.Model.ViewModel;
 
-namespace TestTCP1.Lib
+namespace TouchUI.Lib
 {
     public class DbConn : DrawMarkPointUtil,IMarkPointDb
     {
@@ -30,7 +30,8 @@ namespace TestTCP1.Lib
         }
         public SqlConnection GetConn()
         {
-            return new SqlConnection(ConnString);
+            var con = new SqlConnection(ConnString);
+            return con;
         }
         public async Task SavePosition(PosView data)
         {

@@ -5,9 +5,9 @@ using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestTCP1.Model;
+using TouchUI.Model;
 
-namespace TestTCP1.Lib
+namespace TouchUI.Lib
 {
     public class FileLib
     {
@@ -215,7 +215,6 @@ namespace TestTCP1.Lib
                         if (!Dict.ContainsKey(sn))
                             Dict.Add(sn, text);
                     }
-                    await Task.Delay(100);
                 }
                 while ((string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text)) && File.Exists(files[i]));
                 //if (File.Exists(files[i]))

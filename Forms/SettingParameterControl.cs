@@ -9,15 +9,15 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Lib;
-using TestTCP1.Model;
+using TouchUI.Lib;
+using TouchUI.Model;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.ComponentModel.Design;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class SettingParameterControl : UserControl, IDisposable
     {
@@ -569,7 +569,7 @@ namespace TestTCP1.Forms
             {
                 button17.Enabled = false;
             });
-            await dbCon.SaveCavity(Model, new TestTCP1.Model.ViewModel.CavityModel() { CavityTotal = int.Parse(cavityBox.Value.ToString() ?? "0"), Pitching = pitchingBox.Value });
+            await dbCon.SaveCavity(Model, new TouchUI.Model.ViewModel.CavityModel() { CavityTotal = int.Parse(cavityBox.Value.ToString() ?? "0"), Pitching = pitchingBox.Value });
 
             var data = await dbCon.GetCavity(Model);
             activePitching = data?.Pitching ?? 0;

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TestTCP1.Properties {
+namespace TouchUI.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -230,7 +230,7 @@ namespace TestTCP1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(" backup/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("backup/")]
         public string BackupLogPath {
             get {
                 return ((string)(this["BackupLogPath"]));

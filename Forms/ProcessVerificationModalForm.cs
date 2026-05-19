@@ -8,10 +8,10 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Lib;
-using TestTCP1.Model;
+using TouchUI.Lib;
+using TouchUI.Model;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class ProcessVerificationModalForm : Form
     {

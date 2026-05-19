@@ -1,4 +1,4 @@
-﻿namespace TestTCP1.Forms
+﻿namespace TouchUI.Forms
 {
     partial class AreaImageForm
     {

@@ -11,12 +11,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Lib;
-using TestTCP1.Lib.DbUtil;
-using TestTCP1.Model;
-using TestTCP1.Model.ViewModel;
+using TouchUI.Lib;
+using TouchUI.Lib.DbUtil;
+using TouchUI.Model;
+using TouchUI.Model.ViewModel;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class DashboardControl : UserControl
     {
@@ -162,31 +162,39 @@ namespace TestTCP1.Forms
         public DashboardControl(string _Model)
         {
             InitializeComponent();
-            livePositionConn = new TCPConn[] {
+            try
+            {
+                livePositionConn = new TCPConn[] {
                 TCPConn.newInstance(),
                 TCPConn.newInstance(),
                 TCPConn.newInstance() };
-            DelayTimer = int.Parse(Properties.Settings.Default["DelayDashboardProcess"].ToString() ?? "0");
-            CameraDelay = int.Parse(Properties.Settings.Default["NgCameraDelay"].ToString() ?? "0");
-            markDb = dbCon;
-            finalJudgeLabel.Text = string.Empty;
-            foreach (var conn in livePositionConn)
-                conn.setLog(false);
-            mainConn.setLog(true);
-            statusConn.setLog(false);
-            Model = _Model;
-            runningModel.Text = Model;
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Area");
-            dt.Columns.Add("Judgement");
-            inspectionListGridView.DataSource = dt;
-            LoadCountView();
-            ngWatcher.Path = fileLib._filePath;
-            snWatcher.Path = Properties.Settings.Default.SNLocation;
-            ngWatcher.IncludeSubdirectories = true;
-            snWatcher.IncludeSubdirectories = true;
-            ngWatcher.NotifyFilter = NotifyFilters.FileName;
-            snWatcher.NotifyFilter = NotifyFilters.FileName;
+                DelayTimer = int.Parse(Properties.Settings.Default["DelayDashboardProcess"].ToString() ?? "0");
+                CameraDelay = int.Parse(Properties.Settings.Default["NgCameraDelay"].ToString() ?? "0");
+                markDb = dbCon;
+                finalJudgeLabel.Text = string.Empty;
+                foreach (var conn in livePositionConn)
+                    conn.setLog(false);
+                mainConn.setLog(true);
+                statusConn.setLog(false);
+                Model = _Model;
+                runningModel.Text = Model;
+                DataTable dt = new DataTable();
+                dt.Columns.Add("Area");
+                dt.Columns.Add("Judgement");
+                inspectionListGridView.DataSource = dt;
+                LoadCountView();
+                ngWatcher.Path = fileLib._filePath;
+                snWatcher.Path = Properties.Settings.Default.SNLocation;
+                ngWatcher.IncludeSubdirectories = true;
+                snWatcher.IncludeSubdirectories = true;
+                ngWatcher.NotifyFilter = NotifyFilters.FileName;
+                snWatcher.NotifyFilter = NotifyFilters.FileName;
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show($"{e.Message} - {e.StackTrace}");
+                return;
+            }
         }
         async Task<string> SendCommand(string cmd)
         {
@@ -510,7 +518,7 @@ namespace TestTCP1.Forms
         }
         private async Task ReadSN()
         {
-            await Task.Delay(3000);
+            await Task.Delay(5000);
             if (snFile is null)
                 throw new Exception("SN File not detected");
             if (!File.Exists(snFile))
@@ -707,11 +715,11 @@ namespace TestTCP1.Forms
             updateStatusText("Running...");
             if (!mainConn.IsRunning())
                 await mainConn.StartConnection();
-            string waitRes = await SendCommand("RD MR406"),waitRes2 = await SendCommand("RD MR400");
-            while ( (waitRes.Last()!='1' || waitRes2.Last() != '1') && !cTokenSource.IsCancellationRequested)
+            string waitRes = await SendCommand("RD MR406");//,waitRes2 = await SendCommand("RD MR400");
+            while ( waitRes.Last()!='1'  && !cTokenSource.IsCancellationRequested)
             {
                 waitRes = await SendCommand("RD MR406");
-                waitRes2 = await SendCommand("RD MR400");
+               // waitRes2 = await SendCommand("RD MR400");
                 await Task.Delay(50);
             }
             if (cTokenSource.IsCancellationRequested)
@@ -813,37 +821,44 @@ namespace TestTCP1.Forms
 
         private async void DashboardControl_Load(object sender, EventArgs e)
         {
-            if (Model == null || Model == string.Empty)
-                return;
-            if (!mainConn.IsRunning())
-                await mainConn.StartConnection();
-            foreach (var conn in livePositionConn)
+            try
             {
-                if (!conn.IsRunning())
-                    await conn.StartConnection();
+                if (Model == null || Model == string.Empty)
+                    return;
+                if (!mainConn.IsRunning())
+                    await mainConn.StartConnection();
+                foreach (var conn in livePositionConn)
+                {
+                    if (!conn.IsRunning())
+                        await conn.StartConnection();
+                }
+                await mainConn.SendCommand("WR MR410 0");
+                await mainConn.SendCommand("WR MR004 0");
+                await GetPos();
+
+                if (CamPoint is not null)
+                    await TriggerCamPoint();
+
+                var data = await markDb.GetMarkPoint(Model);
+                if (data is not null)
+                {
+                    markPoint = data.ToList();
+                    if (markPoint.Count > 1 && markPoint[0].Position == 1)
+                        LoadMarking(markPoint[0]);
+                }
+                ngWatcher.Created += NGWatcherEvent;
+                snWatcher.Created += SNWatcherEvent;
+                LoadCavityGridTable();
+                if (ProcessTask != null || ProcessTask != Task.CompletedTask)
+                    mainCts.Cancel();
+                ProcessTask = Task.Run(LoopProcess, CancellationToken.None);
+                LivePositionTask = Task.Run(GetLivePosition, CancellationToken.None);
+                StatusCheckTask = Task.Run(CheckEmgPause, CancellationToken.None);
             }
-            await mainConn.SendCommand("WR MR410 0");
-            await mainConn.SendCommand("WR MR004 0");
-            await GetPos();
-
-            if (CamPoint is not null)
-                await TriggerCamPoint();
-
-            var data = await markDb.GetMarkPoint(Model);
-            if (data is not null)
+            catch (Exception er)
             {
-                markPoint = data.ToList();
-                if (markPoint.Count > 1 && markPoint[0].Position == 1)
-                    LoadMarking(markPoint[0]);
+                MessageBox.Show($"{er.Message} - {er.StackTrace}");
             }
-            ngWatcher.Created += NGWatcherEvent;
-            snWatcher.Created += SNWatcherEvent;
-            LoadCavityGridTable();
-            if (ProcessTask != null || ProcessTask != Task.CompletedTask)
-                mainCts.Cancel();
-            ProcessTask = Task.Run(LoopProcess, CancellationToken.None);
-            LivePositionTask = Task.Run(GetLivePosition, CancellationToken.None);
-            StatusCheckTask = Task.Run(CheckEmgPause, CancellationToken.None);
         }
         private void LoadCavityGridTable(bool reset = true) => Invoke(delegate
         {
@@ -1216,12 +1231,23 @@ namespace TestTCP1.Forms
             _curPos = Positions.Where(x => x.Pos == curArea.Position).First();
             _curInspectionView = res;
         }
-        protected override void OnLeave(EventArgs e)
+        void closeAll()
         {
-            base.OnLeave(e);
+
             mainCts.Cancel();
             cts.Cancel();
+            if (livePositionConn is not null)
+                foreach (var c in livePositionConn)
+                    c.StopConnection();
+            mainConn?.StopConnection();
+            this.statusConn?.StopConnection();
         }
+        protected override void OnHandleDestroyed(EventArgs e)
+        {
+            base.OnHandleDestroyed(e);
+            closeAll();
+        }
+
         private async Task LoopProcess()
         {
             mainCts = new CancellationTokenSource();

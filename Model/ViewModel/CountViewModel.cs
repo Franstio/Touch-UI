@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestTCP1.Model.ViewModel
+namespace TouchUI.Model.ViewModel
 {
     public class CountViewModel
     {

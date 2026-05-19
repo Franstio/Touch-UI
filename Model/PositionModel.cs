@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestTCP1.Model
+namespace TouchUI.Model
 {
     public class PositionModel
     {

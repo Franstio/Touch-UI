@@ -54,7 +54,7 @@
       <Value Profile="(Default)">res/</Value>
     </Setting>
     <Setting Name="BackupLogPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)"> backup/</Value>
+      <Value Profile="(Default)">backup/</Value>
     </Setting>
   </Settings>
 </SettingsFile>

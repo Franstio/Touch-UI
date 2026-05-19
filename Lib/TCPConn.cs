@@ -7,9 +7,9 @@ using System.Net.Sockets;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-using TestTCP1.Properties;
+using TouchUI.Properties;
 
-namespace TestTCP1.Lib
+namespace TouchUI.Lib
 {
     public class TCPConn
     {
@@ -59,28 +59,49 @@ namespace TestTCP1.Lib
             }
             if (IsRunning())
             {
-                MessageBox.Show("Connection already started. Please disconnect first");
-                return;
+                _tcpClient.Close();
+//                MessageBox.Show("Connection already started. Please disconnect first");
+//                return;
             }
+
+            _tcpClient = new TcpClient();
+            _tcpClient.NoDelay = true;
+            CancellationTokenSource cts = new CancellationTokenSource();
             int tryCount = 0;
             bool isCompleted= false;
             do
             {
                 try
                 {
-                    await _tcpClient.ConnectAsync(_address, _port);
-                    isCompleted = true;
+                    _ = Task.Run(async () =>
+                    {
+                        await Task.Delay(1000);
+                        if (isCompleted)
+                            return;
+                        cts.Cancel();
+                        isCompleted = false;
+                    });
+                    await _tcpClient.ConnectAsync(_address, _port, cts.Token);
+                    if (!cts.IsCancellationRequested)
+                        isCompleted = true;
                     //            _tcpClient.GetStream().BeginRead(gBuffer, 0, gBuffer.Length, this.checkConnection, _tcpClient);
                 }
                 catch (Exception ex)
                 {
+
+                    _tcpClient = new TcpClient();
+                    _tcpClient.NoDelay = true;
                     Debug.WriteLine(ex.Message);
                     Task.Delay(100);
                     tryCount++;
                     isCompleted = false;
                 }
+                finally
+                {
+                     cts = new CancellationTokenSource();
+                }
             }
-            while (tryCount < 3 && !isCompleted);
+            while (!isCompleted);
             
         }
         public bool IsRunning()
@@ -100,7 +121,10 @@ namespace TestTCP1.Lib
         {
             if (!IsRunning() )
                 await StartConnection();
+            int count = 0;
 
+            do
+            {
                 try
                 {
                     string msg = string.Empty;
@@ -123,6 +147,9 @@ namespace TestTCP1.Lib
                     while ((msg.Contains("E1") || msg == string.Empty) && (token is null || !token.Value.IsCancellationRequested) );
                 await Task.Delay(10);
                     return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty).Trim().Replace("\r", "").Replace("\n", "");
+                    }
+                    while ((msg.Contains("E1") || msg == string.Empty) && tryCount <= 7);
+                    return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty);
                 }
                 catch (Exception ex)
                 {
@@ -143,7 +170,8 @@ namespace TestTCP1.Lib
                 }
                 byte[] buffer = new byte[1024];
                 Debug.WriteLineIf(log,$"Reading Stream TCP {(logCommand is not null ? "From "+logCommand : "") }...");
-                await stream.ReadAsync(buffer, 0, buffer.Length,token ?? CancellationToken.None);
+                var stream = _tcpClient.GetStream();
+                await stream.ReadAsync(buffer, 0, buffer.Length);
                 string msg = Encoding.ASCII.GetString(buffer, 0, buffer.Length);
 //                await stream.FlushAsync();
                 Debug.WriteLineIf(log, $"Result: {msg}");
@@ -157,8 +185,6 @@ namespace TestTCP1.Lib
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message + " " + ex.InnerException?.Message);
-                StopConnection();
-                await StartConnection();
 //                MessageBox.Show(ex.Message);
                 return await ReadIncomingMsg(logCommand);
             }

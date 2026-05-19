@@ -1,9 +1,9 @@
 using System.Configuration;
 using System.Data;
-using TestTCP1.Forms;
-using TestTCP1.Lib;
+using TouchUI.Forms;
+using TouchUI.Lib;
 
-namespace TestTCP1
+namespace TouchUI
 {
     public partial class CommandCenter : Form
     {

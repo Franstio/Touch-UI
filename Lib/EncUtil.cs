@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestTCP1.Lib
+namespace TouchUI.Lib
 {
     public static class EncUtil
     {
