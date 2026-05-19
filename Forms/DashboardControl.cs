@@ -521,7 +521,7 @@ namespace TouchUI.Forms
         {
             string sample = text[0];
 
-            string[] judgement = sample.Split(",#");
+            string[] judgement = sample.Split(",*");
             return judgement.Last().Length > 1;
         }
         private async Task ReadSN()
@@ -538,8 +538,8 @@ namespace TouchUI.Forms
             for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
             {
                 cavities.CurrentCavity = i;
-                string[] judgement = isSingleSn ? text[i].Split(",#").First().Split(",") :  text[(i * 2)].Replace(",#", "").Split(',');
-                string sn = isSingleSn ? text[i].Split(",#").Last() : text[(i * 2) + 1];
+                string[] judgement = isSingleSn ? text[i].Split(",*").First().Split(",") :  text[(i * 2)].Replace(",*", "").Split(',');
+                string sn = isSingleSn ? text[i].Split(",*").Last() : text[(i * 2) + 1];
                 string[] dataSn = sn.Split(',');
                 sn = dataSn[dataSn.Length - 2];
                 inputSerialView[1, i].Value = sn;
@@ -593,8 +593,6 @@ namespace TouchUI.Forms
                     LoadCountView();
                 }));
                 //Debug.WriteLine(string.Join("\n", text));
-                File.Delete(snFile);
-                updateStatusText(".txt Output have been deleted");
             }
             cavities.CurrentCavity = 0;
             //this.Invoke(new Action(() =>
