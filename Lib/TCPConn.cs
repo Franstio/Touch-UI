@@ -121,49 +121,45 @@ namespace TouchUI.Lib
         {
             if (!IsRunning() )
                 await StartConnection();
-            int count = 0;
 
-            do
+            try
             {
-                try
-                {
-                    string msg = string.Empty;
-                    stream = _tcpClient.GetStream();
-                    stream.ReadTimeout = 500;
-                    stream.WriteTimeout = 1000;
+                string msg = string.Empty;
+                stream = _tcpClient.GetStream();
+                stream.ReadTimeout = 500;
+                stream.WriteTimeout = 1000;
                 do
                 {
-                        byte[] buffer = Encoding.ASCII.GetBytes($"{cmd}\r\n");
-                        Debug.WriteLineIf(log, $"Writing {cmd} Command");
-                        await stream.WriteAsync(buffer, 0, buffer.Length,token ?? CancellationToken.None);
+                    byte[] buffer = Encoding.ASCII.GetBytes($"{cmd}\r\n");
+                    Debug.WriteLineIf(log, $"Writing {cmd} Command");
+                    await stream.WriteAsync(buffer, 0, buffer.Length, token ?? CancellationToken.None);
                     if (token is not null && token.Value.IsCancellationRequested)
                     {
                         await stream.FlushAsync();
                     }
                     //Thread.Sleep(100);
-                    msg = await ReadIncomingMsg(cmd,token);
+                    msg = await ReadIncomingMsg(cmd, token);
+                    await Task.Delay(10);
 
-                    }
-                    while ((msg.Contains("E1") || msg == string.Empty) && (token is null || !token.Value.IsCancellationRequested) );
-                await Task.Delay(10);
-                    return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty).Trim().Replace("\r", "").Replace("\n", "");
-                    }
-                    while ((msg.Contains("E1") || msg == string.Empty) && tryCount <= 7);
-                    return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty);
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message + " " + ex.InnerException?.Message);
-                    StopConnection();
-                    await StartConnection();
-                    return await SendCommand(cmd);
-                }
+                while ((msg.Contains("E1") || msg == string.Empty) && (token is null || !token.Value.IsCancellationRequested));
+                return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty).Trim().Replace("\r", "").Replace("\n", "");
+
+            }
+
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message + " " + ex.InnerException?.Message);
+                StopConnection();
+                await StartConnection();
+                return await SendCommand(cmd);
+            }
         }
         private async Task<string> ReadIncomingMsg(string? logCommand=null,CancellationToken? token=null)
         {
             try
             {
-                if (!_tcpClient.Connected || stream is null)
+                if (!_tcpClient.Connected )
                 {
                     showMsgBox("TCP is not Connected");
                     return string.Empty;
