@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using TouchUI.Lib;
 using TouchUI.Lib.DbUtil;
 using TouchUI.Model;
@@ -516,6 +517,13 @@ namespace TouchUI.Forms
                 statusLabel.Text = text;
             });
         }
+        private bool checkSNSingle(string[] text)
+        {
+            string sample = text[0];
+
+            string[] judgement = sample.Split(",#");
+            return judgement.Last().Length > 1;
+        }
         private async Task ReadSN()
         {
             await Task.Delay(5000);
@@ -524,12 +532,14 @@ namespace TouchUI.Forms
             if (!File.Exists(snFile))
                 throw new Exception("SN File Path not found");
             string[] text = File.ReadAllLines(snFile);
+
+            bool isSingleSn = checkSNSingle(text);
             var sortedArea = areaData.OrderBy(x => x.Position).ThenBy(x => x.No).ToArray();
             for (int i = 0; i < cavities!.Cavity.CavityTotal; i++)
             {
                 cavities.CurrentCavity = i;
-                string[] judgement = text[(i * 2)].Replace(",#", "").Split(',');
-                string sn = text[(i * 2) + 1];
+                string[] judgement = isSingleSn ? text[i].Split(",#").First().Split(",") :  text[(i * 2)].Replace(",#", "").Split(',');
+                string sn = isSingleSn ? text[i].Split(",#").Last() : text[(i * 2) + 1];
                 string[] dataSn = sn.Split(',');
                 sn = dataSn[dataSn.Length - 2];
                 inputSerialView[1, i].Value = sn;
