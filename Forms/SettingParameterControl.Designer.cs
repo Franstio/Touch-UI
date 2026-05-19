@@ -509,9 +509,10 @@
             panel3.Controls.Add(button13);
             panel3.Controls.Add(button6);
             panel3.Controls.Add(button5);
+            panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(3, 18);
             panel3.Name = "panel3";
-            panel3.Size = new Size(584, 196);
+            panel3.Size = new Size(574, 297);
             panel3.TabIndex = 40;
             // 
             // button10
@@ -532,7 +533,7 @@
             // 
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label1.AutoSize = true;
-            label1.Location = new Point(186, 97);
+            label1.Location = new Point(176, 97);
             label1.Name = "label1";
             label1.Size = new Size(29, 15);
             label1.TabIndex = 38;
@@ -540,7 +541,7 @@
             // 
             // button16
             // 
-            button16.Location = new Point(454, 150);
+            button16.Location = new Point(435, 150);
             button16.Name = "button16";
             button16.Size = new Size(121, 23);
             button16.TabIndex = 39;
@@ -555,7 +556,7 @@
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "0.1", "0.5", "1", "1.5", "2" });
-            comboBox1.Location = new Point(124, 99);
+            comboBox1.Location = new Point(114, 99);
             comboBox1.Margin = new Padding(3, 2, 3, 2);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(56, 23);
@@ -579,7 +580,7 @@
             // 
             radioButton2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(120, 76);
+            radioButton2.Location = new Point(110, 76);
             radioButton2.Margin = new Padding(3, 2, 3, 2);
             radioButton2.Name = "radioButton2";
             radioButton2.Size = new Size(74, 19);
@@ -611,6 +612,7 @@
             radioButton1.Name = "radioButton1";
             radioButton1.Size = new Size(46, 19);
             radioButton1.TabIndex = 35;
+            radioButton1.TabStop = true;
             radioButton1.Text = "JOG";
             radioButton1.UseVisualStyleBackColor = true;
             radioButton1.CheckedChanged += radioButton1_CheckedChanged;
@@ -631,7 +633,7 @@
             // 
             // button15
             // 
-            button15.Location = new Point(454, 110);
+            button15.Location = new Point(435, 110);
             button15.Margin = new Padding(3, 2, 3, 2);
             button15.Name = "button15";
             button15.Size = new Size(122, 26);
@@ -657,7 +659,7 @@
             // 
             // button13
             // 
-            button13.Location = new Point(454, 69);
+            button13.Location = new Point(435, 75);
             button13.Name = "button13";
             button13.Size = new Size(122, 23);
             button13.TabIndex = 33;

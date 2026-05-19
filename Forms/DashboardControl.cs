@@ -29,15 +29,16 @@ namespace TestTCP1.Forms
 
         private int? CamPoint = null;
         private bool isEmergencyActive = false;
+        private bool isFullEmgActive = false;
 
         private readonly FileLib fileLib = new FileLib();
-        
+
         private readonly DbConn dbCon = new DbConn();
-        
+
         private readonly TCPConn mainConn = TCPConn.newInstance();
-        private TCPConn? livePositionConn = null;
+        private TCPConn[] livePositionConn;
         private readonly TCPConn statusConn = TCPConn.newInstance();
-        
+
         private List<PositionModel> Positions = new List<PositionModel>();
         private PositionModel _curPos = new PositionModel();
 
@@ -48,7 +49,9 @@ namespace TestTCP1.Forms
 
         private DateTime startTime = DateTime.Now;
         private TimeSpan delayTimer = TimeSpan.FromSeconds(1);
-
+        private DateTime pauseStartTime = DateTime.MinValue;
+        private DateTime pauseEndTime = DateTime.MinValue;
+        private TimeSpan ElapsedTime = TimeSpan.Zero;
         private InspectionView _curInspectionView = new InspectionView();
 
         private readonly int DelayTimer = 0;
@@ -61,6 +64,8 @@ namespace TestTCP1.Forms
         private bool isRunning = false;
         private bool isSensorActive = false;
         private static Task ProcessTask = Task.CompletedTask;
+        private static Task LivePositionTask = Task.CompletedTask;
+        private static Task StatusCheckTask = Task.CompletedTask;
         private string? snFile = null;
 
         private List<ImageAreaModel> areaData = new List<ImageAreaModel>();
@@ -76,24 +81,97 @@ namespace TestTCP1.Forms
         protected override void OnControlRemoved(ControlEventArgs e)
         {
             mainConn.StopConnection();
-            livePositionConn?.StopConnection();
+            foreach (var conn in livePositionConn)
+                conn.StopConnection();
             base.OnControlRemoved(e);
         }
         private void LoadCountView()
         {
+            if (countView.Count > 0)
+                countView.Yield = (decimal)((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
             quantityLabel.Text = $"Count: {countView.Count}";
             failCountLabel.Text = $"Fail: {countView.Fail}";
-            yieldLabel.Text = $"Yield: {countView.Yield}%";
+            yieldLabel.Text = $"Yield: {countView.Yield.ToString("0.00")}%";
+        }
+        private async Task CheckEmgPause()
+        {
+            while (!cts.IsCancellationRequested)
+            {
+                try
+                {
+
+                    await Task.Delay(50);
+                    if (!statusConn.IsRunning())
+                        await statusConn.StartConnection();
+                    string res = await statusConn.SendCommand("RD MR1003");
+                    if (res.Last() == '1' && !isSensorActive && !isEmergencyActive)
+                    {
+                        prevStatus = statusLabel.Text;
+                        isSensorActive = true;
+                        Invoke(delegate
+                        {
+                            statusLabel.Text = "M/C Paused, Waiting Start Button";
+                        });
+                        processTimer.Stop();
+                        processTimer.Enabled = false;
+                        pauseStartTime = DateTime.Now;
+                    }
+                    /*else if (res.Contains("0") && isSensorActive)
+                    {
+                        isSensorActive = false;
+                        Invoke(delegate
+                        {
+                            statusLabel.Text = prevStatus;
+                        });
+                    }*/
+                    res = await statusConn.SendCommand("RD MR1015");
+                    if (res.Last() == '1' )
+                    {
+
+                        isRunning = false;
+                        cTokenSource.Cancel();
+                        prevStatus = statusLabel.Text;
+                        res = await statusConn.SendCommand("RD R012");
+                        if (res.Last() == '1')
+                        {
+                            isFullEmgActive = true;
+                            await statusConn.SendCommand("WR MR004 0");
+                            await statusConn.SendCommand("WR DM0 0");
+                            await statusConn.SendCommand("WR MR8000 0");
+                            button5.Invoke(delegate { button5.Enabled = true; });
+                            updateStatusText("Emergency, Please Press Reset...");
+                        }
+                        else
+                        {
+                            button5.Invoke(delegate { button5.Enabled = false; });
+                            updateStatusText("Emergency, Please release EMG button...");
+                        }
+                        isEmergencyActive = true;
+                        await Task.Delay(1200);
+                        processTimer.Stop();
+                        processTimer.Enabled = false;
+                    }
+                }
+
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message + "-" + e.StackTrace);
+                }
+            }
         }
         public DashboardControl(string _Model)
         {
             InitializeComponent();
+            livePositionConn = new TCPConn[] {
+                TCPConn.newInstance(),
+                TCPConn.newInstance(),
+                TCPConn.newInstance() };
             DelayTimer = int.Parse(Properties.Settings.Default["DelayDashboardProcess"].ToString() ?? "0");
             CameraDelay = int.Parse(Properties.Settings.Default["NgCameraDelay"].ToString() ?? "0");
             markDb = dbCon;
             finalJudgeLabel.Text = string.Empty;
-            livePositionConn = TCPConn.newInstance();
-            livePositionConn.setLog(false);
+            foreach (var conn in livePositionConn)
+                conn.setLog(false);
             mainConn.setLog(true);
             statusConn.setLog(false);
             Model = _Model;
@@ -102,7 +180,6 @@ namespace TestTCP1.Forms
             dt.Columns.Add("Area");
             dt.Columns.Add("Judgement");
             inspectionListGridView.DataSource = dt;
-            Task.Run(GetLivePosition, cts.Token);
             LoadCountView();
             ngWatcher.Path = fileLib._filePath;
             snWatcher.Path = Properties.Settings.Default.SNLocation;
@@ -118,37 +195,37 @@ namespace TestTCP1.Forms
             await PauseTask();
             return res;
         }
-         async Task PauseTask()
+        async Task PauseTask()
         {
-//            Debug.WriteLine($"Pausing on cavity {cavities?.CurrentCavity+1}");
-            string res = "",res1="";
-            string? label =null;
-            while (isSensorActive)
+            //            Debug.WriteLine($"Pausing on cavity {cavities?.CurrentCavity+1}");
+            string res = "", res1 = "";
+            string? label = null;
+            while (isSensorActive && !isEmergencyActive)
             {
-                await Task.Delay(100);
-                Task<string>[] check = new Task<string>[] {
-                //mainConn.SendCommand("RD R013"),
-                //mainConn.SendCommand("RD R014")
-                mainConn.SendCommand("RD MR1005")
-            };
-                await Task.WhenAll(check);
-                res = await check[0];
+                if (cTokenSource.IsCancellationRequested)
+                    return;
+                res = await mainConn.SendCommand("RD MR1005");
                 if (res.Last() == '1')
                 {
-                    res = await mainConn.SendCommand("RD DM0");
-                    await Task.Delay(100);
-                    if (res.Last() == '2')
-                    {
-                        await mainConn.SendCommand("WR MR300 0");
-                        await Task.Delay(50);
-                        res1 = await mainConn.SendCommand("WR MR407 1");
-                        await mainConn.SendCommand("WR MR300 1");
-                    }
-                    else
-                       res1= await mainConn.SendCommand("WR MR407 1");
+                    //                    res = await mainConn.SendCommand("RD DM0");
+                    //                    await Task.Delay(10);
+                    //                    if (res.Last() == '7')
+                    //                    {
+                    ////                        await mainConn.SendCommand("WR MR300 0");
+                    //                        await mainConn.SendCommand("WR MR1011 1");
+                    //                        res1 = await mainConn.SendCommand("WR MR407 1");
+                    ////                        await mainConn.SendCommand("WR MR300 1");
+                    //                    }
+                    //                    else
+                    //                        res1 = await mainConn.SendCommand("WR MR407 1");
+                    await mainConn.SendCommand("WR MR407 1");
+                    await mainConn.SendCommand("WR MR1005 0");
+
+                    //                    await mainConn.SendCommand("WR DM0 1");
                     isSensorActive = false;
                     Invoke(delegate
                     {
+                        pauseEndTime = DateTime.Now;
                         processTimer.Enabled = true;
                         processTimer.Start();
                     });
@@ -159,94 +236,64 @@ namespace TestTCP1.Forms
 
                 while (!statusLabel.IsHandleCreated)
                     await Task.Delay(50);
-                if ( label is not null)
-                    statusLabel.Invoke(delegate
+                if (label is not null)
+                    Invoke(delegate
                     {
                         statusLabel.Text = label;
                     });
             }
-//            Debug.WriteLine($"Resuming on cavity {cavities?.CurrentCavity+1}");
+            //            Debug.WriteLine($"Resuming on cavity {cavities?.CurrentCavity+1}");
         }
         private async Task GetLivePosition()
         {
-            try
+            while (!cts.IsCancellationRequested)
             {
-                while (!cts.IsCancellationRequested)
+                try
                 {
                     string res = string.Empty;
                     decimal val = 0;
-                    if (livePositionConn is null)
-                        livePositionConn = TCPConn.newInstance();
-                    if (!livePositionConn.IsRunning())
-                        await livePositionConn.StartConnection();
-                    if (!statusConn.IsRunning())
-                        await statusConn.StartConnection();
-                    res = await statusConn.SendCommand("RD MR1003");
-                    if (res.Last() == '1' && !isSensorActive)
+                    string[] cmd = new string[] { "CM8830", "CM8870.L", "CM8910" };
+                    for (int i = 0; i < livePositionConn.Length; i++)
                     {
-                        prevStatus = statusLabel.Text;
-                        isSensorActive = true;
-                        statusLabel.Invoke(delegate
-                        {
-                            statusLabel.Text = "M/C Paused, Waiting Start Button";
-                        });
-                        processTimer.Stop();
-                        processTimer.Enabled = false;
-                    }
-                    /*else if (res.Contains("0") && isSensorActive)
-                    {
-                        isSensorActive = false;
-                        statusLabel.Invoke(delegate
-                        {
-                            statusLabel.Text = prevStatus;
-                        });
-                    }*/
-                    res = await statusConn.SendCommand("RD R012");
-                    if (res.Last() == '0')
-                    {
-                        isRunning = false;
-                        cTokenSource.Cancel();
-                        await livePositionConn.SendCommand("WR MR004 0");
-                        await livePositionConn.SendCommand("WR DM0 0");
-                        await livePositionConn.SendCommand("WR MR8000 0");
-                        updateStatusText("Emergency...");
-                        processTimer.Stop();
-                        processTimer.Enabled = false;
-                        isEmergencyActive = true;
-                    }
-                    button5.Invoke(delegate { button5.Enabled = isEmergencyActive; });
-                    val = await LoadValue("RD CM8830", 0);
+                        TCPConn conn = livePositionConn[i];
+                        if (!conn.IsRunning())
+                            await conn.StartConnection();
 
-                    xLabel.Invoke(new Action(() =>
-                    xLabel.Text = $"X: {(val / 1600 * 20).ToString("0.00")} mm"));
-                    //Thread.Sleep(5);
-                    val = await LoadValue("RD CM8870", 0);
-                    yLabel.Invoke(new Action(() =>
-                    yLabel.Text = $"Y: {(val / 1600 * 20).ToString("0.00")} mm"));
-                    //Thread.Sleep(5);
-                    val = await LoadValue("RD CM8910", 0);
-                    zLabel.Invoke(new Action(() =>
-                    zLabel.Text = $"Z: {(val / 1600 * 20).ToString("0.00")} mm"));
-                    await Task.Delay(delayTimer);
+                        val = await LoadValue($"RD {cmd[i]}", 0, conn);
+                        switch (i)
+                        {
+                            case 0:
+                                xLabel.Invoke(new Action(() =>
+                                xLabel.Text = $"X: {(val / 1600 * 20).ToString("0.00")} mm"));
+                                break;
+                            //Thread.Sleep(5);
+                            case 1:
+                                yLabel.Invoke(new Action(() =>
+                                yLabel.Text = $"Y: {(val / 1600 * 20).ToString("0.00")} mm"));
+                                //Thread.Sleep(5);
+                                break;
+                            case 2:
+                                zLabel.Invoke(new Action(() =>
+                                zLabel.Text = $"Z: {(val / 1600 * 20).ToString("0.00")} mm"));
+                                await Task.Delay(delayTimer);
+                                break;
+                        }
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message + "|" + ex.StackTrace);
                 }
             }
-            catch(Exception ex)
-            {
-                Debug.WriteLine(ex.Message + "|" + ex.StackTrace);
-            }
-            finally
-            {
-                if (!cts.IsCancellationRequested)
-                    Task.Run(GetLivePosition);
-            }
-            
+
         }
         private async Task<decimal[]> GetCurrentPosition()
         {
             decimal[] values = new decimal[3];
-            values[0] = await LoadValue("RD CM8830", 0);
-            values[1] = await LoadValue("RD CM8870.L", 0);
-            values[2] = await LoadValue("RD CM8910", 0);
+            values[0] = await LoadValue("RD CM8830", 0, livePositionConn[0]);
+            values[1] = await LoadValue("RD CM8870.L", 0, livePositionConn[1]);
+            values[2] = await LoadValue("RD CM8910", 0, livePositionConn[2]);
             return values;
         }
         private async Task LogWrite()
@@ -277,7 +324,7 @@ namespace TestTCP1.Forms
                         bool isValid = await fileLib.ValidateLog(_cavity.SerialNumber);
                         if (!isValid)
                         {
-                            MessageBox.Show("BOT tidak ditemukan", "Log Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            await Task.Run(delegate { MessageBox.Show("BOT tidak ditemukan", "Log Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }).ConfigureAwait(false);
                             SwitchControlState("Error");
                             return;
 
@@ -303,17 +350,20 @@ namespace TestTCP1.Forms
                     var _cavity = cavities.Cavities.Where(x => x.SerialNumber == item.Key).FirstOrDefault();
                     if (_cavity == null)
                         continue;
-                    sb = sb.AppendLine($"Cavity {_cavity.CavityNo+1}: ");
+                    sb = sb.AppendLine($"Cavity {_cavity.CavityNo + 1}: ");
                     sb = sb.AppendLine($"{item.Value}\n");
                 }
                 if (string.IsNullOrEmpty(sb.ToString()))
                     return;
-                Invoke(delegate
+                await Task.Run(delegate
+                {
+                    Invoke(delegate
                 {
                     DialogResult res = MessageBox.Show(sb.ToString(), "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     if (res == DialogResult.OK)
                         fileLib.ClearSN();
                 });
+                }).ConfigureAwait(false);
             }
         }
         private async Task GetPos()
@@ -339,7 +389,10 @@ namespace TestTCP1.Forms
         }
         private async Task ReloadCavity(CavityModel cavityModel)
         {
-
+            Invoke(delegate
+            {
+                button4.Enabled = false;
+            });
             Positions = await dbCon.GetPositionByModel(Model);
             areaData = await dbCon.GetAreaImageByModel(Model);
             cavities = new DashboardCavityModel(cavityModel, Positions);
@@ -349,6 +402,11 @@ namespace TestTCP1.Forms
                 comboBox1.SelectedIndex = comboBox1.Items.IndexOf(cavities.Cavity.CavityTotal.ToString());
             });
             cavities.CurrentCavityItem.InspectionViews = mapper.Map<List<InspectionView>>(areaData);
+
+            Invoke(delegate
+            {
+                button4.Enabled = true;
+            });
 
         }
         private async Task TriggerCamPoint()
@@ -373,10 +431,10 @@ namespace TestTCP1.Forms
                     //pictureBox1.Invoke(new Action(() => pictureBox1.Image = markPoint.Where(x => x.Position == 1).FirstOrDefault() is null ? null : fileLib.ReadImage(markPoint.Where(x=>x.Position==1).FirstOrDefault()!.ImageName,manualPath:fileLib._markSaveDir)));
                     //scanLabel.Invoke(new Action(() => scanLabel.Text = textBox1.Text));
                     //textBox1.Invoke(new Action(() => textBox1.Enabled = false));
-                    statusLabel.Invoke(new Action(() => statusLabel.Text = "Waiting for start button (In-Progress)"));
+                    Invoke(new Action(() => statusLabel.Text = "Waiting for start button (In-Progress)"));
                     break;
                 case "running":
-                    statusLabel.Invoke(new Action(() =>
+                    Invoke(new Action(() =>
                     {
                         statusLabel.Text = "Running...";
                     }));
@@ -385,10 +443,10 @@ namespace TestTCP1.Forms
                     //oldScanCode = textBox1.Text;
                     //scanLabel.Invoke(new Action(() => scanLabel.Text = string.Empty));
                     //textBox1.Invoke(new Action(() => { textBox1.Enabled = true; textBox1.Text = string.Empty; })); ;
-                    statusLabel.Invoke(new Action(() => statusLabel.Text = "Running Process Complete"));
+                    Invoke(new Action(() => statusLabel.Text = "Running Process Complete"));
                     break;
                 default:
-                    statusLabel.Invoke(new Action(() => statusLabel.Text = status));
+                    Invoke(new Action(() => statusLabel.Text = status));
                     break;
             }
         }
@@ -405,12 +463,15 @@ namespace TestTCP1.Forms
         }
         private async Task ScanRun()
         {
+            ElapsedTime = TimeSpan.Zero;
+            pauseStartTime = DateTime.MinValue;
+            pauseEndTime = DateTime.MinValue;
             string res = string.Empty;
             await GetPos();
             for (int i = 0; i < cavities!.Cavity.CavityTotal && !cTokenSource.IsCancellationRequested; i++)
             {
                 cavities!.CurrentCavity = i;
-  //              Debug.WriteLine($"Write Cavity {i + 1} Started.");
+                //              Debug.WriteLine($"Write Cavity {i + 1} Started.");
                 this.Invoke(delegate
                 {
                     groupBox3.Text = "Inspection List: " + inputSerialView[0, cavities!.CurrentCavity].Value;
@@ -420,7 +481,7 @@ namespace TestTCP1.Forms
 
                 await RunProcess(i);
 
- //               Debug.WriteLine($"Write Cavity {i + 1} Completed.");
+                //               Debug.WriteLine($"Write Cavity {i + 1} Completed.");
             }
             string res1, res2;
             do
@@ -442,7 +503,7 @@ namespace TestTCP1.Forms
         }
         void updateStatusText(string text)
         {
-            statusLabel.Invoke(delegate
+            Invoke(delegate
             {
                 statusLabel.Text = text;
             });
@@ -474,7 +535,7 @@ namespace TestTCP1.Forms
                 int ngCount = 0;
                 if (judgement.Length != sortedArea.Length)
                 {
-                    updateStatusText( "Failing Reading output .txt,Stopping Process");
+                    updateStatusText("Failing Reading output .txt,Stopping Process");
                     mainCts.Cancel();
                     isRunning = false;
                     cTokenSource.Cancel();
@@ -485,23 +546,22 @@ namespace TestTCP1.Forms
                     bool isPassed = judgement[j] == "0";
                     cavities.Cavities[i].InspectionViews[j].Judgement = isPassed ? "PASS" : "NG";
                     string localImage = await dbCon.GetLocalImage(sortedArea[j]);
-                    cavities.Cavities[i].InspectionViews[j].Image = isPassed ? localImage : ngImage[ngImage.Count-1];
+                    cavities.Cavities[i].InspectionViews[j].Image = isPassed ? localImage : ngImage[ngImage.Count - 1];
                     ngCount = isPassed ? ngCount : ngCount + 1;
-                    cavities!.AddToImageList(i , sortedArea[j].AreaInspection, localImage, cavities.Cavities[i].InspectionViews[j].Image);
+                    cavities!.AddToImageList(i, sortedArea[j].AreaInspection, localImage, cavities.Cavities[i].InspectionViews[j].Image);
                     var pos = Positions.Where(x => x.Pos == sortedArea[j].Position).First();
                     RecordInspectionModel record = mapper.Map<RecordInspectionModel>(pos);
                     record.ScanCode = sn;//inputSerialView.Rows[j + 1].Cells[1].Value.ToString() ?? string.Empty;
                     record.AreaInspection = sortedArea[j].AreaInspection;
                     record.Judgement = cavities.Cavities[i].InspectionViews[j].Judgement;
                 }
-                cavities.CurrentCavity = 0;
                 this.inspectionListGridView.Invoke(new Action(() =>
                 {
                     LoadInspectionToGrid();
                 }));
                 this.Invoke(new Action(() =>
                 {
-                    bool finalJudge = cavities.CurrentCavityItem.InspectionViews.Select(x => x.Judgement).Any(x => x.Contains("NG"));
+                    bool finalJudge = cavities.CurrentCavityItem.isNg();
                     inputSerialView[2, cavities.CurrentCavity].Style.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
                     inputSerialView[2, cavities.CurrentCavity].Value = finalJudge ? "FAIL" : "PASS";
                     finalJudgeLabel.ForeColor = finalJudge ? Color.DarkRed : Color.Lime;
@@ -511,13 +571,14 @@ namespace TestTCP1.Forms
                         countView.Fail++;
                     else
                         countView.Pass++;
-                    countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
+                    //                    countView.Yield = ((decimal)((decimal)countView.Pass / (decimal)countView.Count) * 100);
                     LoadCountView();
                 }));
                 //Debug.WriteLine(string.Join("\n", text));
                 File.Delete(snFile);
                 updateStatusText(".txt Output have been deleted");
             }
+            cavities.CurrentCavity = 0;
             //this.Invoke(new Action(() =>
             //{
             //    bool finalJudge = cavities.CurrentCavityItem.InspectionViews.Select(x => x.Judgement).Any(x => x.Contains("NG"));
@@ -542,6 +603,7 @@ namespace TestTCP1.Forms
         }
         private async Task ShowLogPopup()
         {
+
             DialogResult dialogResult = MessageBox.Show("Generete Log Data?", "Log Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dialogResult == DialogResult.Yes)
             {
@@ -562,17 +624,17 @@ namespace TestTCP1.Forms
 
             Positions = cavities!.Cavities[cavityNo].Models;
             SwitchControlState("running");
-            for (int i = 0; i < Positions.Count ; i++)
+            for (int i = (cavityNo==0) ? 1: 0; i < Positions.Count; i++)
             {
                 if (i >= Positions.Count || cTokenSource.IsCancellationRequested)
                     break;
                 //Debug.WriteLine("Position Start " + Positions[i].Pos);
                 var _pos = /*Model.ToLower()=="touch-ui" ? touchUITemp.Setup( Positions[i]) :*/ Positions[i];
                 await StartProcess(_pos);
-//                LoadImage(Positions[i]); [TODO]
-                
-               // Debug.WriteLine("Position Finish " + Positions[i].Pos);
-                this.areaLabel.Invoke(new Action(() => areaLabel.Text = string.Join(",",areaData.Where(x => x.Position == Positions[i].Pos).Select(x=>x.AreaInspection).ToArray())));
+                //                LoadImage(Positions[i]); [TODO]
+
+                // Debug.WriteLine("Position Finish " + Positions[i].Pos);
+                this.areaLabel.Invoke(new Action(() => areaLabel.Text = string.Join(",", areaData.Where(x => x.Position == Positions[i].Pos).Select(x => x.AreaInspection).ToArray())));
                 /*#pragma warning disable CS4014 //r Because this call is not awaited, execution of the current method continues before the call is completed
                                 Task.Run(new Action(() =>
                                 {
@@ -628,28 +690,52 @@ namespace TestTCP1.Forms
             fileLib.SaveImage(file.FullName, file.Name, true);
             return file.Name;
         }
-
-        private async Task StartProcess(PositionModel data)
+        private async Task MovePosition(PositionModel data)
         {
-            if (!mainConn.IsRunning())
-                await mainConn.StartConnection();
-            await Task.Delay(2000);
-            var s = await SendCommand("WR MR300 0");
-            string res = string.Empty;
-            Console.WriteLine($"Moving To {data.X},{data.Y},{data.Z}");
+            string res;
+            if (data.CameraCheckpoint != "")
+                res = await SendCommand($"WR W0F2 {data.CameraCheckpoint}");
             string xVal = String.Format("{0:0}", data.X * 1600 / 20);
             string yVal = String.Format("{0:0}", data.Y * 1600 / 20);
             string zVal = String.Format("{0:0}", data.Z * 1600 / 20);
             res = await SendCommand($"WR CM8010 {xVal}");
             res = await SendCommand($"WR CM8210.L {yVal}");
             res = await SendCommand($"WR CM8410 {zVal}");
-            if (data.CameraCheckpoint != "")
-                res = await SendCommand($"WR W0F2 {data.CameraCheckpoint}");
+        }
+        private async Task StartProcess(PositionModel data)
+        {
+            updateStatusText("Running...");
+            if (!mainConn.IsRunning())
+                await mainConn.StartConnection();
+            string waitRes = await SendCommand("RD MR406"),waitRes2 = await SendCommand("RD MR400");
+            while ( (waitRes.Last()!='1' || waitRes2.Last() != '1') && !cTokenSource.IsCancellationRequested)
+            {
+                waitRes = await SendCommand("RD MR406");
+                waitRes2 = await SendCommand("RD MR400");
+                await Task.Delay(50);
+            }
+            if (cTokenSource.IsCancellationRequested)
+                return;
+            string res = string.Empty;
+            await MovePosition(data);
+
+            if (!(data.X == 0 && data.Y == 0 && data.Z == 0))
+                await SendCommand("WR MR1011 1");
+            /*s = await SendCommand("RD DM0");
+            if (s.Last() == '2')
+            {
+                await SendCommand("WR MR300 0");
+                await Task.Delay(10);
+            }*/
+
             if (data.X == 0 && data.Y == 0 && data.Z == 0)
             {
                 await SendCommand("WR MR002 0");
-                s = await SendCommand("WR MR300 1");
-                await Task.Delay(4000);
+                
+//                s = await SendCommand("WR MR300 0");
+                await SendCommand("WR MR1010 1");
+  //              s = await SendCommand("WR MR300 1");
+                //  await Task.Delay(4000);
                 decimal[] _curPos = await GetCurrentPosition();
                 while (_curPos.Any(x => x != 0))
                 {
@@ -661,16 +747,12 @@ namespace TestTCP1.Forms
                     _curPos = await GetCurrentPosition();
                 }
                 await SendCommand("WR MR004 0");
+                await SendCommand("WR MR1010 0");
                 return;
             }
-            s = await SendCommand("RD DM0");
-            if (s.Last()=='2')
-            {
-                await SendCommand("WR MR300 0");
-                await Task.Delay(10);
-            }
-            s = await SendCommand("WR MR300 1");
-            await Task.Delay(4000);
+//            if (s.Last() == '2')
+//             s = await SendCommand("WR MR300 1");
+//            await Task.Delay(4000);
             bool[] confirms = new bool[3];
             do
             {
@@ -685,16 +767,16 @@ namespace TestTCP1.Forms
                 confirms[2] = (await SendCommand($"RD CR8601")).Contains("1");
             }
             while (confirms.Any(x => x == false));
-            res = string.Empty;
+/*            res = string.Empty;
             do
             {
                 res = await SendCommand("RD DM0");
                 if (res.Last() == '2')
                     await SendCommand("WR MR300 1");
             }
-            while (res.Last() != '7');
-            await SendCommand("WR MR406 1");
-            await Task.Delay(500);
+            while (res.Last() != '7');*/
+//            await SendCommand("WR MR406 1");
+//            await Task.Delay(10);
         }
         private async Task<bool?> Trigger(string checkPoint)
         {
@@ -735,8 +817,11 @@ namespace TestTCP1.Forms
                 return;
             if (!mainConn.IsRunning())
                 await mainConn.StartConnection();
-            if (livePositionConn is not null && !livePositionConn.IsRunning())
-                await livePositionConn.StartConnection();
+            foreach (var conn in livePositionConn)
+            {
+                if (!conn.IsRunning())
+                    await conn.StartConnection();
+            }
             await mainConn.SendCommand("WR MR410 0");
             await mainConn.SendCommand("WR MR004 0");
             await GetPos();
@@ -756,8 +841,9 @@ namespace TestTCP1.Forms
             LoadCavityGridTable();
             if (ProcessTask != null || ProcessTask != Task.CompletedTask)
                 mainCts.Cancel();
-            ProcessTask = Task.Run(LoopProcess);
-
+            ProcessTask = Task.Run(LoopProcess, CancellationToken.None);
+            LivePositionTask = Task.Run(GetLivePosition, CancellationToken.None);
+            StatusCheckTask = Task.Run(CheckEmgPause, CancellationToken.None);
         }
         private void LoadCavityGridTable(bool reset = true) => Invoke(delegate
         {
@@ -787,21 +873,21 @@ namespace TestTCP1.Forms
             inputSerialView.Refresh();
 
         });
-        private async Task<decimal> LoadValue(string command, decimal defaultValue)
+        private async Task<decimal> LoadValue(string command, decimal defaultValue, TCPConn conn)
         {
             if (livePositionConn is null)
                 return defaultValue;
             string res;
             decimal value;
-            res = await livePositionConn.SendCommand(command);
+            res = await conn.SendCommand(command);
             string[] spl = res.Split("\n");
             if (spl.Length > 1)
             {
                 if (spl[1] != string.Empty)
                 {
                     Debug.WriteLine($"{command} reading resulting multiline value\nvalue: {res}\nRestarting Connection");
-                    livePositionConn.StopConnection();
-                    await livePositionConn.StartConnection();
+                    conn.StopConnection();
+                    await conn.StartConnection();
                     await Task.Delay(100);
                     return defaultValue;
                 }
@@ -912,10 +998,11 @@ namespace TestTCP1.Forms
 
         private void processTimer_Tick(object sender, EventArgs e)
         {
-            var elapsed = DateTime.Now - startTime;
+            ElapsedTime = ElapsedTime.Add(TimeSpan.FromSeconds(1));
+
             processTimeLabel.Invoke(new Action(() =>
             {
-                processTimeLabel.Text = $"Process Time: {elapsed.Hours.ToString("00")}:{elapsed.Minutes.ToString("00")}:{elapsed.Seconds.ToString("00")}";
+                processTimeLabel.Text = $"Process Time: {ElapsedTime.Hours.ToString("00")}:{ElapsedTime.Minutes.ToString("00")}:{ElapsedTime.Seconds.ToString("00")}";
             }));
         }
 
@@ -925,7 +1012,7 @@ namespace TestTCP1.Forms
             var ins = inspectionListGridView.Rows[index].Cells[1];
             var ar = areaData.Where(x => x.AreaInspection == inspectionListGridView[0, index].Value.ToString()).First();
             var pos = Positions.Where(x => x.Pos == ar.Position).First();
-            var frm = new ProcessVerificationModalForm(pos,areaData.Where(x => x.AreaInspection == inspectionListGridView[0,e.RowIndex].Value.ToString()).First(), ins.Value.ToString() == "PASS", cavities!.CurrentCavityItem.InspectionViews[index].Image);
+            var frm = new ProcessVerificationModalForm(pos, areaData.Where(x => x.AreaInspection == inspectionListGridView[0, e.RowIndex].Value.ToString()).First(), ins.Value.ToString() == "PASS", cavities!.CurrentCavityItem.InspectionViews[index].Image);
             frm.WindowState = FormWindowState.Maximized;
             var res = frm.ShowDialog();
             if (res == DialogResult.OK)
@@ -933,17 +1020,20 @@ namespace TestTCP1.Forms
                 //RecordInspectionModel record = mapper.Map<RecordInspectionModel>(pos);
                 //record.Judgement = InspectionViews[index].Judgement;
 
-
-                ReasonForm reasonForm = new ReasonForm();
-                var _res = reasonForm.ShowDialog();
-                if (_res == DialogResult.OK)
+                bool isPrevNg = cavities.CurrentCavityItem.isNg();
+                if (!frm.resultVerification)
                 {
-                    string reason = reasonForm.Result;
-                    cavities.CurrentCavityItem.InspectionViews[index].Reason = reason;
-                    cavities.CurrentCavityItem.InspectionViews[index].Judgement = frm.resultVerification ? "PASS" : "NG";
+                    ReasonForm reasonForm = new ReasonForm();
+                    var _res = reasonForm.ShowDialog();
+                    if (_res == DialogResult.OK)
+                    {
+                        string reason = reasonForm.Result;
+                        cavities.CurrentCavityItem.InspectionViews[index].Reason = reason;
+                    }
+                    else
+                        return;
                 }
-                else
-                    return;
+                cavities.CurrentCavityItem.InspectionViews[index].Judgement = frm.resultVerification ? "PASS" : "NG";
                 if (frm.resultVerification)
                 {
                     var areaGet = areaData.Where(x => x.AreaInspection == inspectionListGridView[0, e.RowIndex].Value.ToString()).First();
@@ -952,6 +1042,11 @@ namespace TestTCP1.Forms
                     //                    await dbCon.SaveImage(pos.Model, pos.Pos, frm._image);
                     //                    fileLib.SaveImage(frm._imageFull, frm._image);
                 }
+                if (!isPrevNg && cavities.CurrentCavityItem.isNg())
+                    countView = new CountViewModel() { Count = countView.Count, Fail = countView.Fail + 1, Pass = countView.Pass - 1 };
+                else if (isPrevNg && !cavities.CurrentCavityItem.isNg())
+                    countView = new CountViewModel() { Count = countView.Count, Fail = countView.Fail - 1, Pass = countView.Pass + 1 };
+                Invoke(new(() => LoadCountView()));
                 await Task.Run(new Action(() =>
                 {
                     this.inspectionListGridView.Invoke(new Action(() =>
@@ -1118,13 +1213,14 @@ namespace TestTCP1.Forms
             button2.Visible = false;// res.Judgement != "PASS";
             actualPictureBox.Image = fileLib.ReadImage(img.Item2, res.Judgement == "PASS"); //Image.FromFile(img.Item2);
             parameterPictureBox.Image = fileLib.ReadImage(img.Item1, true);
-            _curPos = Positions.Where(x=>x.Pos==curArea.Position).First();
+            _curPos = Positions.Where(x => x.Pos == curArea.Position).First();
             _curInspectionView = res;
         }
         protected override void OnLeave(EventArgs e)
         {
             base.OnLeave(e);
             mainCts.Cancel();
+            cts.Cancel();
         }
         private async Task LoopProcess()
         {
@@ -1132,21 +1228,28 @@ namespace TestTCP1.Forms
             cTokenSource = new CancellationTokenSource();
             await GetPos();
             LoadCavityGridTable(false);
-            try
+
+            while (!mainCts.IsCancellationRequested && cavities is not null)
             {
-                while (!mainCts.IsCancellationRequested)
+                try
                 {
+
                     cavities!.CurrentCavity = 0;
                     if (isEmergencyActive)
+                    {
                         continue;
+                    }
+                    await MovePosition(cavities!.CurrentCavityItem.Models.First());
                     cTokenSource = new CancellationTokenSource();
                     SwitchControlState("waiting");
                     string res = await SendCommand("RD MR004");
                     while (res.Last() != '1' && !cTokenSource.IsCancellationRequested)
                     {
+                        await Task.Delay(10);
+                        updateStatusText("Waiting for start button (In-Progress)");
                         if (!button6.Enabled)
                             await SendCommand("WR MR410 0");
-                        if (mainCts.IsCancellationRequested )
+                        if (mainCts.IsCancellationRequested)
                             return;
                         res = await SendCommand("RD MR004");
                     }
@@ -1186,7 +1289,7 @@ namespace TestTCP1.Forms
                     await ScanRun();
                     if (cavities!.isCavitiesPass())
                         await LogWrite();
-                    
+
                     else
                     {
 
@@ -1194,44 +1297,54 @@ namespace TestTCP1.Forms
                         {
                             button6.Enabled = true;
                         });
-                        int loading = 0;
                         while (button6.Enabled)
                         {
-                            statusLabel.Invoke(delegate
+                            await Task.Delay(100);
+                            Invoke(delegate
                             {
-                                statusLabel.Text = "Complete (Need Verification)"+new string('.',loading);
-                                loading = (loading + 1) % 1;
+                                statusLabel.Text = "Complete (Need Verification)";
                             });
                         }
                     }
+
+                }
+                catch (Exception ex)
+                {
+                    isRunning = false;
+                    Debug.WriteLine("ERROR: " + ex.Message + " " + ex.StackTrace);
+                    updateStatusText("ERROR: " + ex.Message);
+                    await Task.Run(delegate
+                    {
+                        this.Invoke(new(() => MessageBox.Show("Error Detected,Stopping Process Temporary. Close this message to continue.", "Error Detected", MessageBoxButtons.OK, MessageBoxIcon.Error)));
+                    }).ConfigureAwait(false);
+                    mainCts.Cancel();
+                    cTokenSource.Cancel();
+                }
+                finally
+                {
+                    //                MessageBox.Show("Process Finished");
+                    if (cavities is null)
+                    {
+                        Invoke(new(() => MessageBox.Show("Cavitiy Load Issue")));
+
+                    }
+                    else if (!isEmergencyActive)
+                    {
+                        Debug.WriteLine("Process Finished/Stopped");
+                        if (cts.IsCancellationRequested)
+                            Debug.WriteLine("Cancelled");
+                    }
                 }
             }
-            catch (Exception ex)
-            {
-                isRunning = false;
-                Debug.WriteLine("ERROR: " + ex.Message + " " + ex.StackTrace);
-                updateStatusText("ERROR: " +ex.Message);
-                mainCts.Cancel();
-                cTokenSource.Cancel();
-            }
-            finally
-            {
-//                MessageBox.Show("Process Finished");
-                Debug.WriteLine("Process Finished/Stopped");
-                if (cts.IsCancellationRequested)
-                    Debug.WriteLine("Cancelled");
-                else
-                    ProcessTask = Task.Run(LoopProcess);
-            }
         }
-        private async void NGWatcherEvent(object sender,FileSystemEventArgs e)
+        private async void NGWatcherEvent(object sender, FileSystemEventArgs e)
         {
             if (e.Name is null && !isRunning)
                 return;
             await Task.Delay(Properties.Settings.Default.NgCameraDelay);
             ngImage.Add(e.FullPath);
         }
-        private void SNWatcherEvent(object sender,FileSystemEventArgs e)
+        private void SNWatcherEvent(object sender, FileSystemEventArgs e)
         {
             if (e.FullPath is null && !isRunning)
                 return;
@@ -1239,8 +1352,8 @@ namespace TestTCP1.Forms
             return;
 
         }
-        
-        
+
+
         private void inputSerialView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || isRunning)
@@ -1275,46 +1388,89 @@ namespace TestTCP1.Forms
 
         private async void button5_Click(object sender, EventArgs e)
         {
-            var dialogResult = MessageBox.Show("Are you sure to reset running process?", "Reset Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (dialogResult != DialogResult.Yes)
-                return;
-            this.button5.Invoke(new Action(() => this.button5.Enabled = false));
+            await Task.Run(async delegate
+            {
+                var dialogResult = MessageBox.Show("Are you sure to reset running process?", "Reset Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dialogResult != DialogResult.Yes)
+                    return;
 
-            LoadCavityGridTable(true);
+                LoadCavityGridTable(true);
 
                 cTokenSource.Cancel();
-
-                processTimer.Enabled = false;
-                processTimer.Stop();
                 await GetPos();
+                await SendCommand("WR MR300 0");
+                await SendCommand("WR MR001 0");
+                await SendCommand("WR DM0 0");
+                await SendCommand("WR MR701 1");
+                await Task.Delay(DelayTimer);
+                await SendCommand("WR MR701 0");
+                await SendCommand("WR M400 0");
+                await SendCommand("WR B068 0");
+                await SendCommand("WR MR006 1");
+                await Task.Delay(DelayTimer);
+                await SendCommand("WR MR006 0");
+                await SendCommand("WR MR003 1");
+                await Task.Delay(DelayTimer);
+                await SendCommand("WR MR003 0");
+                await SendCommand("WR MR004 0");
+                string[] cmds = new string[] { "R001", "R002", "R004" };
+                bool[] _res = new bool[] { false, false, false };
+                while (_res.Any(x => !x))
+                {
+                    for (int i = 0; i < cmds.Length; i++)
+                    {
+                        CancellationTokenSource sourceTOken = new CancellationTokenSource();
+                        var t1 = Task.Run(async delegate {
+                            await Task.Delay(3000);
+                            sourceTOken.Cancel();
+                        });
+                        string _data = await mainConn.SendCommand("RD "+cmds[i],sourceTOken.Token);
+                        _res[i] = _data.Contains("0") || _data.Contains("1");
+                    }
+                }
+                isFullEmgActive = false;
+                isEmergencyActive = false;
+                if (isSensorActive)
+                {
+                    isSensorActive = false;
+                }
                 Invoke(delegate
                 {
                     button4.Enabled = true;
                     isRunning = false;
                     statusLabel.Text = "Cancelled...";
+                    processTimer.Stop();
+                    processTimer.Enabled = false;
+                    processTimeLabel.Text = "Process Time: 00:00:00";
+                    button5.Enabled = false;
                 });
-            await SendCommand("WR MR300 0");
-            await SendCommand("WR MR001 0");
-            await SendCommand("WR DM0 0");
-            await SendCommand("WR MR701 1");
-            await Task.Delay(DelayTimer);
-            await SendCommand("WR MR701 0");
-            await SendCommand("WR M400 0");
-            await SendCommand("WR B068 0");
-            await SendCommand("WR MR006 1");
-            await Task.Delay(DelayTimer);
-            await SendCommand("WR MR006 0");
-            await SendCommand("WR MR003 1");
-            await Task.Delay(DelayTimer);
-            await SendCommand("WR MR003 0");
-            await SendCommand("WR MR004 0");
-            isEmergencyActive = false;
-            processTimeLabel.Invoke(new Action(() => processTimeLabel.Text = "Process Time: 00:00:00"));
+                updateStatusText(prevStatus);
+            }).ConfigureAwait(false);
         }
 
         private async void button6_Click(object sender, EventArgs e)
         {
             await ShowLogPopup();
+        }
+
+        private void checkProcessTimer_Tick(object sender, EventArgs e)
+        {
+            if (cavities is null)
+                return;
+            if (ProcessTask.Status == TaskStatus.Faulted || ProcessTask.IsCompleted || ProcessTask.Status == TaskStatus.Canceled)
+                ProcessTask = Task.Run(LoopProcess, CancellationToken.None);
+
+            if (LivePositionTask.Status == TaskStatus.Faulted || LivePositionTask.IsCompleted || LivePositionTask.Status == TaskStatus.Canceled)
+            {
+                cts = new CancellationTokenSource();
+                LivePositionTask = Task.Run(GetLivePosition, CancellationToken.None);
+            }
+
+            if (StatusCheckTask.Status == TaskStatus.Faulted || StatusCheckTask.IsCompleted || StatusCheckTask.Status == TaskStatus.Canceled)
+            {
+                cts = new CancellationTokenSource();
+                StatusCheckTask = Task.Run(CheckEmgPause, CancellationToken.None);
+            }
         }
     }
 }

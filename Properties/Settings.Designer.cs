@@ -227,5 +227,17 @@ namespace TestTCP1.Properties {
                 this["JudgementPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(" backup/")]
+        public string BackupLogPath {
+            get {
+                return ((string)(this["BackupLogPath"]));
+            }
+            set {
+                this["BackupLogPath"] = value;
+            }
+        }
     }
 }

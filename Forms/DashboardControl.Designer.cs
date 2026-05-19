@@ -91,6 +91,7 @@
             button6 = new Button();
             ngWatcher = new FileSystemWatcher();
             snWatcher = new FileSystemWatcher();
+            checkProcessTimer = new System.Windows.Forms.Timer(components);
             groupBox2.SuspendLayout();
             panel7.SuspendLayout();
             panel5.SuspendLayout();
@@ -830,6 +831,7 @@
             // button4
             // 
             button4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button4.Enabled = false;
             button4.Location = new Point(112, 22);
             button4.Name = "button4";
             button4.Size = new Size(186, 31);
@@ -852,6 +854,7 @@
             // button5
             // 
             button5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button5.Enabled = false;
             button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             button5.Location = new Point(1052, 110);
             button5.Name = "button5";
@@ -886,6 +889,11 @@
             snWatcher.Filter = "*.txt";
             snWatcher.NotifyFilter = NotifyFilters.FileName;
             snWatcher.SynchronizingObject = this;
+            // 
+            // checkProcessTimer
+            // 
+            checkProcessTimer.Interval = 1000;
+            checkProcessTimer.Tick += checkProcessTimer_Tick;
             // 
             // DashboardControl
             // 
@@ -1016,5 +1024,6 @@
         private Button button6;
         private FileSystemWatcher ngWatcher;
         private FileSystemWatcher snWatcher;
+        private System.Windows.Forms.Timer checkProcessTimer;
     }
 }

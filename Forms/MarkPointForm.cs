@@ -92,7 +92,7 @@ namespace TestTCP1.Forms
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            if (controlState)
+            if (controlState || pictureBox1.Image is null)
                 return;
             MouseEventArgs m = (MouseEventArgs)e;
             PointF curLoc = DrawMark(m.Location, Color.Red);
@@ -163,6 +163,8 @@ namespace TestTCP1.Forms
         private async void button2_Click(object sender, EventArgs e)
         {
             var item = (ImageAreaModel)comboBox1.SelectedItem;
+            if (item is null)
+                return;
             newModel.AreaInspection = item.AreaInspection;
             newModel.Position = item.Position;
             await conn.SaveMarkPoint(newModel);

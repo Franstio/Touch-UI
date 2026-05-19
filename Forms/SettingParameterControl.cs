@@ -145,7 +145,7 @@ namespace TestTCP1.Forms
             decimal initVal = 80;
             initVal = initVal * mmVal;
             for (int i = 0; i < InchingCommand.Count; i++)
-                await mainConn.SendCommand($"WR {InchingCommand[i]} {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
+                await mainConn.SendCommand($"WR {InchingCommand[i]}.L {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
             //       await mainConn.SendCommand($"WR {InchingCommand[i]}{(i > 2 ? ".L" : string.Empty)} {(i > 2 ? "-" : "")}{initVal.ToString().Split(".").FirstOrDefault()}");
         }
         private async void SettingParameterControl_Load(object sender, EventArgs e)
@@ -527,16 +527,16 @@ namespace TestTCP1.Forms
             if (state == "INCHING")
             {
                 foreach (var button in buttons)
-                    button.Enabled = false;
+                    button.Invoke(new(()=>button.Enabled = false));
                 await LoadInching();
                 foreach (var button in buttons)
-                    button.Enabled = true;
+                    button.Invoke(new(() => button.Enabled = true));
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadJogState("INCHING");
+            await LoadJogState("INCHING");
         }
 
         private void parameterDatsGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)

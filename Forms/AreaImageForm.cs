@@ -39,6 +39,8 @@ namespace TestTCP1.Forms
             CameraDelay = Properties.Settings.Default.CameraDelay;
             DelayTimer = Properties.Settings.Default.DelaySettingParameter;
             triggerWatcher.Path = fileLib._filePath;
+            triggerWatcher.IncludeSubdirectories = true;
+            triggerWatcher.NotifyFilter = NotifyFilters.FileName;
             triggerWatcher.Created += OnTriggerImageCreated;
         }
 
@@ -155,11 +157,13 @@ namespace TestTCP1.Forms
 
             //            this.button2.Invoke(new Action(() => { button2.Enabled = true; }));
         }
-        private void OnTriggerImageCreated(object sender, FileSystemEventArgs e)
+        private async void OnTriggerImageCreated(object sender, FileSystemEventArgs e)
         {
+            await Task.Delay(500);
             if (button2.Enabled)
                 return;
             sourceImage = e.FullPath;
+            areaImage.Invoke(delegate { areaImage.ImageLocation = e.FullPath; });
             button2.Enabled = true;
             button2.Text = "Trigger";
         }

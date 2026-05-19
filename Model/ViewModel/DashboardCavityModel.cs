@@ -86,7 +86,7 @@ namespace TestTCP1.Model.ViewModel
     public class CavityModel 
     {
 
-        public int CavityTotal { get; set; } = 0;
+        public int CavityTotal { get; set; } = 1;
         public decimal Pitching { get; set; } = 0;
     }
 

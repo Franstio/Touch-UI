@@ -163,9 +163,9 @@ namespace TestTCP1.Lib
                     _path = Path.Combine(_logPath, filename);
                 else
                 {
-                    _path = Path.Combine(_logPath, "result", filename);
-                    if (!Directory.Exists(Path.Combine(_logPath, "result")))
-                        Directory.CreateDirectory(Path.Combine(_logPath,"result"));
+                    _path = Path.Combine( Properties.Settings.Default.BackupLogPath, filename);
+                    if (!Directory.Exists(Path.Combine(Properties.Settings.Default.BackupLogPath)))
+                        Directory.CreateDirectory(Properties.Settings.Default.BackupLogPath);
                 }    
                 if (File.Exists(_path))
                     File.Delete(_path);

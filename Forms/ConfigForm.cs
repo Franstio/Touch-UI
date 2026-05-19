@@ -82,6 +82,7 @@ namespace TestTCP1.Forms
             debugLogPath.Text = GetConfig("DebugLogPath");
             snResultPath.Text = GetConfig("SNResultPath");
             snLocation.Text = GetConfig("SNLocation");
+            backupLogPath.Text = GetConfig("BackupLogPath");
         }
 
         private void button1_Click(object sender, EventArgs e)

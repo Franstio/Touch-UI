@@ -48,6 +48,9 @@
             label2 = new Label();
             label1 = new Label();
             groupBox3 = new GroupBox();
+            button11 = new Button();
+            label18 = new Label();
+            backupLogPath = new TextBox();
             button10 = new Button();
             label17 = new Label();
             snLocation = new TextBox();
@@ -282,6 +285,9 @@
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox3.Controls.Add(button11);
+            groupBox3.Controls.Add(label18);
+            groupBox3.Controls.Add(backupLogPath);
             groupBox3.Controls.Add(button10);
             groupBox3.Controls.Add(label17);
             groupBox3.Controls.Add(snLocation);
@@ -313,10 +319,41 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Directory Setting";
             // 
+            // button11
+            // 
+            button11.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button11.Location = new Point(370, 197);
+            button11.Name = "button11";
+            button11.Size = new Size(75, 23);
+            button11.TabIndex = 27;
+            button11.Tag = "BackupLogPath";
+            button11.Text = "Change";
+            button11.UseVisualStyleBackColor = true;
+            button11.Click += openDialogFolder;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(6, 201);
+            label18.Name = "label18";
+            label18.Size = new Size(99, 15);
+            label18.TabIndex = 26;
+            label18.Text = "Backup Log Path:";
+            // 
+            // backupLogPath
+            // 
+            backupLogPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            backupLogPath.Location = new Point(143, 198);
+            backupLogPath.Name = "backupLogPath";
+            backupLogPath.ReadOnly = true;
+            backupLogPath.Size = new Size(222, 23);
+            backupLogPath.TabIndex = 25;
+            backupLogPath.Tag = "BackupLogPath";
+            // 
             // button10
             // 
             button10.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button10.Location = new Point(370, 226);
+            button10.Location = new Point(370, 256);
             button10.Name = "button10";
             button10.Size = new Size(75, 23);
             button10.TabIndex = 24;
@@ -328,7 +365,7 @@
             // label17
             // 
             label17.AutoSize = true;
-            label17.Location = new Point(6, 230);
+            label17.Location = new Point(6, 260);
             label17.Name = "label17";
             label17.Size = new Size(74, 15);
             label17.TabIndex = 23;
@@ -337,7 +374,7 @@
             // snLocation
             // 
             snLocation.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            snLocation.Location = new Point(143, 227);
+            snLocation.Location = new Point(143, 257);
             snLocation.Name = "snLocation";
             snLocation.ReadOnly = true;
             snLocation.Size = new Size(222, 23);
@@ -347,7 +384,7 @@
             // button9
             // 
             button9.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button9.Location = new Point(370, 197);
+            button9.Location = new Point(370, 227);
             button9.Name = "button9";
             button9.Size = new Size(75, 23);
             button9.TabIndex = 21;
@@ -359,7 +396,7 @@
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(6, 201);
+            label15.Location = new Point(6, 231);
             label15.Name = "label15";
             label15.Size = new Size(87, 15);
             label15.TabIndex = 20;
@@ -368,7 +405,7 @@
             // snResultPath
             // 
             snResultPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            snResultPath.Location = new Point(143, 198);
+            snResultPath.Location = new Point(143, 228);
             snResultPath.Name = "snResultPath";
             snResultPath.ReadOnly = true;
             snResultPath.Size = new Size(222, 23);
@@ -698,5 +735,8 @@
         private Button button10;
         private Label label17;
         private TextBox snLocation;
+        private Button button11;
+        private Label label18;
+        private TextBox backupLogPath;
     }
 }
