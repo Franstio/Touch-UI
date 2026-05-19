@@ -54,8 +54,9 @@ namespace TouchUI.Model.ViewModel
                 CavityItemModel item = new CavityItemModel();
                 item.CavityNo = i;
                 item.Models = new List<PositionModel>();
+                
                 CurrentPitching = Cavity.Pitching * (i % 4);
-                CurrentPitchingY = Cavity.PitchingY * Convert.ToInt32(Math.Floor(Convert.ToDecimal(i) / Convert.ToDecimal(4)));
+                CurrentPitchingY = Cavity.PitchingY * Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(i+1) / Convert.ToDecimal(4)));
                 foreach (var model in models)
                 {
                     item.Models.Add(Transform(model));

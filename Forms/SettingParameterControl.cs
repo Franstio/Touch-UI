@@ -335,9 +335,9 @@ namespace TouchUI.Forms
             button12.Invoke(new Action(() => { button12.Enabled = false; }));
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
             curModel.Model = Model;
-            int activeCavityX = activeCavity % 5;
-            int activeCavityY = Convert.ToInt32( Math.Floor(Convert.ToDecimal(activeCavity)/ Convert.ToDecimal(5)));
-            curModel.X = (curModel.X * 20 / 1600) - ((activeCavityX - 1) * activePitching);
+            int activeCavityX = (activeCavity - 1) % 4;
+            int activeCavityY = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(activeCavity) / Convert.ToDecimal(4))) - 1;
+            curModel.X = (curModel.X * 20 / 1600) - ((activeCavityX ) * activePitching);
             curModel.Y = (curModel.Y * 20 / 1600 ) - ((activeCavityY ) * activePitchingy);
             curModel.Z = curModel.Z * 20 / 1600;
             PosView v = map.Map<PosView>(curModel);
@@ -364,9 +364,9 @@ namespace TouchUI.Forms
             int newPos = int.Parse(insertAfter.Value.ToString());
             curModel.Pos = newPos + 1;
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
-            int activeCavityX = activeCavity % 5;
-            int activeCavityY = Convert.ToInt32(Math.Floor(Convert.ToDecimal(activeCavity) / Convert.ToDecimal(5)));
-            curModel.X = (curModel.X * 20 / 1600) - ((activeCavityX - 1) * activePitching);
+            int activeCavityX = (activeCavity - 1) % 4;
+            int activeCavityY = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(activeCavity) / Convert.ToDecimal(4))) - 1;
+            curModel.X = (curModel.X * 20 / 1600) - ((activeCavityX ) * activePitching);
             curModel.Y = (curModel.Y * 20 / 1600) - ((activeCavityY ) * activePitchingy);
             curModel.Z = curModel.Z * 20 / 1600;
             PosView v = map.Map<PosView>(curModel);
