@@ -232,7 +232,7 @@
             timeLabel.AutoSize = true;
             timeLabel.Location = new Point(966, 11);
             timeLabel.Name = "timeLabel";
-            timeLabel.Size = new Size(37, 30);
+            timeLabel.Size = new Size(36, 30);
             timeLabel.TabIndex = 12;
             timeLabel.Text = "Date:\r\nTime:";
             timeLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -418,7 +418,7 @@
             label5.AutoSize = true;
             label5.Location = new Point(28, 66);
             label5.Name = "label5";
-            label5.Size = new Size(102, 15);
+            label5.Size = new Size(103, 15);
             label5.TabIndex = 2;
             label5.Text = "Camera Execution";
             // 
@@ -832,6 +832,7 @@
             pitchingyBox.DecimalPlaces = 2;
             pitchingyBox.Location = new Point(3, 9);
             pitchingyBox.Maximum = new decimal(new int[] { 99999, 0, 0, 0 });
+            pitchingyBox.Minimum = new decimal(new int[] { 9999, 0, 0, int.MinValue });
             pitchingyBox.Name = "pitchingyBox";
             pitchingyBox.Size = new Size(46, 23);
             pitchingyBox.TabIndex = 0;
@@ -904,6 +905,7 @@
             pitchingBox.DecimalPlaces = 2;
             pitchingBox.Location = new Point(3, 9);
             pitchingBox.Maximum = new decimal(new int[] { 99999, 0, 0, 0 });
+            pitchingBox.Minimum = new decimal(new int[] { 9999, 0, 0, int.MinValue });
             pitchingBox.Name = "pitchingBox";
             pitchingBox.Size = new Size(46, 23);
             pitchingBox.TabIndex = 0;

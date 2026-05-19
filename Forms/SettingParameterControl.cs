@@ -335,10 +335,10 @@ namespace TouchUI.Forms
             button12.Invoke(new Action(() => { button12.Enabled = false; }));
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
             curModel.Model = Model;
-            int activeCavityX = activeCavity % 4;
+            int activeCavityX = activeCavity % 5;
             int activeCavityY = Convert.ToInt32( Math.Floor(Convert.ToDecimal(activeCavity)/ Convert.ToDecimal(4)));
             curModel.X = (curModel.X * 20 / 1600) - ((activeCavityX - 1) * activePitching);
-            curModel.Y = (curModel.Y * 20 / 1600 ) - ((activeCavityY - 1) * activePitchingy);
+            curModel.Y = (curModel.Y * 20 / 1600 ) - ((activeCavityY ) * activePitchingy);
             curModel.Z = curModel.Z * 20 / 1600;
             PosView v = map.Map<PosView>(curModel);
             v.CameraPoint = int.Parse(camPoint.Value.ToString());
@@ -364,10 +364,10 @@ namespace TouchUI.Forms
             int newPos = int.Parse(insertAfter.Value.ToString());
             curModel.Pos = newPos + 1;
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
-            int activeCavityX = activeCavity % 4;
+            int activeCavityX = activeCavity % 5;
             int activeCavityY = Convert.ToInt32(Math.Floor(Convert.ToDecimal(activeCavity) / Convert.ToDecimal(4)));
             curModel.X = (curModel.X * 20 / 1600) - ((activeCavityX - 1) * activePitching);
-            curModel.Y = (curModel.Y * 20 / 1600) - ((activeCavityY - 1) * activePitchingy);
+            curModel.Y = (curModel.Y * 20 / 1600) - ((activeCavityY ) * activePitchingy);
             curModel.Z = curModel.Z * 20 / 1600;
             PosView v = map.Map<PosView>(curModel);
 
@@ -390,10 +390,11 @@ namespace TouchUI.Forms
         {
             //string res = string.Empty;
             curModel = new PositionModel(_data);
-            int activeCavityX = activeCavity % 4;
+            int activeCavityX = activeCavity % 5;
+            activeCavityX = activeCavityX == 0 ? 1 : activeCavityX;
             int activeCavityY = Convert.ToInt32(Math.Floor(Convert.ToDecimal(activeCavity) / Convert.ToDecimal(4)));
             curModel.X = (_data.X + ((activeCavityX - 1) * activePitching)) * 1600 / 20;
-            curModel.Y = (_data.Y + ((activeCavityY-1) * activePitchingy))* 1600 / 20;
+            curModel.Y = (_data.Y + ((activeCavityY) * activePitchingy))* 1600 / 20;
             curModel.Z = _data.Z * 1600 / 20;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Run(new Action(async () => await GoPoint()));
