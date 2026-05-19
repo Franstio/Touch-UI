@@ -39,6 +39,7 @@ namespace TouchUI.Forms
         private Button[] _buttons = new Button[0];
         private readonly int CameraDelay = 0;
         private decimal activePitching = 0;
+        private decimal activePitchingy = 0;
         private int activeCavity = 1;
         private List<ImageAreaModel> areaData = new List<ImageAreaModel>();
         private Dictionary<string, Dictionary<string, string>> CommandDict = new Dictionary<string, Dictionary<string, string>>
@@ -160,10 +161,12 @@ namespace TouchUI.Forms
             await LoadJogState("JOG");
             var data = await dbCon.GetCavity(Model);
             activePitching = data?.Pitching ?? 0;
+            activePitchingy = data?.PitchingY ?? 0;
             activeCavity = 1;
             activeCavityBox.Maximum = data?.CavityTotal ?? 1;
             activeCavityBox.Value = 1;
             pitchingBox.Value = data?.Pitching ?? 0;
+            pitchingyBox.Value = data?.PitchingY ?? 0;
             cavityBox.Value = data?.CavityTotal ?? 1;
         }
         private void checkMinusButton()
@@ -332,8 +335,10 @@ namespace TouchUI.Forms
             button12.Invoke(new Action(() => { button12.Enabled = false; }));
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
             curModel.Model = Model;
-            curModel.X = (curModel.X * 20 / 1600) - ((activeCavity - 1) * activePitching);
-            curModel.Y = curModel.Y * 20 / 1600;
+            int activeCavityX = activeCavity % 4;
+            int activeCavityY = Convert.ToInt32( Math.Floor(Convert.ToDecimal(activeCavity)/ Convert.ToDecimal(4)));
+            curModel.X = (curModel.X * 20 / 1600) - ((activeCavityX - 1) * activePitching);
+            curModel.Y = (curModel.Y * 20 / 1600 ) - ((activeCavityY - 1) * activePitchingy);
             curModel.Z = curModel.Z * 20 / 1600;
             PosView v = map.Map<PosView>(curModel);
             v.CameraPoint = int.Parse(camPoint.Value.ToString());
@@ -359,9 +364,10 @@ namespace TouchUI.Forms
             int newPos = int.Parse(insertAfter.Value.ToString());
             curModel.Pos = newPos + 1;
             curModel.CameraCheckpoint = cameraTriggerBox.Text;
-
-            curModel.X = (curModel.X * 20 / 1600) - ((activeCavity - 1) * activePitching);
-            curModel.Y = curModel.Y * 20 / 1600;
+            int activeCavityX = activeCavity % 4;
+            int activeCavityY = Convert.ToInt32(Math.Floor(Convert.ToDecimal(activeCavity) / Convert.ToDecimal(4)));
+            curModel.X = (curModel.X * 20 / 1600) - ((activeCavityX - 1) * activePitching);
+            curModel.Y = (curModel.Y * 20 / 1600) - ((activeCavityY - 1) * activePitchingy);
             curModel.Z = curModel.Z * 20 / 1600;
             PosView v = map.Map<PosView>(curModel);
 
@@ -384,8 +390,10 @@ namespace TouchUI.Forms
         {
             //string res = string.Empty;
             curModel = new PositionModel(_data);
-            curModel.X = (_data.X + ((activeCavity - 1) * activePitching)) * 1600 / 20;
-            curModel.Y = _data.Y * 1600 / 20;
+            int activeCavityX = activeCavity % 4;
+            int activeCavityY = Convert.ToInt32(Math.Floor(Convert.ToDecimal(activeCavity) / Convert.ToDecimal(4)));
+            curModel.X = (_data.X + ((activeCavityX - 1) * activePitching)) * 1600 / 20;
+            curModel.Y = (_data.Y + ((activeCavityY-1) * activePitchingy))* 1600 / 20;
             curModel.Z = _data.Z * 1600 / 20;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Run(new Action(async () => await GoPoint()));
@@ -569,7 +577,7 @@ namespace TouchUI.Forms
             {
                 button17.Enabled = false;
             });
-            await dbCon.SaveCavity(Model, new TouchUI.Model.ViewModel.CavityModel() { CavityTotal = int.Parse(cavityBox.Value.ToString() ?? "0"), Pitching = pitchingBox.Value });
+            await dbCon.SaveCavity(Model, new TouchUI.Model.ViewModel.CavityModel() { CavityTotal = int.Parse(cavityBox.Value.ToString() ?? "0"), Pitching = pitchingBox.Value,PitchingY = pitchingyBox.Value });
 
             var data = await dbCon.GetCavity(Model);
             activePitching = data?.Pitching ?? 0;

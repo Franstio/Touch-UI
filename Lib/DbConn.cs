@@ -56,7 +56,7 @@ namespace TouchUI.Lib
             string[] queries = new string[]
                 {
                     "Insert Into tbl_data(Model,Position,X,Y,Z,CameraCheckPoint) Select @newModelName,Position,x,y,z,CameraCheckPoint From TBl_Data where model=@oldModelName;",
-                    "Insert Into Tbl_CamPoint(Model,CameraPoint,Pitching,CavityTotal) Select @newModelName,CameraPoint,Pitching,CavityTotal From Tbl_CamPoint where model=@oldModelName",
+                    "Insert Into Tbl_CamPoint(Model,CameraPoint,Pitching,PitchingY,CavityTotal) Select @newModelName,CameraPoint,Pitching,PitchingY,CavityTotal From Tbl_CamPoint where model=@oldModelName",
                     "Insert Into Tbl_MarkPoint(Model,Position,AreaInspection,X,Y,ImageName) Select @newModelName,Position,AreaInspection,X,Y,ImageName From TBl_MarkPoint Where model=@oldModelName",
                     "Insert Into Tbl_Image(Model,Position,ImageName,AreaInspection,No) Select @newModelName,Position,ImageName,AreaInspection,No From Tbl_Image Where Model=@oldModelName"
                 };
@@ -312,7 +312,7 @@ namespace TouchUI.Lib
             using (var conn=GetConn())
             {
                 await conn.OpenAsync();
-                string query = "Select Pitching,CavityTotal From Tbl_Campoint where model=@model";
+                string query = "Select Pitching,PitchingY,CavityTotal From Tbl_Campoint where model=@model";
                 var res = await conn.QueryAsync<CavityModel>(query, new { model = model });
                 result = res.FirstOrDefault();
             }
@@ -326,10 +326,10 @@ namespace TouchUI.Lib
                 await conn.OpenAsync();
                 string query = string.Empty;
                 if (camPoint is null || camPoint == -1)
-                    query = "Insert Into Tbl_CamPoint(Model,CameraPoint,Pitching,CavityTotal) values(@Model,-2,@Pitching,@CavityTotal)";
+                    query = "Insert Into Tbl_CamPoint(Model,CameraPoint,Pitching,PitchingY,CavityTotal) values(@Model,-2,@Pitching,@PitchingY,@CavityTotal)";
                 else
-                    query = "Update Tbl_Campoint set Pitching=@Pitching,CavityTotal=@CavityTotal Where Model=@model";
-                await conn.ExecuteAsync(query,new {model= Model, Pitching=data.Pitching,CavityTotal=data.CavityTotal});
+                    query = "Update Tbl_Campoint set Pitching=@Pitching,PitchingY=@PitchingY,CavityTotal=@CavityTotal Where Model=@model";
+                await conn.ExecuteAsync(query,new {model= Model, Pitching=data.Pitching, PitchingY=data.PitchingY, CavityTotal=data.CavityTotal});
             }
         }
 

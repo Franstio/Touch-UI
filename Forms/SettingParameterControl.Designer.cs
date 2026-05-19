@@ -85,6 +85,9 @@
             groupBox6 = new GroupBox();
             button17 = new Button();
             tableLayoutPanel1 = new TableLayoutPanel();
+            panel6 = new Panel();
+            pitchingyBox = new NumericUpDown();
+            label7 = new Label();
             label3 = new Label();
             label6 = new Label();
             panel1 = new Panel();
@@ -115,6 +118,8 @@
             ((System.ComponentModel.ISupportInitialize)camPoint).BeginInit();
             groupBox6.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pitchingyBox).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)cavityBox).BeginInit();
             panel2.SuspendLayout();
@@ -227,7 +232,7 @@
             timeLabel.AutoSize = true;
             timeLabel.Location = new Point(966, 11);
             timeLabel.Name = "timeLabel";
-            timeLabel.Size = new Size(36, 30);
+            timeLabel.Size = new Size(37, 30);
             timeLabel.TabIndex = 12;
             timeLabel.Text = "Date:\r\nTime:";
             timeLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -413,7 +418,7 @@
             label5.AutoSize = true;
             label5.Location = new Point(28, 66);
             label5.Name = "label5";
-            label5.Size = new Size(103, 15);
+            label5.Size = new Size(102, 15);
             label5.TabIndex = 2;
             label5.Text = "Camera Execution";
             // 
@@ -646,7 +651,7 @@
             // button8
             // 
             button8.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button8.Location = new Point(222, 107);
+            button8.Location = new Point(222, 110);
             button8.Margin = new Padding(3, 2, 3, 2);
             button8.Name = "button8";
             button8.Size = new Size(100, 26);
@@ -685,7 +690,7 @@
             // button5
             // 
             button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            button5.Location = new Point(222, 69);
+            button5.Location = new Point(223, 73);
             button5.Margin = new Padding(3, 2, 3, 2);
             button5.Name = "button5";
             button5.Size = new Size(100, 26);
@@ -736,11 +741,11 @@
             groupBox5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox5.Controls.Add(button14);
             groupBox5.Controls.Add(camPoint);
-            groupBox5.Location = new Point(364, 11);
+            groupBox5.Location = new Point(442, 11);
             groupBox5.Margin = new Padding(3, 2, 3, 2);
             groupBox5.Name = "groupBox5";
             groupBox5.Padding = new Padding(3, 2, 3, 2);
-            groupBox5.Size = new Size(220, 104);
+            groupBox5.Size = new Size(133, 104);
             groupBox5.TabIndex = 34;
             groupBox5.TabStop = false;
             groupBox5.Text = "Camera Program";
@@ -749,7 +754,7 @@
             // 
             button14.Location = new Point(6, 71);
             button14.Name = "button14";
-            button14.Size = new Size(209, 23);
+            button14.Size = new Size(121, 23);
             button14.TabIndex = 1;
             button14.TabStop = false;
             button14.Text = "Set";
@@ -762,7 +767,7 @@
             camPoint.Location = new Point(6, 20);
             camPoint.Margin = new Padding(3, 2, 3, 2);
             camPoint.Name = "camPoint";
-            camPoint.Size = new Size(209, 39);
+            camPoint.Size = new Size(121, 39);
             camPoint.TabIndex = 0;
             camPoint.TabStop = false;
             // 
@@ -773,7 +778,7 @@
             groupBox6.Controls.Add(tableLayoutPanel1);
             groupBox6.Location = new Point(9, 11);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(364, 104);
+            groupBox6.Size = new Size(427, 104);
             groupBox6.TabIndex = 35;
             groupBox6.TabStop = false;
             groupBox6.Text = "Cavity & Pitching";
@@ -783,7 +788,7 @@
             button17.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             button17.Location = new Point(6, 71);
             button17.Name = "button17";
-            button17.Size = new Size(352, 23);
+            button17.Size = new Size(415, 23);
             button17.TabIndex = 2;
             button17.TabStop = false;
             button17.Text = "Set";
@@ -793,11 +798,15 @@
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel1.ColumnCount = 4;
+            tableLayoutPanel1.ColumnCount = 6;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 13.333333F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 13.333333F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 13.333333F));
+            tableLayoutPanel1.Controls.Add(panel6, 5, 0);
+            tableLayoutPanel1.Controls.Add(label7, 4, 0);
             tableLayoutPanel1.Controls.Add(label3, 0, 0);
             tableLayoutPanel1.Controls.Add(label6, 2, 0);
             tableLayoutPanel1.Controls.Add(panel1, 1, 0);
@@ -806,8 +815,38 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(352, 43);
+            tableLayoutPanel1.Size = new Size(415, 43);
             tableLayoutPanel1.TabIndex = 36;
+            // 
+            // panel6
+            // 
+            panel6.Controls.Add(pitchingyBox);
+            panel6.Dock = DockStyle.Fill;
+            panel6.Location = new Point(362, 3);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(50, 37);
+            panel6.TabIndex = 5;
+            // 
+            // pitchingyBox
+            // 
+            pitchingyBox.DecimalPlaces = 2;
+            pitchingyBox.Location = new Point(3, 9);
+            pitchingyBox.Maximum = new decimal(new int[] { 99999, 0, 0, 0 });
+            pitchingyBox.Name = "pitchingyBox";
+            pitchingyBox.Size = new Size(46, 23);
+            pitchingyBox.TabIndex = 0;
+            pitchingyBox.TabStop = false;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Dock = DockStyle.Fill;
+            label7.Location = new Point(279, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(77, 43);
+            label7.TabIndex = 4;
+            label7.Text = "Pitching Y (mm):";
+            label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label3
             // 
@@ -815,7 +854,7 @@
             label3.Dock = DockStyle.Fill;
             label3.Location = new Point(3, 0);
             label3.Name = "label3";
-            label3.Size = new Size(64, 43);
+            label3.Size = new Size(49, 43);
             label3.TabIndex = 0;
             label3.Text = "Cavity:";
             label3.TextAlign = ContentAlignment.MiddleCenter;
@@ -824,20 +863,20 @@
             // 
             label6.AutoSize = true;
             label6.Dock = DockStyle.Fill;
-            label6.Location = new Point(178, 0);
+            label6.Location = new Point(141, 0);
             label6.Name = "label6";
-            label6.Size = new Size(99, 43);
+            label6.Size = new Size(77, 43);
             label6.TabIndex = 1;
-            label6.Text = "Pitching (mm):";
+            label6.Text = "Pitching X (mm):";
             label6.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel1
             // 
             panel1.Controls.Add(cavityBox);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(73, 3);
+            panel1.Location = new Point(58, 3);
             panel1.Name = "panel1";
-            panel1.Size = new Size(99, 37);
+            panel1.Size = new Size(77, 37);
             panel1.TabIndex = 2;
             // 
             // cavityBox
@@ -846,7 +885,7 @@
             cavityBox.Maximum = new decimal(new int[] { 99999, 0, 0, 0 });
             cavityBox.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             cavityBox.Name = "cavityBox";
-            cavityBox.Size = new Size(90, 23);
+            cavityBox.Size = new Size(67, 23);
             cavityBox.TabIndex = 0;
             cavityBox.TabStop = false;
             cavityBox.Value = new decimal(new int[] { 1, 0, 0, 0 });
@@ -855,9 +894,9 @@
             // 
             panel2.Controls.Add(pitchingBox);
             panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(283, 3);
+            panel2.Location = new Point(224, 3);
             panel2.Name = "panel2";
-            panel2.Size = new Size(66, 37);
+            panel2.Size = new Size(49, 37);
             panel2.TabIndex = 3;
             // 
             // pitchingBox
@@ -866,7 +905,7 @@
             pitchingBox.Location = new Point(3, 9);
             pitchingBox.Maximum = new decimal(new int[] { 99999, 0, 0, 0 });
             pitchingBox.Name = "pitchingBox";
-            pitchingBox.Size = new Size(54, 23);
+            pitchingBox.Size = new Size(46, 23);
             pitchingBox.TabIndex = 0;
             pitchingBox.TabStop = false;
             // 
@@ -935,6 +974,8 @@
             groupBox6.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            panel6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pitchingyBox).EndInit();
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)cavityBox).EndInit();
             panel2.ResumeLayout(false);
@@ -1008,5 +1049,8 @@
         private Button button6;
         private Button button5;
         private Panel panel5;
+        private Label label7;
+        private Panel panel6;
+        private NumericUpDown pitchingyBox;
     }
 }

@@ -9,13 +9,15 @@ namespace TouchUI.Model.ViewModel
     public class DashboardCavityModel
     {
         public decimal CurrentPitching { get; private set; } = 0;
+        public decimal CurrentPitchingY { get; private set; } = 0;
         public int CurrentCavity { get; set; } = 0;
         public CavityModel Cavity { get; set; } = new CavityModel();
         public List<CavityItemModel> Cavities { get;private set; }
-        public DashboardCavityModel(int _pitching, int cavityNumber)
+        public DashboardCavityModel(int _pitching,int _pitchingy, int cavityNumber)
         {
             Cavity.CavityTotal = cavityNumber;
             Cavity.Pitching = _pitching;
+            Cavity.PitchingY = _pitchingy;
             Cavities = new List<CavityItemModel>();
         }
         public DashboardCavityModel(CavityModel cavity,List<PositionModel> Positions)
@@ -41,6 +43,7 @@ namespace TouchUI.Model.ViewModel
                 Pos = model.Pos
             };
             newPos.X += CurrentPitching;
+            newPos.Y += CurrentPitchingY;
             return newPos;
         }
         public void SetupCavities(List<PositionModel> models)
@@ -51,7 +54,8 @@ namespace TouchUI.Model.ViewModel
                 CavityItemModel item = new CavityItemModel();
                 item.CavityNo = i;
                 item.Models = new List<PositionModel>();
-                CurrentPitching = Cavity.Pitching * i;
+                CurrentPitching = Cavity.Pitching * (i % 4);
+                CurrentPitchingY = Cavity.PitchingY * Convert.ToInt32(Math.Floor(Convert.ToDecimal(i) / Convert.ToDecimal(4)));
                 foreach (var model in models)
                 {
                     item.Models.Add(Transform(model));
@@ -88,6 +92,7 @@ namespace TouchUI.Model.ViewModel
 
         public int CavityTotal { get; set; } = 1;
         public decimal Pitching { get; set; } = 0;
+        public decimal PitchingY { get; set; } = 0;
     }
 
     public class CavityItemModel
