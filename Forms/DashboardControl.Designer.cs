@@ -845,7 +845,7 @@
             comboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6" });
+            comboBox1.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" });
             comboBox1.Location = new Point(6, 27);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(100, 23);
