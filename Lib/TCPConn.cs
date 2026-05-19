@@ -122,6 +122,9 @@ namespace TouchUI.Lib
             if (!IsRunning() )
                 await StartConnection();
             int count = 0;
+
+            do
+            {
                 try
                 {
                     string msg = string.Empty;
@@ -136,9 +139,6 @@ namespace TouchUI.Lib
                         await Task.Delay(100);
                         await StartConnection();
                         count = 0;
-                    }
-                    count = count + 1;
-                        byte[] buffer = Encoding.ASCII.GetBytes($"{cmd}\r\n");
                         Debug.WriteLineIf(log, $"Writing {cmd} Command");
                         await stream.WriteAsync(buffer, 0, buffer.Length,token ?? CancellationToken.None);
                     if (token is not null && token.Value.IsCancellationRequested)
@@ -148,10 +148,13 @@ namespace TouchUI.Lib
                     //Thread.Sleep(100);
                     msg = await ReadIncomingMsg(cmd,token);
 
-                    }
+                        //Thread.Sleep(100);
                     while ((msg.Contains("E1") || msg == string.Empty) && (token is null || !token.Value.IsCancellationRequested) );
                 await Task.Delay(10);
                     return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty).Trim().Replace("\r", "").Replace("\n", "");
+                    }
+                    while ((msg.Contains("E1") || msg == string.Empty) && tryCount <= 7);
+                    return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty);
                 }
                 catch (Exception ex)
                 {
@@ -169,10 +172,10 @@ namespace TouchUI.Lib
                 {
                     StopConnection();
                     await StartConnection();
-                }
-                byte[] buffer = new byte[1024];
-                Debug.WriteLineIf(log,$"Reading Stream TCP {(logCommand is not null ? "From "+logCommand : "") }...");
                 await stream.ReadAsync(buffer, 0, buffer.Length,token ?? CancellationToken.None);
+                Debug.WriteLineIf(log,$"Reading Stream TCP {(logCommand is not null ? "From "+logCommand : "") }...");
+                var stream = _tcpClient.GetStream();
+                await stream.ReadAsync(buffer, 0, buffer.Length);
                 string msg = Encoding.ASCII.GetString(buffer, 0, buffer.Length);
 //                await stream.FlushAsync();
                 Debug.WriteLineIf(log, $"Result: {msg}");
@@ -187,7 +190,7 @@ namespace TouchUI.Lib
             {
                 Debug.WriteLine(ex.Message + " " + ex.InnerException?.Message);
 //                MessageBox.Show(ex.Message);
-                return string.Empty;
+                return await ReadIncomingMsg(logCommand);
             }
         }
     }

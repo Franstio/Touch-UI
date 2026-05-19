@@ -612,7 +612,6 @@
             radioButton1.Name = "radioButton1";
             radioButton1.Size = new Size(46, 19);
             radioButton1.TabIndex = 35;
-            radioButton1.TabStop = true;
             radioButton1.Text = "JOG";
             radioButton1.UseVisualStyleBackColor = true;
             radioButton1.CheckedChanged += radioButton1_CheckedChanged;
