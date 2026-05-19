@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace TouchUI.Model
 {
-    public class MarkPointModel
+    public class ImageAreaModel
     {
         public string Model { get; set; } = string.Empty;
-        public int Position { get; set; }
+        public int Position { get; set; } = -1;
+        public int No { get; set; } = -1;
         public string AreaInspection { get; set; } = string.Empty;
-        public string ImageName { get; set; } = string.Empty;
-        public float X { get; set;  }
-        public float Y { get; set; }    
+        public string Image { get; set;} = string.Empty;    
     }
 }

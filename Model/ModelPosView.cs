@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestTCP1.Model
+namespace TouchUI.Model
 {
     public class ModelPosView
     {
         public int Pos { get; set; } 
-        public string Area { get; set; } = string.Empty;
         public string CameraCheckpoint { get; set; } = string.Empty;
         public string Axis { get; set; } = string.Empty;
     }

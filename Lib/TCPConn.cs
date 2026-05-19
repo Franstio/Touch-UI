@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-using TestTCP1.Properties;
+using TouchUI.Properties;
 
-namespace TestTCP1.Lib
+namespace TouchUI.Lib
 {
     public class TCPConn
     {
@@ -18,6 +19,7 @@ namespace TestTCP1.Lib
         private int _port = 23000;
         private bool log = true;
         private byte[] gBuffer = new byte[512];
+        NetworkStream? stream = null;
         public void setLog(bool log)
         {
             this.log = log;
@@ -57,28 +59,49 @@ namespace TestTCP1.Lib
             }
             if (IsRunning())
             {
-                MessageBox.Show("Connection already started. Please disconnect first");
-                return;
+                _tcpClient.Close();
+//                MessageBox.Show("Connection already started. Please disconnect first");
+//                return;
             }
+
+            _tcpClient = new TcpClient();
+            _tcpClient.NoDelay = true;
+            CancellationTokenSource cts = new CancellationTokenSource();
             int tryCount = 0;
             bool isCompleted= false;
             do
             {
                 try
                 {
-                    await _tcpClient.ConnectAsync(_address, _port);
-                    isCompleted = true;
+                    _ = Task.Run(async () =>
+                    {
+                        await Task.Delay(1000);
+                        if (isCompleted)
+                            return;
+                        cts.Cancel();
+                        isCompleted = false;
+                    });
+                    await _tcpClient.ConnectAsync(_address, _port, cts.Token);
+                    if (!cts.IsCancellationRequested)
+                        isCompleted = true;
                     //            _tcpClient.GetStream().BeginRead(gBuffer, 0, gBuffer.Length, this.checkConnection, _tcpClient);
                 }
                 catch (Exception ex)
                 {
+
+                    _tcpClient = new TcpClient();
+                    _tcpClient.NoDelay = true;
                     Debug.WriteLine(ex.Message);
                     Task.Delay(100);
                     tryCount++;
                     isCompleted = false;
                 }
+                finally
+                {
+                     cts = new CancellationTokenSource();
+                }
             }
-            while (tryCount < 3 && !isCompleted);
+            while (!isCompleted);
             
         }
         public bool IsRunning()
@@ -94,64 +117,75 @@ namespace TestTCP1.Lib
         {
             MessageBox.Show(message);
         }
-        public async Task<string> SendCommand(string cmd)
+        public async Task<string> SendCommand(string cmd,CancellationToken? token=null)
         {
-            if (!IsRunning())
+            if (!IsRunning() )
                 await StartConnection();
-            int tryCount = 0;
-
-            do
-            {
+            int count = 0;
                 try
                 {
                     string msg = string.Empty;
-                    do
+                    stream = _tcpClient.GetStream();
+                    stream.ReadTimeout = 500;
+                    stream.WriteTimeout = 1000;
+                do
+                {
+                    if (count > 100)
                     {
-                        byte[] buffer = Encoding.ASCII.GetBytes($"{cmd}\r\n");
-                        Debug.WriteLineIf(log, $"Writing {cmd} Command, Count: {tryCount + 1}");
-                        await _tcpClient.GetStream().WriteAsync(buffer, 0, buffer.Length);
-                        await _tcpClient.GetStream().FlushAsync();
-                        //Thread.Sleep(100);
-                        msg = await ReadIncomingMsg(cmd);
-                        tryCount = tryCount + 1;
+                        StopConnection();
+                        await Task.Delay(100);
+                        await StartConnection();
+                        count = 0;
                     }
-                    while ((msg.Contains("E1") || msg == string.Empty) && tryCount <= 7);
-                    return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty);
+                    count = count + 1;
+                        byte[] buffer = Encoding.ASCII.GetBytes($"{cmd}\r\n");
+                        Debug.WriteLineIf(log, $"Writing {cmd} Command");
+                        await stream.WriteAsync(buffer, 0, buffer.Length,token ?? CancellationToken.None);
+                    if (token is not null && token.Value.IsCancellationRequested)
+                    {
+                        await stream.FlushAsync();
+                    }
+                    //Thread.Sleep(100);
+                    msg = await ReadIncomingMsg(cmd,token);
+
+                    }
+                    while ((msg.Contains("E1") || msg == string.Empty) && (token is null || !token.Value.IsCancellationRequested) );
+                await Task.Delay(10);
+                    return msg.Replace("\0", string.Empty).Replace("\\0", string.Empty).Trim().Replace("\r", "").Replace("\n", "");
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message + " " + ex.InnerException?.Message);
                     StopConnection();
                     await StartConnection();
-                    tryCount++;
+                    return await SendCommand(cmd);
                 }
-            }
-            while (tryCount <= 10);
-            return string.Empty;
         }
-        private async Task<string> ReadIncomingMsg(string? logCommand=null)
+        private async Task<string> ReadIncomingMsg(string? logCommand=null,CancellationToken? token=null)
         {
             try
             {
-                if (!_tcpClient.Connected)
+                if (!_tcpClient.Connected || stream is null)
                 {
-                    showMsgBox("TCP is not Connected");
-                    return string.Empty;
+                    StopConnection();
+                    await StartConnection();
                 }
-                byte[] buffer = new byte[512];
+                byte[] buffer = new byte[1024];
                 Debug.WriteLineIf(log,$"Reading Stream TCP {(logCommand is not null ? "From "+logCommand : "") }...");
-                var stream = _tcpClient.GetStream();
-                await stream.ReadAsync(buffer, 0, buffer.Length);
+                await stream.ReadAsync(buffer, 0, buffer.Length,token ?? CancellationToken.None);
                 string msg = Encoding.ASCII.GetString(buffer, 0, buffer.Length);
-                //await stream.FlushAsync();
+//                await stream.FlushAsync();
                 Debug.WriteLineIf(log, $"Result: {msg}");
+                if (token is not null && token.Value.IsCancellationRequested)
+                {
+                    await stream.FlushAsync();
+                }
+
                 return msg;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message + " " + ex.InnerException?.Message);
-                StopConnection();
-                await StartConnection();
 //                MessageBox.Show(ex.Message);
                 return string.Empty;
             }

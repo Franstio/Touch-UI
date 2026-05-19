@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Lib;
+using TouchUI.Lib;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class ConfigForm : UserControl
     {
@@ -81,7 +81,8 @@ namespace TestTCP1.Forms
             reportLogPath.Text = GetConfig("LogPath");
             debugLogPath.Text = GetConfig("DebugLogPath");
             snResultPath.Text = GetConfig("SNResultPath");
-
+            snLocation.Text = GetConfig("SNLocation");
+            backupLogPath.Text = GetConfig("BackupLogPath");
         }
 
         private void button1_Click(object sender, EventArgs e)

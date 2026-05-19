@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class SelectModalForm : Form
     {

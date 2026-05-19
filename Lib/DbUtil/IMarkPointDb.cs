@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Model;
+using TouchUI.Model;
 
-namespace TestTCP1.Lib.DbUtil
+namespace TouchUI.Lib.DbUtil
 {
     public abstract class DrawMarkPointUtil
     {

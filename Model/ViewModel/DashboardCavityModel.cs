@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestTCP1.Model.ViewModel
+namespace TouchUI.Model.ViewModel
 {
     public class DashboardCavityModel
     {
@@ -36,7 +36,6 @@ namespace TestTCP1.Model.ViewModel
                 X = model.X,
                 Y = model.Y,
                 Z = model.Z,
-                AreaInspection = model.AreaInspection,
                 CameraCheckpoint = model.CameraCheckpoint,
                 Model = model.Model,
                 Pos = model.Pos
@@ -87,7 +86,7 @@ namespace TestTCP1.Model.ViewModel
     public class CavityModel 
     {
 
-        public int CavityTotal { get; set; } = 0;
+        public int CavityTotal { get; set; } = 1;
         public decimal Pitching { get; set; } = 0;
     }
 

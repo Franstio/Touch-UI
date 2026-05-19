@@ -8,10 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Forms;
-using TestTCP1.Lib;
+using TouchUI.Forms;
+using TouchUI.Lib;
 
-namespace TestTCP1
+namespace TouchUI
 {
     public partial class MainForm : Form
     {
@@ -22,6 +22,13 @@ namespace TestTCP1
             WindowState = FormWindowState.Maximized;
         }
 
+        void clearMainPanel()
+        {
+            if (mainPanel.Controls.Count < 0)
+                return;
+            mainPanel.Controls[0].Dispose();
+            mainPanel.Controls.Clear();
+        }
         private async void changeModelToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -29,7 +36,7 @@ namespace TestTCP1
             this.Invoke(new Action(() =>
             {
                 SelectModalForm frm = new SelectModalForm("Choose Model", data.Select(x => x.Model).Distinct().ToList());
-                mainPanel.Controls.Clear();
+                clearMainPanel();
                 var res = frm.ShowDialog();
                 if (res == DialogResult.OK)
                 {
@@ -43,7 +50,7 @@ namespace TestTCP1
 
         private void newModelParameterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            mainPanel.Controls.Clear();
+            clearMainPanel();
             InputModalForm frm = new InputModalForm("New Parameter Setting");
             var res = frm.ShowDialog();
             if (res == DialogResult.OK)
@@ -71,7 +78,7 @@ namespace TestTCP1
             this.Invoke(new Action(() =>
             {
                 SelectModalForm frm = new SelectModalForm("Modify Parameter Setting", data.Select(x => x.Model).Distinct().ToList());
-                mainPanel.Controls.Clear();
+                clearMainPanel();
                 var res = frm.ShowDialog();
                 if (res == DialogResult.OK)
                 {
@@ -85,7 +92,7 @@ namespace TestTCP1
 
         private void configurationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            mainPanel.Controls.Clear();
+            clearMainPanel();
             ConfigForm ctrl = new ConfigForm();
             ctrl.Dock = DockStyle.Fill;
             mainPanel.Controls.Add(ctrl);

@@ -8,12 +8,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Lib;
-using TestTCP1.Model;
+using TouchUI.Lib;
+using TouchUI.Model;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class ProcessForm : UserControl
     {

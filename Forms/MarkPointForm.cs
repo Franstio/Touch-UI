@@ -9,11 +9,11 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Lib;
-using TestTCP1.Lib.DbUtil;
-using TestTCP1.Model;
+using TouchUI.Lib;
+using TouchUI.Lib.DbUtil;
+using TouchUI.Model;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class MarkPointForm : Form
     {
@@ -22,7 +22,7 @@ namespace TestTCP1.Forms
         private readonly IMarkPointDb conn = new DbConn();
         private string originalPathImage = string.Empty;
         private string originalFileName = string.Empty;
-        private List<PositionModel> posModels = new List<PositionModel>();
+        private List<ImageAreaModel> posModels = new List<ImageAreaModel>();
         private List<MarkPointModel> markModels = new List<MarkPointModel>();
         private MarkPointModel newModel = new MarkPointModel();
         private FileLib fileLib = new FileLib();
@@ -92,7 +92,7 @@ namespace TestTCP1.Forms
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            if (controlState)
+            if (controlState || pictureBox1.Image is null)
                 return;
             MouseEventArgs m = (MouseEventArgs)e;
             PointF curLoc = DrawMark(m.Location, Color.Red);
@@ -140,7 +140,7 @@ namespace TestTCP1.Forms
                 pictureBox1.Image = fileLib.ReadImage(originalPathImage, manualPath: fileLib._markSaveDir);
                 pictureBox1.Refresh();
             }
-            posModels = await ((DbConn)conn).GetPositionByModel(model);
+            posModels = await ((DbConn)conn).GetAreaImageByModel(model);
             markModels = ret.ToList();
             this.Invoke(new Action(LoadDataGridView));
             this.Invoke(new Action(LoadComboBox));
@@ -162,9 +162,11 @@ namespace TestTCP1.Forms
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            var item = (PositionModel)comboBox1.SelectedItem;
+            var item = (ImageAreaModel)comboBox1.SelectedItem;
+            if (item is null)
+                return;
             newModel.AreaInspection = item.AreaInspection;
-            newModel.Position = item.Pos;
+            newModel.Position = item.Position;
             await conn.SaveMarkPoint(newModel);
             var data = await conn.GetMarkPoint(model);
             if (data is null)

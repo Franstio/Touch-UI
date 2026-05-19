@@ -5,9 +5,9 @@ using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestTCP1.Model;
+using TouchUI.Model;
 
-namespace TestTCP1.Lib
+namespace TouchUI.Lib
 {
     public class FileLib
     {
@@ -163,9 +163,9 @@ namespace TestTCP1.Lib
                     _path = Path.Combine(_logPath, filename);
                 else
                 {
-                    _path = Path.Combine(_logPath, "result", filename);
-                    if (!Directory.Exists(Path.Combine(_logPath, "result")))
-                        Directory.CreateDirectory(Path.Combine(_logPath,"result"));
+                    _path = Path.Combine( Properties.Settings.Default.BackupLogPath, filename);
+                    if (!Directory.Exists(Path.Combine(Properties.Settings.Default.BackupLogPath)))
+                        Directory.CreateDirectory(Properties.Settings.Default.BackupLogPath);
                 }    
                 if (File.Exists(_path))
                     File.Delete(_path);
@@ -215,7 +215,6 @@ namespace TestTCP1.Lib
                         if (!Dict.ContainsKey(sn))
                             Dict.Add(sn, text);
                     }
-                    await Task.Delay(100);
                 }
                 while ((string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text)) && File.Exists(files[i]));
                 //if (File.Exists(files[i]))

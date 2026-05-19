@@ -4,13 +4,14 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestTCP1.Lib;
-using TestTCP1.Model;
+using TouchUI.Lib;
+using TouchUI.Model;
 
-namespace TestTCP1.Forms
+namespace TouchUI.Forms
 {
     public partial class ProcessVerificationModalForm : Form
     {
@@ -21,13 +22,14 @@ namespace TestTCP1.Forms
         public string _imageFull { get; set; } = string.Empty;
         private bool isPassed = false;
         private string _img = string.Empty;
+        private ImageAreaModel _area;
         public bool resultVerification { get; set; } = false;
-        public ProcessVerificationModalForm(PositionModel pos, bool isPassed, string img)
+        public ProcessVerificationModalForm(PositionModel pos,ImageAreaModel model, bool isPassed, string img)
         {
             InitializeComponent();
             positionModel = pos;
+            _area = model;
             this.isPassed = isPassed;
-            this.label1.Text = "Verification: " + positionModel.AreaInspection;
             _img = img;
         }
 
@@ -38,7 +40,7 @@ namespace TestTCP1.Forms
             this.Close();
         }
 
-        private async Task LoadImage(PositionModel position, bool isPassed)
+        private async Task LoadImage(ImageAreaModel position, bool isPassed)
         {
             if (_img is null || _img == string.Empty)
             {
@@ -82,7 +84,10 @@ namespace TestTCP1.Forms
 
         private async void ProcessVerificationModalForm_Load(object sender, EventArgs e)
         {
-            await LoadImage(this.positionModel, isPassed);
+
+            var data = (await dbCon.GetAreaImageByModel(_area.Model, _area.Position, _area.No)).First();
+            this.label1.Text = "Verification: " + data.AreaInspection;
+            await LoadImage(this._area, isPassed);
         }
     }
 }

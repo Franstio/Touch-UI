@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace TestTCP1
+namespace TouchUI
 {
     internal static class Program
     {
@@ -18,8 +18,8 @@ namespace TestTCP1
                 Directory.CreateDirectory(debugLogPath);
             Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(debugLogPath,$"Debug-Log-{DateTime.Now.ToString("yyyy.MM.dd-HH.mm.ss")}.txt")));
             ApplicationConfiguration.Initialize();
-            //            Application.Run(new CommandCenter());
             Application.Run(new MainForm());
         }
     }
 }
+            //            Application.Run(new CommandCenter());
